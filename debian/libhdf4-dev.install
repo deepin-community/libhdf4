@@ -1,0 +1,6 @@
+usr/lib/lib*.a
+usr/lib/lib*.la
+usr/lib/lib*.settings
+usr/lib/lib*.so
+usr/include/hdf
+usr/share/man/man3

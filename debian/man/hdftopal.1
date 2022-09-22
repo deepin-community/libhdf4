@@ -1,0 +1,35 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH HDFTOPAL 1 "November 6, 1999"
+.SH NAME
+hdftopal, paltohdf \- convert between a palette in an HDF file and a raw palett
+e in a non-HDF file
+.SH SYNOPSIS
+\fBhdftopal\fP \fIhdf-pallette-file\fP \fIraw-pallette-file\fP
+.br
+\fBpaltohdf\fP \fIraw-pallette-file\fP \fIhdf-pallette-file\fP
+.SH DESCRIPTION
+\fBhdftopal\fP converts a palette in an HDF file to a raw
+palette in an non-HDF file. The raw palette will have 768 bytes with
+the first 256 bytes representing red intensity values, the second 256
+bytes representing green intensity values, and the third 256 bytes
+representing blue intensity values.
+.P
+\fBpaltohdf\fP performs the converse conversion, from raw palette data
+to the HDF palette format. The raw palette data must have 768 bytes
+organized in the following order: first, 256 contiguous red intensity
+values, then 256 contiguous green intensity values, then 256
+contiguous blue intensity values. The palette in the HDF file will
+have the RGB values pixel-interlaced, as follows:
+.nf
+
+red-value green-value blue-value red-value green-value blue-value...
+
+.fi
+This is the standard HDF format for 8-bit palettes.
+.P
+If an HDF palette format file is specified that doesn't exist, it is
+created before the converted data is stored. If an HDF palette format
+file is specified that already exists, the converted data is appended
+to the file.
+.SH "SEE ALSO"
+\fBhdf\fP(5)

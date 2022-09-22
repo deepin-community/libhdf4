@@ -1,0 +1,33 @@
+Description: Fix paths in manpage.
+Author: Francesco Paolo Lovergine <frankie@debian.org>
+
+--- a/man/hdf.1
++++ b/man/hdf.1
+@@ -6,9 +6,7 @@ hdf \- Hierarchical Data Format library
+ .ft B
+ -lmfhdf -ldf -ljpeg -lz [ -lsz ]
+ .sp 0
+-{HDFLIBDIR}/libmfhdf.a {HDFLIBDIR}/libdf.a {JPEGLIBDIR}/libjpeg.a 
+-.sp 0
+-{GZIPLIBDIR}/libz.a [{SZIPLIBDIR}/libsz.a]
++/usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib/libjpeg.a /usr/lib/libz.a /usr/lib/libsz.a
+ 
+ .SH DESCRIPTION
+ HDF is a multi-object file format that facilitates the transfer of various 
+@@ -159,13 +157,13 @@ Email: help@hdfgroup.org
+ .SH FILES
+ .PD 0
+ .TP 30
+-.B /usr/local/lib/hdf/{libmfhdf.a,libdf.a,libjpeg.a,libz.a [,libsz.a]}
++.B /usr/lib/{libmfhdf,libdf,libjpeg,libz,libsz}.{a,so}
+ hdf libraries
+ .TP 30
+-.B /usr/local/bin
++.B /usr/bin
+ Location of most hdf utilities
+ .TP 30
+-.B /usr/local/include/hdf
++.B /usr/include/hdf
+ Location of include file hdf.h, mfhdf.h, and others
+ .PD
+ 

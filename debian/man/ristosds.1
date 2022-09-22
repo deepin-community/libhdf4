@@ -1,0 +1,40 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>     -*- nroff -*-
+.TH RISTOSDS 1 "November 7, 1999"
+.SH NAME
+.ad l
+.nh
+ristosds \- convert several RIS8 images to one 3D SDS
+.SH SYNOPSIS
+.HP
+\fBristosds\fP
+\fIinput-file-1\fP,
+\fIinput-file-2\fP...
+[\fB-o\fP \fIoutput-file\fP]
+.ad b
+.hy
+.SH DESCRIPTION
+\fBristosds\fP creates a single HDF file consisting of a
+three-dimensional Scientific Data Set (SDS) from a set of HDF files
+containing one or more raster images. All images in the input HDF
+files must have the same dimensions. If a palette is to be included
+with the images, it should be in the first HDF input file. Only one
+palette can be associated with the images; any additional palette data
+encountered by the utility after the first palette has been processed
+will be ignored.
+.SH OPTIONS
+.TP
+.BR -o " \fIoutfile\fP"
+Write the output to \fIoutfile\fP.
+.SH EXAMPLES
+The contents of a directory consists of 20 files named "storm001.hdf",
+"storm002.hdf". ... "storm020.hdf". Each file contains a single RIS8
+with a 100 x 200 raster image. A file that combines these 20 raster
+images into a 32-bit floating-point SDS with the dimensions 100 x 200
+x 20 can be created with the following \fBristosds\fP command:
+.nf
+
+        ristosds storm*.hdf -o storm.hdf
+
+.fi
+.SH "SEE ALSO"
+\fBhdf\fP(5).

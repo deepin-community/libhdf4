@@ -1,0 +1,14 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH HDF2JPEG 1 "November 5, 1999"
+.SH NAME
+hdf2jpeg \- convert HDF images to JPEG
+.SH SYNOPSIS
+\fBhdf2jpeg\fP \fIhdf-file\fP \fIoutput-template\fP
+.SH DESCRIPTION
+\fBhdf2jpeg\fP reads images from \fIhdf-file\fP and converts them to
+JPEG format.  \fIoutput-template\fP is the template for the names of
+the output files.  It may contain the special character "#", which
+will be replaced by the reference number of the HDF image being
+extracted.  The default format is "file.#.jpg".
+.SH "SEE ALSO"
+\fBjpeg2hdf\fP(1), \fBhdf\fP(5)

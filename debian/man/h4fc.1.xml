@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<refentry id='h4fc'>
+
+  <refmeta>
+    <refentrytitle>h4fc</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>h4fc</refname>
+    <refpurpose>compiles an HDF4 F90 program</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>h4fc</command>
+      <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
+      <arg choice='plain'>&lt;<replaceable>compile line</replaceable>&gt;</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>h4fc</command> compiles an HDF4 F90 program.
+    </para>
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+
+      <varlistentry>
+        <term><option>-help</option></term>
+        <listitem>
+          <para>
+            Display usage information
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-echo</option></term>
+        <listitem>
+          <para>
+            Show all the shell commands executed
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-prefix</option>=<replaceable>DIR</replaceable></term>
+        <listitem>
+          <para>
+            Prefix directory to find HDF4
+            <filename class='directory'>lib/</filename> and
+            <filename class='directory'>include/</filename> subdirectories
+            [default: /usr]
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-show</option></term>
+        <listitem>
+          <para>
+            Show the commands without executing them
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>&lt;<replaceable>compile line</replaceable>&gt;</term>
+        <listitem>
+          <para>
+            the normal compile line options for your compiler.
+            <command>h4fc</command> uses the same compiler you used to compile
+            HDF4.
+            Check with your compiler's man pages for more information on
+            which options are needed.
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+    <para>
+      You can override the compiler, linker, and whether or not to use static
+      or shared libraries to compile your program by setting the following
+      environment variables accordingly:
+      <variablelist>
+
+        <varlistentry>
+          <term>HDF4_F77</term>
+          <listitem>
+            <para>
+              use a different Fortran 77 compiler
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>HDF4_F77LINKER</term>
+          <listitem>
+            <para>
+              use a different linker
+            </para>
+          </listitem>
+        </varlistentry>
+
+      </variablelist>
+    </para>
+
+  </refsect1>
+
+</refentry>

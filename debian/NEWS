@@ -1,0 +1,53 @@
+libhdf4 (4.2r4-2) experimental; urgency=low
+
+   An upstream unsupported shared edition with mixed C and Fortran functions
+   are now provided. Note that the upstream SONAME is maintained, but
+   the shlibs are not ABI compatible with upstream or third parties
+   editions. This should not be a true problem, because HDF4 libraries
+   were provided in static mode traditionally until very recent versions.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 26 Mar 2009 15:27:01 +0100
+
+libhdf4 (4.2r4-1) experimental; urgency=low
+
+   The HDF4 libraries are now supported as shared libraries by upstream.
+   Unfortunately that support does not include the Fortran API, which
+   has been dropped in Debian packages. This differs from previous
+   shlib mixed mode C/Fortran distributed packages, which were a Debian
+   specific extension. In short terms, if you need the Fortran API you
+   have now to build the static libraries yourself and include them with
+   your application.
+
+   A different (-alt aka alternative) flavor of the two HDF4 libraries
+   is also provided to be compatible with an external NetCDF library and
+   allow linking both NetCDF and HDF4 libraries within the same program.
+   In order to use the alternative flavor you have to use -lmfhdfalt
+   and -ldfalt instead of the usual -lmfhdf and -ldf linking items. The
+   standard flavor is totally back-compatible and provides embedded a
+   partial NetCDF support. 
+   
+   See README.Debian for major information about that.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Wed, 11 Mar 2009 23:13:21 +0100
+
+libhdf4 (4.2r4-2) experimental; urgency=low
+
+   The HDF4 libraries are now supported as shared libraries by upstream.
+   Unfortunately that support does not include the Fortran API, which
+   has been dropped in Debian packages. This differs from previous
+   shlib mixed mode C/Fortran distributed packages, which were a Debian
+   specific extension. In short terms, if you need the Fortran API you
+   have now to build the static libraries yourself and include them with
+   your application.
+
+   A different (-alt aka alternative) flavor of the two HDF4 libraries
+   is also provided to be compatible with an external NetCDF library and
+   allow linking both NetCDF and HDF4 libraries within the same program.
+   In order to use the alternative flavor you have to use -lmfhdfalt
+   and -ldfalt instead of the usual -lmfhdf and -ldf linking items. The
+   standard flavor is totally back-compatible and provides embedded a
+   partial NetCDF support. 
+   
+   See README.Debian for major information about that.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 26 Mar 2009 15:27:01 +0100

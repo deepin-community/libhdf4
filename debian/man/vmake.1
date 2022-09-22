@@ -1,0 +1,39 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>     -*- nroff -*-
+.TH VMAKE 1 "November 7, 1999"
+.SH NAME
+.ad l
+.nh
+vmake \- display vdata information about objects in an HDF file
+.SH SYNOPSIS
+.HP
+\fBvmake\fP
+\fIhdf-file\fP
+[\fB+\fP|\fB+\fP\fIvdata-id\fP]
+.ad b
+.hy
+.SH DESCRIPTION
+\fBvmake\fP displays information about either one vdata object in an
+HDF file, or all Vdata objects in the file.
+.SH OPTIONS
+.TP
+.BR +
+Display information about all Vdata objects in the
+HDF file.
+.TP
+.BI + vdata-id
+One Vdata.
+Display information about the Vdata object
+corresponding to the specified vdata id.
+.SH EXAMPLES
+Information about all of the Vdata objects in the HDF file named
+"image012.hdf" must be examined. The following command will display
+this information:
+.nf
+
+        vshow image012.hdf +
+.fi
+.SH "SEE ALSO"
+\fBhdfls\fP(1),
+\fBhdp\fP(1),
+\fBhdfed\fP(1),
+\fBhdf\fP(5).

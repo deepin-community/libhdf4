@@ -1,0 +1,23 @@
+Description: Fix endianness definition for ppc64el.
+Author: Fernando Seiti Furusato <ferseiti@br.ibm.com>
+
+--- a/mfhdf/libsrc/xdrposix.c
++++ b/mfhdf/libsrc/xdrposix.c
+@@ -442,7 +442,7 @@ xdrposix_getlong(xdrs, lp)
+     long *lp;
+ {
+     unsigned char *up = (unsigned char *)lp ;
+-#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
++#if (defined AIX5L64 || (defined __powerpc64__ && !defined __LITTLE_ENDIAN__) || defined __s390x__ || (defined __hpux && __LP64__))
+     *lp = 0 ;
+     up += (sizeof(long) - 4) ;
+ #endif
+@@ -465,7 +465,7 @@ xdrposix_putlong(xdrs, lp)
+     netlong mycopy = htonl(*lp);
+     up = (unsigned char *)&mycopy;
+ #endif
+-#if (defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
++#if (defined AIX5L64  || (defined __powerpc64__ && !defined __LITTLE_ENDIAN__) || defined __s390x__ || (defined __hpux && __LP64__))
+     up += (sizeof(long) - 4) ;
+ #endif
+ 

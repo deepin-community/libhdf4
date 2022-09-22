@@ -1,0 +1,24 @@
+.TH VSHOW 1 "October 31, 1999"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.SH NAME
+vshow \- dumps HDF vsets info from hdf file
+.SH SYNOPSIS
+\fBvshow\fP \fIhdf-file\fP [\fB+\fP|\fB-\fP[\fIn\fP]]
+.SH DESCRIPTION
+\fBvshow\fP displays information about either one vdata object in an
+HDF file, or all vdata objects in the file.
+.SH OPTIONS
+.TP
+.BI +
+gives full dump of all vdatas.
+.TP
+.BI -
+Gives full dump of all vdatas one record per line.
+.TP
+.BI + n
+gives full dump of vdata with id \fIn\fP.
+.TP
+.BI - n
+gives full dump of vdata with id \fIn\fP with one record per line.
+.SH "SEE ALSO"
+\fBhdf\fP(5)

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<refentry id='hrepack'>
+
+  <refmeta>
+    <refentrytitle>hrepack</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>hrepack</refname>
+    <refpurpose>copies an HDF file to a new file</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>hrepack</command>
+      <arg choice='plain'><option>-i</option> <replaceable>input</replaceable></arg>
+      <arg choice='plain'><option>-o</option> <replaceable>output</replaceable></arg>
+      <arg choice='opt'><option>-V</option></arg>
+      <arg choice='opt'><option>-h</option></arg>
+      <arg choice='opt'><option>-v</option></arg>
+      <arg choice='opt'><option>-t</option> <replaceable>comp_info</replaceable></arg>
+      <arg choice='opt'><option>-c</option> <replaceable>chunk_info</replaceable></arg>
+      <arg choice='opt'><option>-f</option> <replaceable>cfile</replaceable></arg>
+      <arg choice='opt'><option>-m</option> <replaceable>size</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>hrepack</command> copies an HDF file to a new file with/without
+      compression and/or chunking.
+    </para>
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+
+      <varlistentry>
+        <term><option>-i</option> <replaceable>input</replaceable></term>
+        <listitem>
+          <para>
+            input HDF File
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-o</option> <replaceable>output</replaceable></term>
+        <listitem>
+          <para>
+            output HDF File
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-V</option></term>
+        <listitem>
+          <para>
+            prints version of the HDF4 library and exits
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-h</option></term>
+        <listitem>
+          <para>
+            prints usage information
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-v</option></term>
+        <listitem>
+          <para>
+            verbose mode
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-t</option> <replaceable>comp_info</replaceable></term>
+        <listitem>
+          <para>
+            compression type: '<replaceable>comp_info</replaceable>' is a
+            string with the format
+            &lt;object list&gt;:&lt;type of compression&gt;&lt;parameters&gt;
+          </para>
+          <para>
+            &lt;object list&gt; is a comma separated list of object names
+            meaning apply compression only to those objects.
+            '*' means all objects.
+          </para>
+          <para>
+            &lt;type of compression&gt; can be:
+            <variablelist>
+
+              <varlistitem>
+                <term>RLE</term>
+                <listitem>
+                  <para>
+                    for RLE compression
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>HUFF</term>
+                <listitem>
+                  <para>
+                    for Huffman
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>GZIP</term>
+                <listitem>
+                  <para>
+                    for gzip
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>JPEG</term>
+                <listitem>
+                  <para>
+                    for JPEG (for images only)
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>SZIP</term>
+                <listitem>
+                  <para>
+                    for szip
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>NONE</term>
+                <listitem>
+                  <para>
+                    to uncompress
+                  </para>
+                </listitem>
+              </varlistitem>
+
+            </variablelist>
+          </para>
+          <para>
+            &lt;parameters&gt; is optional compression info
+            <variablelist>
+
+              <varlistitem>
+                <term>RLE</term>
+                <listitem>
+                  <para>
+                    no parameter
+                  </para>
+                </listitem>
+              </varlistitem>
+            
+              <varlistitem>
+                <term>HUFF</term>
+                <listitem>
+                  <para>
+                    the skip-size
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>GZIP</term>
+                <listitem>
+                  <para>
+                    the deflation level
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>JPEG</term>
+                <listitem>
+                  <para>
+                    the quality factor
+                  </para>
+                </listitem>
+              </varlistitem>
+
+              <varlistitem>
+                <term>SZIP</term>
+                <listitem>
+                  <para>
+                    pixels per block, compression mode (NN or EC)
+                  </para>
+                </listitem>
+              </varlistitem>
+
+            </variablelist>
+          </para>
+          <para>
+            
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-c</option> <replaceable>chunk_info</replaceable></term>
+        <listitem>
+          <para>
+            apply chunking.
+            <replaceable>chunk_info</replaceable> is a string with the format
+            &lt;object list&gt;:&lt;chunk information&gt;
+          </para>
+          <para>
+            &lt;object list&gt; is a comma separated list of object names
+            meaning apply chunking only to those objects.
+            '*' means all objects
+          </para>
+          <para>
+            &lt;chunk information&gt; is the chunk size of each dimension:
+            <replaceable>dim_1 x dim_2 x ... dim_n</replaceable> or
+            NONE, to unchunk a previous chunked object
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-f</option> <replaceable>cfile</replaceable></term>
+        <listitem>
+          <para>
+            file with compression information <option>-t</option> and
+            <option>-c</option>
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-m</option> <replaceable>size</replaceable></term>
+        <listitem>
+          <para>
+            do not compress objects smaller than size (bytes)
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+
+  <refsect1 id='examples'>
+    <title>EXAMPLES</title>
+
+    <example>
+      <para>
+        compresses all objects in the file <filename>file1.hdf</filename>,
+        using RLE compression
+      </para>
+
+      <screen>
+<command>hrepack</command> <option>-v</option> <option>-i</option> <filename>file1.hdf</filename> <option>-o</option> <filename>file2.hdf</filename> <option>-t</option> <literal>'*:RLE'</literal>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        applies Skipping Huffman compression with skip factor of 1,
+        for objects /group1/A, /group2/B and C
+      </para>
+
+      <screen>
+<command>hrepack</command> <option>-v</option> <option>-i</option> <filename>file1.hdf</filename> <option>-o</option> <filename>file2.hdf</filename> <option>-t</option> <literal>'/group1/A,/group2/B,C:HUFF 1'</literal>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        applies RLE compression for object /group1/D.
+      </para>
+      <para>
+        applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions
+      </para>
+
+      <screen>
+<command>hrepack</command> <option>-v</option> <option>-i</option> <filename>file1.hdf</filename> <option>-o</option> <filename>file2.hdf</filename> <option>-t</option> <literal>'/group1/D:RLE'</literal> <option>-c</option> <literal>'D,E:10x10'</literal>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        uncompresses object A
+      </para>
+
+      <screen>
+<command>hrepack</command> <option>-v</option> <option>-i</option> <filename>file1.hdf</filename> <option>-o</option> <filename>file2.hdf</filename> <option>-t</option> <literal>'A:NONE'</literal>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        applies SZIP compression to object A, with parameters 8 and NN
+      </para>
+
+      <screen>
+<command>hrepack</command> <option>-v</option> <option>-i</option> <filename>file1.hdf</filename> <option>-o</option> <filename>file2.hdf</filename> <option>-t</option> <literal>'A:SZIP 8,NN'</literal>
+      </screen>
+
+      <para>
+        Note: the use of the verbose option -v is recommended
+      </para>
+    </example>
+
+  </refsect1>
+
+</refentry>

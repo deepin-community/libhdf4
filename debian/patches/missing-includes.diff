@@ -1,0 +1,13 @@
+Description: Fix missing includes.
+Author: Matthias Klose <doko@ubuntu.com>
+
+--- a/hdf/util/hdf2gif.c
++++ b/hdf/util/hdf2gif.c
+@@ -13,6 +13,7 @@
+ 
+ #include "gif.h"
+ #include <stdio.h>
++#include <string.h>
+ 
+ #define HDFNAME "laser.hdf"
+ #define VGROUPCLASS "RIG0.0"

@@ -1,0 +1,56 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH HDFPACK 1 "November 6, 1999"
+.SH NAME
+.ad l
+.nh
+hdfpack \- compress an HDF file
+.SH SYNOPSIS
+.HP
+\fBhdfpack\fP
+[\fB-i\fP|\fB-b\fP]
+[\fB-d\fP \fIdata-descriptors-per-block\fP]
+[\fB-t\fP \fIlinked-blocks-per-table-entry\fP]
+\fIinput-hdf-file\fP
+\fIoutput-hdf-file\fP
+.ad b
+.hy
+.SH DESCRIPTION
+\fBhdfpack\fP compresses all of the data in an HDF file and writes the
+compressed data to a second HDF file.
+.SH OPTIONS
+.TP
+.BI -b
+Non-coalesced Blocks.  \fBhdfpack\fP will not coalesce linked-block
+elements.
+.TP
+.BI -i
+Interactive Mode.  \fBhdfpack\fP will prompt for each linked-block
+element.
+.TP
+.BI -d " num"
+Write an output file with the specified number of data descriptors per
+block of data descriptors.
+.TP
+.BI -t " num"
+Write an output file with the specified number of linked blocks per
+table entry.
+.SH EXAMPLES
+To compress the data in the file named "aa.hdf" and store the
+compressed data in the file named "aa.cmp", use the following
+hdfpack command:
+.nf
+
+        hdfpack aa.hdf aa.cmp
+
+.fi
+Suppose a file named "bb.hdf" contains data elements stored as
+sequences of linked blocks. The following hdfpack command compresses
+the file while leaving the linked-block elements intact, and writes
+the compressed data to a file named "bb.blk".
+.nf
+
+        hdfpack -b bb.hdf bb.blk
+
+.fi
+.SH "SEE ALSO"
+\fBhdfcomp\fP(1), \fBhdf\fP(5)

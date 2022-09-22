@@ -1,0 +1,122 @@
+.TH HDFED 1 "October 31, 1999"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.SH NAME
+hdfed \- edit the contents of an HDF File
+.SH SYNOPSIS
+\fBhdfed\fP
+[\fB-nobackup\fP]
+[\fB-batch\fP]
+\fIhdf_file\fP
+.SH DESCRIPTION
+\fBhdfed\fP allows experienced HDF users to manipulate the
+elements of an HDF file. These manipulations include
+.IP *
+Selecting groups and showing information about them.
+.IP *
+Dumping group information to output files.
+.IP *
+Writing group data to output files.
+.IP *
+Deleting groups from HDF files.
+.IP *
+Inserting groups in HDF files.
+.IP *
+Replacing elements of HDF files.
+.IP *
+Editing the labels and descriptions of any element in an HDF file.
+.P
+\fBhdfed\fP is designed primarily for users who need to know about HDF
+files at the level of individual data elements. It is not designed to
+provide a comprehensive high-level view of the contents of an HDF file
+- other tools and utilities should be used for that purpose. To use
+\fBhdfed\fP one should be familiar with the components of an HDF file
+covered in the HDF Specifications manual.
+
+The \fBhdfed\fP utility is loosely modeled on ed(1), the UNIX line
+editor. When \fBhdfed\fP is invoked, it prompts the user for commands,
+as does ed. Also, basic command syntax and description information is
+available to the user through \fBhdfed\fP. The most common \fBhdfed\fP
+commands are used to control the position in the HDF file and the
+format of the information provided.
+
+The initial view of the file under \fBhdfed\fP consists of a set of
+tag/reference number pairs. Although \fBhdfed\fP allows modification
+of tags and reference numbers within strict constraints, it will not
+allow the user to arbitrarily modify binary data in the file.
+
+The following terms and concepts must be understood in order to use
+\fBhdfed\fP correctly and will be used in the following discussion
+about \fBhdfed\fP.
+.IP *
+The data object or object refers to an HDF data object and the
+data descriptor of that object. (i.e., tags, reference numbers,
+offsets, or lengths.)
+.IP *
+The data or data element refers to the record that the data descriptor
+points to. For a precise definition of the data that is associated
+with a given tag consult the HDF Specifications and Developer's Guide
+v3.2 from the HDF WWW home page at http://hdf.ncsa.uiuc.edu/.
+.IP *
+The group refers to a predefined collection of data objects that
+correspond to a particular application. For example, a raster image
+group refers to the collection of objects that are used to store all
+of the information in a raster image set.
+.P
+Once an HDF file has been opened by \fBhdfed\fP, the following operations
+can be performed on the data file, among others:
+.IP *
+Select an HDF object to examine more closely.
+.IP *
+Move forward or backward within the HDF file.
+.IP *
+Get information about an object. (tag, reference number, size,
+label)
+.IP *
+Display a raster image using the ICR protocol.
+.IP *
+Display the contents of any object.
+.IP *
+Delete an object.
+.IP *
+Annotate an object with a label or description.
+.IP *
+Write an object to a second HDF file.
+.IP *
+Write data elements in binary form to a non-HDF file.
+.IP *
+Close the file and exit, or open a new file.
+.P
+\fBhdfed\fP commands are documented in the Users Guide section on
+Command-line Utilities.
+.SH OPTIONS
+.TP
+.BI -nobackup
+Make no backup file. If this option is omitted, a backup file is
+automatically created.
+.TP
+.BI -batch
+Input to \fBhdfed\fP is a stream of \fBhdfed\fP commands, rather than
+interactively.  The \fB-batch\fP flag is useful when a group of
+commonly-used commands are included in a UNIX shell script. The
+following is an example of such a script, using the C-shell, that
+lists information about the groups in a specified HDF file.
+.nf
+
+        #!/bin/csh -f
+        set file=$1
+        shift
+        hdfed -batch $file -nobackup << EOF
+        info -all group $*
+        close
+        quit
+        EOF
+        echo ""
+.fi
+.TP
+.BI -help
+Output usage information, as well as a quick list of the \fBhdfed\fPj
+commands.
+.SH "SEE ALSO"
+\fBhdf\fP(5),
+\fBed\fP(1),
+The HDF Users Guide: \fI/usr/share/doc/libhdf4g/html-userguide/Utils2.html#33\fP.

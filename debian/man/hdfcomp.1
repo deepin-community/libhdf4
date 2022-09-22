@@ -1,0 +1,43 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH HDFCOMP 1 "November 6, 1999"
+.SH NAME
+.ad l
+.nh
+hdfcomp \- compress 8-bit raster images in an HDF file
+.SH SYNOPSIS
+.HP
+\fBhdfcomp\fP
+\fIoutput-filename\fP
+[\fB-c\fP|\fB-r\fP|\fB-i\fP] \fIinput-filename-1\fP
+[\fB-c\fP|\fB-r\fP|\fB-i\fP] \fIinput-filename-2\fP...
+.ad b
+.hy
+.SH DESCRIPTION
+\fBhdfcomp\fP reads RIS8 images from a set of HDF files, compresses
+them and stores the compressed data in a second HDF file.  If the
+output HDF file exists, the compressed images will be appended to it.
+.SH OPTIONS
+.TP
+.BI -r
+No Compression.
+Apply no compression to the output data. (the default).
+.TP
+.BI -c
+Run length coding.  Compress the output data using run-length
+encoding.
+.TP
+.BI -i
+IMCOMP Compression.
+Compress the output data using the IMCOMP method.
+.SH EXAMPLES
+A directory contains twenty files named "storm001", "storm002", ...
+"storm020". Each of these files contains a single RIS8 image. To
+compress these images using run-length encoding and store them in a
+file named "altcomp.hdf", use the following hdfcomp command:
+.nf
+
+        hdfcomp allcomp.hdf -c storm*.hdf
+
+.fi
+.SH "SEE ALSO"
+\fBhdfpack\fP(1), \fBhdf\fP(5)

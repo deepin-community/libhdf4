@@ -1,0 +1,59 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH HDFTOR8 1 "November 6, 1999"
+.SH NAME
+.ad l
+.nh
+hdftor8 \- extract 8-Bit raster images and palettes from HDF file
+.SH SYNOPSIS
+.HP
+\fBhdftor8\fP \fIhdf-file\fP
+[\fB-i\fP]
+[\fB-v\fP]
+[\fB-r\fP \fIraster-image-file\fP]
+[\fB-p\fP \fIpallette-file\fP]
+.ad b
+.hy
+.SH DESCRIPTION
+\fBhdftor8\fP extracts the raster images and/or palettes from an HDF
+file and stores them in one file that contains the raster image data
+and another that contains the palette data.
+.P
+The names given for the raster image and palette
+files are interpreted by hdftor8 as follows: For each raster image
+file, the file name is given the extension ".#.@.%", where "#"
+represents the raster image number from the HDF file, "@" represents
+the x-dimension of the raster image, and "%" represents the
+y-dimension of the raster image. For each palette file, the file name
+is given the extensions ".#", where "#" represents the palette number
+from the HDF format file.
+.P
+If no name is given for the raster image file, the default name
+"img.#.@.%" is assigned, where "#", "@", and "%" are as defined in the
+preceding paragraph. The default name for a palette file is "pal.#".
+.SH OPTIONS
+.TP
+.BI -i
+Execute the program in interactive mode.
+.TP
+.BI -v
+Execute in verbose mode. Display diagnostic messages during the
+session.
+.TP
+.BI -r " raster-image-file"
+Specify the name of the raster image file.
+.TP
+.BI -p " pallette-file"
+Specify the name of the palette file.
+.SH EXAMPLES
+A file named "denm.hdf" contains three 512 x 256 raster images and
+three palettes. To store these images and palettes in separate raster
+image and palette files, use the following hdftor8 command:
+.nf
+
+        hdftor8 denm.hdf
+
+.fi
+Six files are created, named "img1.512.256", "img2.512.256",
+"img3.512.256", "pal.1", "pal.2", and "pal.3".
+.SH "SEE ALSO"
+\fBr8tohdf\fP(1), \fBhdf\fP(5)

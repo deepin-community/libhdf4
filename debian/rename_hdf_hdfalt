@@ -1,0 +1,112 @@
+Description: Rename libdf to libdfalt and libmfhdf to libmfhdfalt.
+Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
+
+--- a/HDF4_ALT/hdf/src/Makefile.am
++++ b/HDF4_ALT/hdf/src/Makefile.am
+@@ -30,10 +30,10 @@ CHEADERS = atom.h bitvect.h cdeflate.h c
+ FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
+ 
+ if HDF_BUILD_FORTRAN
+-libdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
++libdfalt_la_SOURCES = $(CSOURCES) $(FSOURCES)
+ include_HEADERS = $(CHEADERS) hproto_fortran.h $(FHEADERS)
+ else
+-libdf_la_SOURCES = $(CSOURCES)
++libdfalt_la_SOURCES = $(CSOURCES)
+ include_HEADERS = $(CHEADERS)
+ endif
+ 
+--- a/HDF4_ALT/mfhdf/libsrc/Makefile.am
++++ b/HDF4_ALT/mfhdf/libsrc/Makefile.am
+@@ -14,7 +14,7 @@
+ ##                          Library to build                               ##
+ #############################################################################
+ 
+-lib_LTLIBRARIES = libmfhdf.la
++lib_LTLIBRARIES = libmfhdfalt.la
+ 
+ ## Information for building the "libmfhdf.la" library
+ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
+@@ -28,9 +28,9 @@
+ endif
+ 
+ if HDF_BUILD_FORTRAN
+-libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
++libmfhdfalt_la_SOURCES = $(CSOURCES) $(FSOURCES)
+ else
+-libmfhdf_la_SOURCES = $(CSOURCES)
++libmfhdfalt_la_SOURCES = $(CSOURCES)
+ endif
+ 
+ libmfhdf_la_LIBADD = $(XDRLIB)
+--- a/HDF4_ALT/hdf/src/Makefile.am
++++ b/HDF4_ALT/hdf/src/Makefile.am
+@@ -4,7 +4,7 @@
+ 
+ include $(top_srcdir)/config/commence.am
+ 
+-lib_LTLIBRARIES = libdf.la
++lib_LTLIBRARIES = libdfalt.la
+ 
+ FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
+            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
+--- a/HDF4_ALT/config/commence.am
++++ b/HDF4_ALT/config/commence.am
+@@ -21,8 +21,8 @@ RM = rm -f
+ CP = cp
+ 
+ # Libraries to link to while building
+-LIBHDF = $(top_builddir)/hdf/src/libdf.la
+-LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
++LIBHDF = $(top_builddir)/hdf/src/libdfalt.la
++LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdfalt.la
+ 
+ H4CC = ${DESTDIR}$(bindir)/h4cc
+ H4FC = ${DESTDIR}$(bindir)/h4fc
+--- a/HDF4_ALT/hdf/util/Makefile.am
++++ b/HDF4_ALT/hdf/util/Makefile.am
+@@ -1,4 +1,4 @@
+-#############################################################################
++############################################################################
+ ##                      Setup for building programs                        ##
+ #############################################################################
+ 
+@@ -107,8 +107,8 @@ vmake_DEPENDENCIES = $(LIBHDF)
+ vmake_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+ 
+ vshow_SOURCES = vshow.c
+-vshow_LDADD = ../src/libdf.la
+-vshow_DEPENDENCIES = ../src/libdf.la
++vshow_LDADD = $(LIBHDF)
++vshow_DEPENDENCIES = $(LIBHDF)
+ vshow_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+ 
+ #############################################################################
+--- a/HDF4_ALT/mfhdf/ncgen/Makefile.am
++++ b/HDF4_ALT/mfhdf/ncgen/Makefile.am
+@@ -5,9 +5,9 @@
+ include $(top_srcdir)/config/commence.am
+ 
+ if HDF_BUILD_SHARED
+-    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
++    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
+ else
+-    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
++    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdfalt.a
+ endif
+ 
+ ## Setup the different includes and preprocessor #defines we need.
+--- a/HDF4_ALT/mfhdf/ncgen/Makefile.am
++++ b/HDF4_ALT/mfhdf/ncgen/Makefile.am
+@@ -5,9 +5,9 @@
+ include $(top_srcdir)/config/commence.am
+ 
+ if HDF_BUILD_SHARED
+-    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
++    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdfalt.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
+ else
+-    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdfalt.a
++    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdfalt.a $(top_builddir)/hdf/src/.libs/libdfalt.a
+ endif
+ 
+ ## Setup the different includes and preprocessor #defines we need.

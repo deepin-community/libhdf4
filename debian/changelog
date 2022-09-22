@@ -1,0 +1,890 @@
+libhdf4 (4.2.15.1-1+dde) UNRELEASED; urgency=medium
+
+  * update
+
+ -- Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>  Wed, 27 Jul 2022 11:05:58 +0800
+
+libhdf4 (4.2.15.1-1+dde) unstable; urgency=medium
+
+  * Add sunway support.
+
+ -- Miao Changwei <miaochangwei@uniontech.com>  Thu, 19 May 2022 15:43:58 +0800
+
+libhdf4 (4.2.15-4) unstable; urgency=medium
+
+  * Team upload.
+  * Bump Standards-Version to 4.6.0, no changes.
+  * Manually apply changes for riscv64 support.
+    (closes: #978099)
+  * Add patch to fix test failures on riscv64.
+  * Bump debhelper compat to 12, changes:
+    - Drop --list-missing from dh_install
+  * Fix FTBFS with TIRPC.
+    (closes: #994106)
+  * Cleanup debian/tmp before dh_missing.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 14 Sep 2021 17:23:41 +0200
+
+libhdf4 (4.2.15-3) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Adrian Bunk ]
+  * Revert "Explicitly build with GCC 9 (FTBFS with GCC 10, see: #957445)"
+  * Fix the build with gcc 10.
+    (closes: #957445)
+  * Go back to non-parallel test execution, parallal execution is racy.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sun, 15 Nov 2020 06:19:43 +0100
+
+libhdf4 (4.2.15-2) unstable; urgency=medium
+
+  * Team upload.
+  * Bump debhelper compat to 10, changes:
+    - Don't explicitly enable autoreconf, enabled by default
+    - Drop dh-autoreconf build dependency
+  * Bump watch file version to 4.
+  * Explicitly build with GCC 9 (FTBFS with GCC 10, see: #957445)
+  * Update lintian overrides.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sat, 14 Nov 2020 17:42:49 +0100
+
+libhdf4 (4.2.15-1) unstable; urgency=medium
+
+  * Team upload.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sat, 29 Feb 2020 20:09:54 +0100
+
+libhdf4 (4.2.15-1~exp1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * Bump Standards-Version to 4.5.0, no changes.
+  * Drop Name field from upstream metadata.
+  * Update copyright file, changes:
+    - Add license & copyright for sanitizer sources
+    - Add license & copyright for xdr sources
+    - Update terms of HDF4 license
+  * Refresh patches.
+  * Update rename_hdf_hdfalt patch.
+  * Drop unused overrides for file-references-package-build-path.
+  * Fix manpage-without-executable issues.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 28 Feb 2020 06:38:43 +0100
+
+libhdf4 (4.2.14-1) unstable; urgency=medium
+
+  * Team upload.
+  * Fix dirversion regex in watch file.
+  * Update gbp.conf to use --source-only-changes by default.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sun, 07 Jul 2019 08:13:59 +0200
+
+libhdf4 (4.2.14-1~exp1) experimental; urgency=medium
+
+  * Team upload.
+
+  [ Bas Couwenberg ]
+  * Bump Standards-Version to 4.3.0, no changes.
+  * Add Build-Depends-Package field to symbols files.
+  * Update watch file to use releases directory instead of HDF_Current.
+  * Remove package name from lintian overrides.
+  * Refresh patches.
+  * Add upstream metadata.
+  * Update Source URL in copyright file.
+  * Add lintian overrides for file-references-package-build-path.
+
+  [ Johan Van de Wauw ]
+  * New upstream version 4.2.14
+  * Refresh patches
+  * Update my mailaddress
+  * Also update mail in control.in
+  * Update release version
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sat, 16 Mar 2019 09:47:59 +0100
+
+libhdf4 (4.2.13-4) unstable; urgency=medium
+
+  * Team upload.
+  * Drop autopkgtest to test installability.
+  * Add lintian override for testsuite-autopkgtest-missing.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 31 Jul 2018 18:57:48 +0200
+
+libhdf4 (4.2.13-3) unstable; urgency=medium
+
+  * Team upload.
+  * Update copyright-format URL to use HTTPS.
+  * Update Vcs-* URLs for Salsa.
+  * Bump Standards-Version to 4.1.5, no changes.
+  * Strip trailing whitespace from control & rules files.
+  * Use filter instead of findstring to prevent partial matches.
+  * Add disabled patches to series file.
+  * Move non-quilt patch out of patches directory.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sun, 29 Jul 2018 10:35:43 +0200
+
+libhdf4 (4.2.13-2) unstable; urgency=medium
+
+  * Team upload.
+  * Strip trailing whitespace from changelog.
+  * Bump Standards-Version to 4.1.3, no changes.
+  * Update watch file to use HTTPS URL.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Wed, 10 Jan 2018 16:18:05 +0100
+
+libhdf4 (4.2.13-2~exp2) experimental; urgency=medium
+
+  * Team upload.
+  * Change priority from extra to optional.
+  * Bump Standards-Version to 4.1.1, changes: priority.
+  * Update autopkgtest to test installability of individual packages.
+  * Don't build Java library, causes FTBFS on several release architectures.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 13 Oct 2017 11:18:26 +0200
+
+libhdf4 (4.2.13-2~exp1) experimental; urgency=medium
+
+  * Team upload.
+  * Enable SZIP support.
+    (closes: #870079)
+  * Also build Java library.
+    (closes: #871510)
+
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 08 Aug 2017 20:48:46 +0200
+
+libhdf4 (4.2.13-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * Refresh patches.
+  * Bump Standards-Version to 4.0.0, no changes.
+  * Add autopkgtest to test installability.
+  * Use pkg-info.mk variables instead of dpkg-parsechangelog output.
+  * Update hdf4 examples path.
+  * Update symbols for 4.2.13.
+  * Drop libhdf4g-dev transitional package.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Wed, 28 Jun 2017 23:30:05 +0200
+
+libhdf4 (4.2.12-3) unstable; urgency=medium
+
+  * Team upload.
+  * Fix symlink to directory conversion that happened in squeeze.
+    (closes: #861303)
+  * Update spelling-errors.patch to fix 'conversion' typo.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Thu, 27 Apr 2017 12:42:18 +0200
+
+libhdf4 (4.2.12-2) unstable; urgency=medium
+
+  * Team upload.
+  * Enable PIE hardening flags.
+    (closes: #859413)
+  * Drop unused lintian overrides for hardening-no-pie.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Mon, 03 Apr 2017 14:28:06 +0200
+
+libhdf4 (4.2.12-1) unstable; urgency=medium
+
+  * Team upload.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Wed, 06 Jul 2016 17:35:38 +0200
+
+libhdf4 (4.2.12-1~exp2) experimental; urgency=medium
+
+  * Team upload.
+  * Add Conflicts to -dev packages instead of Breaks/Replaces.
+  * Drop quilt from build dependencies.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 01 Jul 2016 20:18:50 +0200
+
+libhdf4 (4.2.12-1~exp1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * Update copyright file, update copyright years for The HDF Group.
+  * Drop unused ARCHIVE variable from rules file.
+  * Drop obsolete README.source.
+  * Refresh patches.
+  * Drop install-examples.diff, no longer required.
+  * Update symbols for version 4.2.12.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 01 Jul 2016 01:06:33 +0200
+
+libhdf4 (4.2.11-2) unstable; urgency=medium
+
+  * Team upload.
+  * Add patch to make the libhdf4.settings reproducible.
+    (closes: #825540)
+  * Add manpages for: h4{cc,fc,redeploy}, hdfimport, hdiff & hrepack.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 27 May 2016 19:25:06 +0200
+
+libhdf4 (4.2.11-1) unstable; urgency=medium
+
+  * Team upload.
+  * Regenerate symbols files using old versions from snapshots.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Fri, 20 May 2016 17:51:11 +0200
+
+libhdf4 (4.2.11-1~exp2) experimental; urgency=medium
+
+  * Disable tests on sparc64, causes FTBFS.
+  * Update libhdf4-alt-dev Breaks/Replaces to also break 4.10.
+    (closes: #824756)
+
+ -- Bas Couwenberg <sebastic@debian.org>  Thu, 19 May 2016 15:23:01 +0200
+
+libhdf4 (4.2.11-1~exp1) experimental; urgency=medium
+
+  * Team upload.
+
+  [ Johan Van de Wauw ]
+  * Imported Upstream version 4.2.11
+  * Update changelog for new upstream version
+  * Remove patch (applied upstream)
+  * Merge NMU
+  * bump version in rules
+  * Remove HDF4 dir content, added in nmu
+  * Remove suggests for old package
+  * use d/format 3.0 quilt for patches
+  * Remove patches applied upstream
+  * Refresh patches
+  * remove patch -> we run autoreconf anyway
+  * Use quilt for all version, patch for specific changes
+  * Fix libhdf4-alt-dev on Mips (Closes: #734153)
+
+  [ Bas Couwenberg ]
+  * Update Vcs-* URLs to use HTTPS.
+  * Enable all hardening buildflags, except PIE (causes build failure).
+  * Add patch to fix spelling errors.
+  * Add symbols files for libhdf4-0 & libhdf4-0-alt.
+  * Use Breaks/Replace with version instead Conflicts/Replaces.
+  * Update watch file to handle common issues.
+  * Use minimal dh rules with autoreconf.
+  * Override dh_install to use --list-missing.
+  * Install settings files in -dev packages.
+  * Update copyright file using copyright-format 1.0.
+  * Bump Standards-Version to 3.9.8, changes:
+    - Vcs-* URLs
+    - Symbols files
+    - copyright-format 1.0
+
+ -- Bas Couwenberg <sebastic@debian.org>  Mon, 09 May 2016 19:42:42 +0200
+
+libhdf4 (4.2.10-3.2) unstable; urgency=medium
+
+  [James Cowgill]
+  * mips64.diff: fix testcase run on mips64(el). (Closes: #779624)
+
+  * Fix unpatch flow.
+
+ -- YunQiang Su <syq@debian.org>  Sun, 22 Mar 2015 23:03:13 +0800
+
+libhdf4 (4.2.10-3.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * add Mips64(el) support back, missing when migrate
+    to unstable (closes: #772980)
+  * fix patch flow, as 'patch' cannot process symlink diretory now.
+
+ -- YunQiang Su <syq@debian.org>  Mon, 02 Mar 2015 00:09:33 +0800
+
+libhdf4 (4.2.10-3) unstable; urgency=medium
+
+  [ Fernando Seiti Furusato ]
+  * Fix endianness definition for ppc64el.
+
+  [ Johan Van de Wauw ]
+  * Disable tests on s390x (closes: #764353)
+  * Remove unneeded build dep groff
+
+ -- Johan Van de Wauw <johan.vandewauw@gmail.com>  Tue, 21 Oct 2014 00:37:41 +0200
+
+libhdf4 (4.2.10-2) unstable; urgency=medium
+
+  * Add build-time checks
+  * Fix wrong endianness s390x/mips(closes: #761603)
+  * Fix ncgen test errors on arm64 (based on fedora changes)
+  * Fix documentation paths
+  * Add lintian override for spurious svn conflict files
+  * Remove duplicate binary control fields
+  * Add debian/source/format
+  * Fix short descriptions, bump standards version
+  * Clarify which version of the GPL applies to the debian packaging
+  * Remove obsolete document prerm/postinst
+
+ -- Johan Van de Wauw <johan.vandewauw@gmail.com>  Sun, 05 Oct 2014 21:14:40 +0200
+
+libhdf4 (4.2.10-1) unstable; urgency=medium
+
+  * Add support for GNU Hurd
+  * Fix kfreebsd-64 bit
+
+ -- Johan Van de Wauw <johan.vandewauw@gmail.com>  Sat, 13 Sep 2014 20:45:47 +0200
+
+libhdf4 (4.2.10-1~exp1) experimental; urgency=medium
+
+  * Add watchfile
+  * Imported Upstream version 4.2.10
+  * Fix vcs link
+  * Fix package synopsis length
+  * Rewrite control file using cme
+  * Fix debian/control.in to match debian/control
+  * Use original source tarball rather than a tarball containing this tarball
+  * Don't copy configufiles to fmpool (dir no longer exists)
+  * Import ubuntu patches changes by doko (closes: #684361,#742421)
+  * Add rsync as build-dep
+  * Use libtoolize and autoreconf (closes: #639720,#744613)
+  * Set debhelper version to 9
+  * Bump standards version
+  * Copy sources using own bash script
+  * enable hardening
+  * Fix String literals
+  * add Mips64(el) support (closes: #753493)
+  * Add myself to uploaders
+
+ -- Johan Van de Wauw <johan.vandewauw@gmail.com>  Thu, 14 Aug 2014 22:19:24 +0200
+
+libhdf4 (4.2r4-12) unstable; urgency=low
+
+  * Previous version did not revert an unreleased change by David Paleino:
+    + debian/control: build-depend on libjpeg-dev rather than libjpeg62-dev
+    (closes: #569249)
+  * Ack previous NMU:
+    - Empty dependency_libs in .la helper file (closes: #620593, #605002).
+    - Depend on libjpeg-dev (closes: #629968).
+  * Policy bumped to 3.9.2, no changes required.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Wed, 20 Jul 2011 10:09:33 +0200
+
+libhdf4 (4.2r4-11) unstable; urgency=high
+
+  * Fixes hdfi.h for SPARC. Thanks Aurelien Jarno.
+    (closes: #596603)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 13 Sep 2010 22:56:23 +0200
+
+libhdf4 (4.2r4-10) unstable; urgency=low
+
+  * Revised hdfi.h to support superH arch.
+    (closes: #562796)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 18 Jan 2010 11:24:23 +0100
+
+libhdf4 (4.2r4-9) unstable; urgency=low
+
+  * Pre-apply kfreebsd patch to manage arch correctly in configure.ac.
+    (closes: #542522)
+  * Updated autotools patch by re-autoconfiscating.
+    (closes: #562796)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 14 Jan 2010 10:30:08 +0100
+
+libhdf4 (4.2r4-8) unstable; urgency=low
+
+  * Added a conflict/replace against old libhdf4g-dev for the new
+    libhdf4-alt-dev packaga, introduced after Lenny.
+    (closes: #562856)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Wed, 13 Jan 2010 22:18:11 +0100
+
+libhdf4 (4.2r4-7) unstable; urgency=low
+
+  * Added a missing dh_installdeb -a that prevented adding required ldconfig at
+    library installation/removing.
+  * Updated autotools patch by autoreconfing.
+    (closes: #542522)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 13 Oct 2009 20:02:28 +0200
+
+libhdf4 (4.2r4-6) unstable; urgency=medium
+
+  * Reintroduced ncdump-hdf and ncgen-hdf tools with their man pages.
+    (closes: #545818)
+  * Now replaces config.{sub,guess} with current ones at config time.
+    (closes: #545057)
+  * Manuals and examples finally updated to current ones now available
+    upstream.
+  * Now libhdf4-doc provides/conflicts/replaces the old libhdf4g-doc
+    to allow correct upgrading. This is an RC bug in upgrading libhdf4-doc.
+  * Policy bumped to 3.8.3.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 10 Sep 2009 12:11:50 +0200
+
+libhdf4 (4.2r4-5) unstable; urgency=medium
+
+  * Removed strict version dependency for libhdf4g-dev on libhdf4-dev
+    dependency, erroneously left around for the transitional package.
+    (closes: #544288)
+  * Note that 4.2 series definitively closes the old netcdf linking issue.
+    (closes: #488086)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 31 Aug 2009 22:16:58 +0200
+
+libhdf4 (4.2r4-4) unstable; urgency=low
+
+  * Do not install conflicting stuff already present in netcdf package.
+    (closes: #538933)
+  * Ack already fixed bugs (closes: #482914, #531688)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 28 Jul 2009 17:12:14 +0200
+
+libhdf4 (4.2r4-3) unstable; urgency=low
+
+  * Upload to unstable.
+  * Set -alt package priority to extra.
+  * Now debian/control.in is truly in sync with debian/control.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 27 Jul 2009 14:28:27 +0200
+
+libhdf4 (4.2r4-2) experimental; urgency=low
+
+  * [PATCH] shared_fortran: Fortran shared library support reintroduced.
+    The shared mixed model libraries are available only for regular flavor.
+    Changed documentation as consequence.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 26 Mar 2009 15:22:31 +0100
+
+libhdf4 (4.2r4-1) experimental; urgency=low
+
+  * New upstream release.
+    Now upstream uses libtool to support C-only shared libraries, so
+    Debian patches can be finally dropped. See NEWS for novelties about
+    that.
+  * Updated homepage to use the .org address instead of the .com one.
+  * Added missing .PHONY field in debian/rules and revised everywhere targets.
+  * Removed gfortran build-dep.
+  * Changed binary package names to reflect breakage of back-compatibility.
+  * A special patch 'autotools' has been introduced to create the -alt flavor
+    by changing library names and autoreconf.
+  * A lot of changes in debian/rules.
+  * Binary packages lost 'g' suffix for transition. Still provided libhdf4g-dev
+    as a transitional dummy package to simplify rebuilding by binNMU for
+    all rdepends.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Thu, 12 Mar 2009 14:44:37 +0100
+
+libhdf4 (4.2r3-3) experimental; urgency=low
+
+  * Fixed section for libhdf4g-dev package.
+  * Added a re-relicensing statement for NetCDF stuff enclosed in the
+    netcdf-copyright-statement mbox. That removes the deprecated advertising
+    clause used in the 1993 BSD-like license for NetCDF.
+  * debian/copyright updated and completed. Thanks Joerg Jaspert.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 08 Jul 2008 10:12:58 +0200
+
+libhdf4 (4.2r3-2) experimental; urgency=low
+
+  * Introduced new libhdf4g-alt and libhdf4g-alt-dev packages. See
+    README.Debian for an explanation of the new flavors of the HDF4
+    libraries. Also introduced new SONAMES which correspond to the new
+    libraries. The new -dev package should be used as alternative
+    to the traditional one, mainly for GDAL use, but not exclusively.
+    Note that the two -dev packages are alternative because it is
+    not expected that people use both at the same time.
+    (closes: #488086)
+  * Now libraries are compiled with two different sets of arguments
+    to produce the standard and -alt flavors.
+  * Fixed comments in changelog.
+  * Added Vcs-* fields to debian/control.in.
+  * Synchronized control.in.
+  * Added a NEWS.Debian file.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Wed, 25 Jun 2008 22:42:43 +0200
+
+libhdf4 (4.2r3-1) experimental; urgency=low
+
+  The "The long way towards the 3rd millennium!" release.
+
+  * New upstream release. One of the main changes is now that both zlib and
+    jpeg libraries are not more embedded. Also configuration
+    has been updated for modern architectures (amd64 and ppc64) and endianess
+    is now dinamically found. That allow dropping some Debian patches to
+    upstream code. Still it needs extended patches to support shared
+    libraries, which are not provided by upstream. Also retained Debian
+    additional manpages and documentation.
+  * Added a README.Debian.
+  * Debian SONAME retained lib*.so.4 for compatibility, but changed solibs
+    to a more conventional lib*.so.4.2.3 name.
+    (closes: #217010, #482914, #437098)
+    Merges from 4.1r4 series:
+  	o Introduced versioned conflicts against libhdf4-run.
+          (closes: #425938)
+        o Re-introduced shlib support for Fortran on ARM (obsolete issue).
+        o Moved to use gfortran.
+          (closes: #456297)
+        o Moved libhdf4g-dev to libdevel section as by ftpmasters override.
+        o Fixes for ppc64 and x86_64 are already merged upstream.
+  * Debian support modernized to use debhelper. Rules file rewritten
+    from scratch to simplify mantainance.
+  * Moved to quilt to mantain Debian patches to upstream code. Old patches
+    updated due to some merged changes in upstream code.
+  * Debhelper compatibility set to 5.
+  * Added a README.source to explain differences introduced into
+    upstream sources to support Debian way of life.
+  * Moved to use modern ${binary:Version} in debian/control.in.
+  * Introduced Homepage field in debian/control.in.
+  * Policy bumped to 3.8.0.
+  * Added dephelper hooks to libhdf4-doc.{prerm|postinst} scripts.
+  * New sections used for doc-base headers used in libhdf4g-doc.
+  * Removed obsolete groff build-dep.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 23 Jun 2008 11:23:26 +0200
+
+libhdf4 (4.1r4-20) unstable; urgency=low
+
+  * New maintainership team. Added myself as uploader.
+    (closes: #387775)
+  * Updated descriptions as long due.
+    (closes: #209570)
+  * Now libhdf4g-run renamed in a more conventional (and coherent with HDF5 package) hdf4-tools.
+    Usual conflicts/provides/replaces provided.
+  * Policy bumped to 3.7.2 (no changes)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 14 May 2007 14:12:37 +0200
+
+libhdf4 (4.1r4-19) unstable; urgency=low
+
+  * QA upload.
+  * Set maintainer address to QA group.
+
+ -- Nico Golde <nion@debian.org>  Wed, 21 Mar 2007 16:07:18 +0100
+
+libhdf4 (4.1r4-18.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Patch source so it builds on amd64, thanks Kurt Roeckx. Closes: #251275
+
+ -- Luk Claes <luk@debian.org>  Thu,  5 May 2005 16:07:36 +0200
+
+libhdf4 (4.1r4-18) unstable; urgency=low
+
+  * New Maintainer
+
+ -- Stephen M Moraco <stephen@debian.org>  Sun, 25 Jan 2004 13:04:47 -0700
+
+libhdf4 (4.1r4-17) unstable; urgency=low
+
+  * QA upload.
+  * hdf/fmpool/config/fmplinux.h: Let <endian.h> define BYTE_ORDER.
+  * hdf/fmpool/config/mh-linux: Add `-D_GNU_SOURCE' for the above.
+  * hdf/src/hdfi.h: Define BIG_LONGS on Alpha.
+  * mfhdf/libsrc/local_nc.h: Define SWAP on little-endian machines.
+  * The above allows us to use a single config/mh-linux for all
+    architectures, and closes: #174316 (which was a screwup on my part).
+  * debian/rules:
+    - Automatically update config.{guess,sub} from autotools-dev.
+    - Set SHELL to /bin/bash for brace expansion.
+
+ -- Matej Vela <vela@debian.org>  Thu, 26 Dec 2002 23:17:51 +0100
+
+libhdf4 (4.1r4-16) unstable; urgency=low
+
+  * QA upload.
+  * Fix hdf/fmpool/configure.in as well.
+
+ -- Matej Vela <vela@debian.org>  Wed, 25 Dec 2002 03:27:04 +0100
+
+libhdf4 (4.1r4-15) unstable; urgency=low
+
+  * QA upload.
+  * configure.in: Use config/mh-linuxalpha for
+    `alphaev67-unknown-linux-gnu'.  Closes: #164431.
+  * Remove /usr/doc transition code.
+  * debian/rules:
+    - Remove `debug' support and enable `-g' by default.
+    - Disable optimization for `noopt'.
+  * Conforms to Standards version 3.5.8.
+
+ -- Matej Vela <vela@debian.org>  Mon, 16 Dec 2002 00:39:16 +0100
+
+libhdf4 (4.1r4-14) unstable; urgency=low
+
+  * Orphaned.
+
+ -- Philippe Troin <phil@fifi.org>  Sat,  7 Sep 2002 16:46:49 -0700
+
+libhdf4 (4.1r4-13) unstable; urgency=low
+
+  * Fixed upstream version detection in debian/rules.
+  * Change all instances of the linux C preprocessor symbol to __linux__
+    to avoid breaking other packages; patch courtesy of James Troup
+    <james@nocrew.org>; closes: #108921.
+
+ -- Philippe Troin <phil@fifi.org>  Fri, 17 Aug 2001 18:15:39 -0700
+
+libhdf4 (4.1r4-12) unstable; urgency=low
+
+  * Added patch for s390 contributed by Gerhard Tonn
+    <GerhardTonn@swol.de>; closes: #105731.
+
+ -- Philippe Troin <phil@fifi.org>  Wed, 18 Jul 2001 14:07:52 -0700
+
+libhdf4 (4.1r4-11) unstable; urgency=low
+
+  * Ported to ia64; closes: #105117.
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 17 Jul 2001 22:14:15 -0700
+
+libhdf4 (4.1r4-10) unstable; urgency=low
+
+  * Added support for DEB_BUILD_OPTIONS.
+  * Upgraded to policy 3.5.5.0.
+  * Added support for get-orig-source.
+  * Made install scripts more robust.
+  * Fixed copyright files.
+  * Removed LD_LIBRARY_PATH tricks for dpkg-shlibdeps.
+  * Fixed -dev package dependencies.
+  * Generate shlibs file on the fly.
+
+ -- Philippe Troin <phil@fifi.org>  Fri, 13 Jul 2001 18:40:10 -0700
+
+libhdf4 (4.1r4-9) unstable; urgency=low
+
+  * Fixed mipsel port; closes: 102865.
+  * Changes /usr/doc references in manpages to /usr/share/doc per FHS;
+    closes: #103182, #103183.
+
+ -- Philippe Troin <phil@fifi.org>  Mon,  2 Jul 2001 13:33:15 -0700
+
+libhdf4 (4.1r4-8) unstable; urgency=low
+
+  * Ported to i386 hurd (for real this time); closes: #96522.
+  * Changed section of libhdf4g-dev to be devel to resync with the
+    override file.
+
+ -- Philippe Troin <phil@fifi.org>  Thu, 17 May 2001 16:31:20 -0700
+
+libhdf4 (4.1r4-7) unstable; urgency=low
+
+  * Fixed the LD_LIBRARY_PATH stanza for dpkg-shlibdeps; closes: #97289.
+
+ -- Philippe Troin <phil@fifi.org>  Mon, 14 May 2001 15:14:14 -0700
+
+libhdf4 (4.1r4-6) unstable; urgency=low
+
+  * Ported to parisc-linux, courtesy of LaMont Jones <lamont@hp.com>.
+  * Ported to i386 hurd (configure.in); closes: #96522.
+
+ -- Philippe Troin <phil@fifi.org>  Mon,  7 May 2001 11:51:31 -0700
+
+libhdf4 (4.1r4-5) unstable; urgency=low
+
+  * Ported to mips and mipsel; closes: #94163.
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 24 Apr 2001 12:09:13 -0700
+
+libhdf4 (4.1r4-4) unstable; urgency=low
+
+  * Ported to arm. This involved updating config.sub and config.guess in
+    several places, modifying hdfi.h, modifying some configure.in files
+    and creating a mh-linuxsparc config fragment. Closes: #90232.
+  * Note that because of a bug in g77, the package still cannot be built
+    on arm. The problem seems to be fixed with the upcoming gcc 3.0. Bug
+    #90363 had been opened against g77 for this problem. In the meantime,
+    the arm .debs contain the fortran objects only in the static
+    libraries. This should be no problem for Debian packages since no
+    other package depend on the fortran bindings in the shared
+    libraries. People using fortran on arm can use the static libraries. A
+    note has been written up in README.arm-fortran.
+  * Remove .note and .comment from binary objects.
+
+ -- Philippe Troin <phil@fifi.org>  Mon, 19 Mar 2001 22:03:06 -0800
+
+libhdf4 (4.1r4-3) unstable; urgency=low
+
+  * Added bison, flex and groff to Source-Depends; closes: #85370.
+
+ -- Philippe Troin <phil@fifi.org>  Fri,  9 Feb 2001 12:20:07 -0800
+
+libhdf4 (4.1r4-2) unstable; urgency=low
+
+  * Resynchronize our sections to the override file.
+  * Applied patch for linux-mips; closes: #83937.
+
+ -- Philippe Troin <phil@fifi.org>  Sun, 28 Jan 2001 20:27:52 -0800
+
+libhdf4 (4.1r4-1) unstable; urgency=low
+
+  * New upstream version; closes: #81876.
+  * Added build-depends line; closes: #82603.
+  * Minor porting fixes to 4.1r4.
+  * Added blurb to README stating that the documentation is version 4.1r3.
+  * Added manpages for all HDF utilities, kindly provided by Jim Van Zandt
+    <jrv@vanzandt.mv.com> and added a few manpages of my own; closes: #39472.
+  * Packages now contain section and priority.
+  * Bumped standards-version to 3.2.1.0.
+  * Executables compiled without -g as per policy.
+  * Corrected section for libhdf4g-doc to be 'doc' rather than 'docs'.
+
+ -- Philippe Troin <phil@fifi.org>  Fri, 19 Jan 2001 17:25:47 -0800
+
+libhdf4 (4.1r3-6) frozen unstable; urgency=low
+
+  * Added a patch for PowerPC architecture, provided by Daniel Jacobowitz
+    <dan@debian.org>; closes: #59454.
+  * Added a patch to hdf/src/hdfi.h to detect linux-sparc (used to work
+    with egcs, now breaks with gcc 2.95).
+  * This should go into frozen because it prevents building this package
+    on PowerPC and Sparc.
+
+ -- Philippe Troin <phil@fifi.org>  Tue,  7 Mar 2000 13:12:38 -0800
+
+libhdf4 (4.1r3-5) frozen unstable; urgency=low
+
+  * Fixed configure.in to link some additional files for non-i386
+    architectures; closes: #48278, #59200.
+  * This should go into frozen because it prevents building this package
+    for non-i386 architectures.
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 29 Feb 2000 12:20:00 -0800
+
+libhdf4 (4.1r3-4) unstable; urgency=low
+
+  * Fmpool really configured for any linux host architecture (this time
+    should be the right time...); closes: #47781.
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 19 Oct 1999 11:10:12 -0700
+
+libhdf4 (4.1r3-3) unstable; urgency=low
+
+  * Fmpool now configured for any linux host; closes: #47027.
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 12 Oct 1999 20:44:16 -0700
+
+libhdf4 (4.1r3-2) unstable; urgency=low
+
+  * Lintian clean and standards-revision 3.0.1.
+  * New -run package for bure binaries.
+  * The libhdf4g doesn't depend on itself anymore...
+  * The user guide is now indexed by dhelp (missing Section).
+
+ -- Philippe Troin <phil@fifi.org>  Mon, 11 Oct 1999 00:59:48 -0700
+
+libhdf4 (4.1r3-1) unstable; urgency=low
+
+  * Maintainer upload; Fixes: #28481, #32856, #28340.
+  * Now includes fortran support; Fixes: #4633.
+  * Fixed references to /usr/local in manpages; Fixes: #35269.
+  * Added sparc diffs; Fixes: #32251.
+  * Added powerpc diffs; Fixes: #37034.
+  * New upstream release.
+
+ -- Philippe Troin <phil@fifi.org>  Sun, 10 Oct 1999 17:44:03 -0700
+
+libhdf4 (4.1r2-5.2) frozen unstable; urgency=low
+
+  * NMU to make it compile on m68k: Remove -DNO_STRERROR from CPPFLAGS_HDF
+    in config/mh-linux68k. (Fixes important #32856)
+
+ -- Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de>  Thu,  4 Feb 1999 10:08:24 +0100
+
+libhdf4 (4.1r2-5.1) frozen unstable; urgency=high
+
+  * NMU to fix critical bug #28340:
+    Change dependency on libjpeg-dev into libjpegg-dev.
+
+ -- Vincent Renardias <vincent@waw.com>  Tue,  5 Jan 1999 22:07:03 +0100
+
+libhdf4 (4.1r2-5) unstable; urgency=low
+
+  * Fix for alpha in mh-linuxalpha, fixes bug #27690.
+
+ -- Philippe Troin <phil@fifi.org>  Fri,  9 Oct 1998 00:46:46 -0700
+
+libhdf4 (4.1r2-4) unstable; urgency=low
+
+  * Fix for m68k in hdfi.h.
+
+ -- Philippe Troin <phil@fifi.org>  Wed,  7 Oct 1998 23:52:06 -0700
+
+libhdf4 (4.1r2-3) unstable; urgency=low
+
+  * Changed ncgen and ncdump to -hdf to avoid conflict with netcdf.
+
+ -- Philippe Troin <phil@fifi.org>  Wed, 30 Sep 1998 20:17:55 -0700
+
+libhdf4 (4.1r2-2) unstable; urgency=low
+
+  * Provide a libhdf.so.4.0 compatibility link to avoid breaking existing
+    packages...
+
+ -- Philippe Troin <phil@fifi.org>  Tue, 29 Sep 1998 02:16:57 -0700
+
+libhdf4 (4.1r2-1) unstable; urgency=low
+
+  * Removed support for libc5 libraries.
+  * New upstream release.
+  * Now includes libmfhdf (fixes bug #22860).
+  * Upstream makefile cleanup.
+  * Now includes a documentation package.
+
+ -- Philippe Troin <phil@fifi.org>  Sat, 26 Sep 1998 22:53:16 -0700
+
+libhdf4 (4.0.2-6) unstable; urgency=low
+
+  * Added patch for alpha compilation (Christopher C Chimelis
+    <chris@classnet.med.miami.edu>) (fixes bug #17562).
+  * Standards-version bumped up to 2.4.0.0.
+  * Changed a 'cp -a' to 'cp -p' for kernel > 2.1.8x (lchown got into the
+    picture)...
+
+ -- Philippe Troin <phil@fifi.org>  Mon,  2 Feb 1998 01:56:35 -0800
+
+libhdf4 (4.0.2-5) unstable; urgency=low
+
+  * Changed wrong dependency for libhdf4g-dev (used to depend on libhdf4,
+    now depends on the correct libhdf4) (fixes bug #16436).
+  * Fixed debian/rules to be architecture-independent (fixes bug #14013).
+  * Updated to Standards-version 2.3.0.1.
+  * Added -{alt}?dev dependencies for -dev and -altdev packages.
+
+ -- Philippe Troin <phil@fifi.org>  Sun, 25 Jan 1998 14:30:13 -0800
+
+libhdf4 (4.0.2-4) unstable; urgency=low
+
+  * Libc6 compilation.
+  * Added i686 as an equivalent of i[345]86 architectures.
+  * Shared libraries linked with -lz -ljpeg -lc.
+  * Aesthetic fix: when upgrading, ldconfig doesn't display anymore
+    unfound libraries.
+
+ -- Philippe Troin <phil@fifi.org>  Sat, 27 Sep 1997 02:12:50 -0700
+
+libhdf4 (4.0.2-3) frozen unstable; urgency=low
+
+  * Fixed the symlinks in the man directory from undocumented.7 to
+    undocumented.7.gz.
+  * Added libjpeg in shlibs.local as libjpeg6a's shlibs file is broken.
+  * Changed the order the shared libraries were unpacked (this could cause
+    spurious warning messages with the new ldconfig, this was bad anyways
+    as the Programmer's manual states).
+
+ -- Philippe Troin <phil@fifi.org>  Wed, 26 Mar 1997 18:36:08 -0800
+
+libhdf4 (4.0.2-2) unstable; urgency=low
+
+  * Added -D_REENTRANT to the library compilation flags.
+  * Added -O2 to every leaf Makefile.in (hdf/{src,test,util})..
+  * Commented out the CFLKAGS in config/linux{,68k} Makefile.in and
+    hdf/Makefile.in and inhibited transmission of CFLAGS through the
+    Makefiles'hierarchy so that the leaf Makefile's CFLAGS are used.
+  * Applied patch for linux/68k as supplied by Frank Neumann.
+
+ -- Philippe Troin <phil@fifi.org>  Fri, 24 Jan 1997 15:53:19 -0800
+
+libhdf4 (4.0.2-1) unstable; urgency=low
+
+  * Heavily modified Makefile.ins and configure to build shared libdf.
+  * Removed zlib, libjpeg and netcdf from the source file.
+  * First debianized version.
+
+ -- Philippe Troin <phil@fifi.org>  Sun, 12 Jan 1997 18:31:04 -0800

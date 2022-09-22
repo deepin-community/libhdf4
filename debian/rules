@@ -1,0 +1,201 @@
+#!/usr/bin/make -f
+#
+# Copyright (C) 2008 Francesco Paolo Lovergine <frankie@debian.org>
+# Released under GPL. See /usr/share/common-licenses/GPL for
+# more information about the license.
+#
+
+# Enable hardening build flags
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+include /usr/share/dpkg/pkg-info.mk
+
+UPSTREAM_VERSION = $(shell echo $(DEB_VERSION_UPSTREAM) | sed -e 's/\+.*//')
+
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+RELEASE := 4.2.15
+PACKAGE := libhdf4
+SOVER   := 0
+
+DESTDIR     := $(CURDIR)/debian/tmp
+DESTDIR_ALT := $(CURDIR)/debian/tmp-alt
+
+F77  := gfortran
+CC   := gcc
+CXX  := g++
+LIBS := -ljpeg -lz -lm
+
+export DEB_FFLAGS_MAINT_APPEND += -fallow-argument-mismatch
+export DEB_CPPFLAGS_MAINT_APPEND = -I/usr/include/tirpc/
+export DEB_LDFLAGS_MAINT_APPEND = -ltirpc
+
+CFLAGS  = $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --get CFLAGS)
+CFLAGS += $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --get CPPFLAGS)
+LDFLAGS = $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --get LDFLAGS)
+
+ifneq (,$(findstring verbose,$(DEB_BUILD_OPTIONS)))
+   DH_VERBOSE=1
+   export DH_VERBOSE
+endif
+
+ifneq (,$(filter $(DEB_BUILD_ARCH),s390x sparc64))
+   DISABLE_TESTS=1
+else
+   DISABLE_TESTS=0
+endif
+
+TEMPLATES=$(wildcard debian/*.in)
+
+templates:
+	for TEMPLATE in $(TEMPLATES) ; do \
+		sed -e 's/@PACKAGE@/$(PACKAGE)/g' \
+		    -e 's/@SOVER@/$(SOVER)/g' \
+		    -e 's/@RELEASE@/$(RELEASE)/g' \
+			$$TEMPLATE > `echo $$TEMPLATE | sed 's/.in$$//'` ; \
+	done
+
+%:
+	dh $@
+
+override_dh_clean:
+	$(RM) -r HDF$(RELEASE) HDF4 HDF4_ALT $(DESTDIR_ALT)
+	dh_clean
+
+override_dh_auto_clean:
+	if [ -e HDF4 ]; then \
+		dh_auto_clean --sourcedirectory=HDF4 \
+		              --builddirectory=debian/build-hdf4 ; \
+	fi
+
+	if [ -e HDF4_ALT ]; then \
+		dh_auto_clean --sourcedirectory=HDF4_ALT \
+		              --builddirectory=debian/build-hdf4-alt ; \
+	fi
+
+override_dh_autoreconf:
+	mkdir HDF$(RELEASE)
+	bash debian/copysources.sh $(RELEASE)
+	patch <debian/rename_hdf_hdfalt -p1
+
+	dh_autoreconf
+
+override_dh_auto_configure: templates
+	rm -rf HDF4 && ln -sf HDF$(RELEASE) HDF4
+
+	# configure the 'regular' netcdf-clashing flavor.
+	dh_auto_configure --sourcedirectory=HDF4 \
+	                  --builddirectory=debian/build-hdf4 \
+	                  -- --prefix=/usr \
+	                     --includedir=/usr/include/hdf \
+	                     --libdir=/usr/lib \
+	                     --enable-shared \
+	                     --enable-fortran \
+	                     --with-szlib=yes \
+	                     F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
+	                     CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+
+	# configure the netcdf compatible flavor, without fortran functions.
+	dh_auto_configure --sourcedirectory=HDF4_ALT \
+	                  --builddirectory=debian/build-hdf4-alt \
+	                  -- --prefix=/usr \
+	                     --includedir=/usr/include/hdf \
+	                     --libdir=/usr/lib \
+	                     --enable-shared \
+	                     --disable-fortran \
+	                     --disable-netcdf \
+	                     --with-szlib=yes \
+	                     CC="$(CC)" CXX="$(CXX)" \
+	                     CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+
+override_dh_auto_build:
+	TESTS_ENVIRONMENT="LD_LIBRARY_PATH=$(CURDIR)/HDF4/hdf/src:$(CURDIR)/HDF4/mfhdf/libsrc:/usr/lib" \
+		dh_auto_build --sourcedirectory=HDF4 \
+		              --builddirectory=debian/build-hdf4 \
+		              -- F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
+		                 CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		                 LIBS="$(LIBS)"
+
+	TESTS_ENVIRONMENT="LD_LIBRARY_PATH=$(CURDIR)/HDF4_ALT/hdf/src:$(CURDIR)/HDF4_ALT/mfhdf/libsrc:/usr/lib" \
+		dh_auto_build --sourcedirectory=HDF4_ALT \
+		              --builddirectory=debian/build-hdf4-alt \
+		              -- CC="$(CC)" CXX="$(CXX)" \
+		                 CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		                 LIBS="$(LIBS)"
+
+override_dh_auto_test:
+	if [ "$(DISABLE_TESTS)" = 0 ]; then \
+		dh_auto_test --sourcedirectory=HDF4 \
+		             --builddirectory=debian/build-hdf4 \
+		             --no-parallel \
+		             -- F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
+		                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		                LIBS="$(LIBS)" ; \
+	fi
+
+	if [ "$(DISABLE_TESTS)" = 0 ]; then \
+		dh_auto_test --sourcedirectory=HDF4_ALT \
+		             --builddirectory=debian/build-hdf4-alt \
+		             --no-parallel \
+		             -- CC="$(CC)" CXX="$(CXX)" \
+		                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		                LIBS="$(LIBS)" ; \
+	fi
+
+override_dh_auto_install:
+	dh_auto_install --sourcedirectory=HDF4 \
+	                --builddirectory=debian/build-hdf4 \
+	                --destdir=$(DESTDIR)
+
+	dh_auto_install --sourcedirectory=HDF4_ALT \
+	                --builddirectory=debian/build-hdf4-alt \
+	                --destdir=$(DESTDIR_ALT)
+
+	install -d -o root -g root $(DESTDIR)/usr/share/doc/$(PACKAGE)
+
+	mkdir -p $(DESTDIR)/usr/share/man/man3
+	sed -e "s/^\.TH HDF 1/\.TH HDF 3/" $(DESTDIR)/usr/share/man/man1/hdf.1 > $(DESTDIR)/usr/share/man/man3/hdf.3
+	rm -f $(DESTDIR)/usr/share/man/man1/hdf.1 $(DESTDIR_ALT)/usr/share/man/man1/hdf.1
+	
+	mv $(DESTDIR_ALT)/usr/lib $(DESTDIR)/usr/lib-alt
+	mv $(DESTDIR_ALT)/usr/include $(DESTDIR)/usr/include-alt
+
+	# Move examples to -doc package
+	mkdir -p $(DESTDIR)/usr/share/doc/$(PACKAGE)-doc
+	mv $(DESTDIR)/usr/share/hdf4_examples $(DESTDIR)/usr/share/doc/$(PACKAGE)-doc/examples
+	
+	# strip rpath into binaries and libraries	
+	for obj in $(DESTDIR)/usr/bin/* $(DESTDIR)/usr/lib/*.so.* $(DESTDIR)/usr/lib-alt/*.so.*; do \
+		chrpath -d $${obj} || true; \
+	done
+
+	# Empty out the dependency field in our .la files
+	for file in $(DESTDIR)/usr/lib/*.la $(DESTDIR)/usr/lib-alt/*.la; do \
+		sed -i -e "/dependency_libs/ s/'.*'/''/" $$file ; \
+	done
+
+	# rename programs also provided by netcdf-bin
+	mv $(DESTDIR)/usr/bin/ncdump $(DESTDIR)/usr/bin/ncdump-hdf
+	mv $(DESTDIR)/usr/bin/ncgen $(DESTDIR)/usr/bin/ncgen-hdf
+
+	# rename manuals also provided by netcdf-bin
+	mv $(DESTDIR)/usr/share/man/man1/ncdump.1 $(DESTDIR)/usr/share/man/man1/ncdump-hdf.1
+	sed -i -e 's/ncdump/ncdump-hdf/g' $(DESTDIR)/usr/share/man/man1/ncdump-hdf.1
+
+	mv $(DESTDIR)/usr/share/man/man1/ncgen.1 $(DESTDIR)/usr/share/man/man1/ncgen-hdf.1
+	sed -i -e 's/ncgen/ncgen-hdf/g' $(DESTDIR)/usr/share/man/man1/ncgen-hdf.1
+
+override_dh_install:
+	dh_install --sourcedir=$(DESTDIR)
+
+	$(RM) -r $(CURDIR)/debian/tmp
+
+override_dh_installman:
+	dh_installman
+	$(RM) $(CURDIR)/debian/hdf4-tools/usr/share/man/man1/hdf.1
+
+override_dh_makeshlibs:
+	dh_makeshlibs -- -v$(UPSTREAM_VERSION)
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l$(DESTDIR)/usr/lib:$(DESTDIR)/usr/lib-alt

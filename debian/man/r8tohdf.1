@@ -1,0 +1,81 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH R8TOHDF 1 "November 6, 1999"
+.SH NAME
+.ad l
+.nh
+r8tohdf \- convert 8-bit raster images to HDF format
+.SH SYNOPSIS
+.HP
+\fBr8tohdf\fP
+[\fInumber-of-rows number-of-columns\fP]
+\fIoutput-filename\fP
+[\fB-p\fP \fIpalette-filename\fP]
+[\fB-c\fP]
+[\fB-r\fP]
+[\fB-i\fP]
+\fIraw-raster-image-filename-1\fP, \fIraw-raster-image-filename-2\fP, ...
+.ad b
+.hy
+.SH DESCRIPTION
+\fBr8tohdf\fP converts a set of raw raster images to the HDF RIS8
+format and writes them to a file.
+.SH OPTIONS
+.TP
+.BI -p " pallette-file"
+Specify the name of the palette file.
+.TP
+.BI -c
+Run length coding.  Compress the output data using run-length
+encoding.
+.TP
+.BI -i
+IMCOMP Compression.
+Compress the output data using the IMCOMP method.
+.TP
+.BI -r
+No Compression.
+Apply no compression to the output data. (the default).
+.SH EXAMPLES
+A file named "rawras" contains a 256 x 512-byte raw raster image, and
+its palette is stored in a file name "mypal". To convert the
+information in these files to an RIS8 without compression and store
+the RIS8 in a file named "ras.hdf", enter the following r8tohdf
+command:
+.nf
+
+  r8tohdf 256 512 ras.hdf -p mypal rawras
+
+.fi
+A 800 x 1000-byte raw raster image is stored in a file named "bigpic".
+This data must be converted to a RIS8 without a palette, compressing
+it using run-length encoding, then stored in a file named
+"bigpic.hdf". The following command will do this:
+.nf
+
+  r8tohdf 800 1000 bigpic.hdf -c bigpic
+
+.fi
+A 300 x 400 raw raster image is contained in each of the files named
+"pic1", "pic2", and "pic3". To convert all three files to RIS8s,
+compress them using the IMCOMP method, and store them in a file named
+"pic.hdf", enter
+.nf
+
+  r8tohdf 300 400 pic.hdf -i pic1 pic2 pic3
+
+.fi
+Different types of raster image data are to be stored in a file named
+"ras.hdf". The image data in the file "rawras1" will be stored without
+a palette. The image data sets from the file named "rawras2" are to be
+stored with a palette extracted from a file named "mypal". The images
+from the "rawras1" and "rawras2" files are to be compressed using
+run-length encoding, and the image in the "rawras3" file is not to be
+compressed. The size of all images are 256 x 512 bytes. The following
+command is used to do this:
+.nf
+
+  r8tohdf 256 512 ras.hdf -c rawras1 -p mypal rawras2 -r rawras3
+
+.fi
+.SH "SEE ALSO"
+\fBhdftor8\fP(1), \fBhdf\fP(5)

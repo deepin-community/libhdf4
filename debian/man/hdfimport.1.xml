@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<refentry id='hdfimport'>
+
+  <refmeta>
+    <refentrytitle>hdfimport</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>hdfimport</refname>
+    <refpurpose>imports ASCII or binary data into HDF</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>hdfimport</command>
+      <arg choice='plain'>&lt;infile&gt;</arg>
+      <arg choice='opt'>
+        <group>
+          <arg choice='opt'><option>-t[ype]</option> <replaceable>output-type</replaceable></arg>
+          <arg choice='opt'><option>-n</option></arg>
+        </group>
+        <arg choice='opt'>
+          &lt;infile&gt;
+          <group>
+            <arg choice='opt'><option>-t[ype]</option> <replaceable>output-type</replaceable></arg>
+            <arg choice='opt'><option>-n</option></arg>
+          </group>
+          ...
+        </arg>
+      </arg>
+      <option>-o[utfile]</option> <replaceable>outfile</replaceable>
+      <arg choice='opt'><option>-r[aster]</option> [ras_opts ...]</arg>
+      <arg choice='opt'><option>-f[loat]</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>hdfimport</command> converts floating point data to HDF
+      Scientific Data Set (SDS) and/or 8-bit Raster Image Set (RIS8) format,
+      storing the results in an HDF file.
+      The image data can be scaled about a mean value.
+    </para>
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+
+      <varlistentry>
+        <term><replaceable>infile(s)</replaceable></term>
+        <listitem>
+          <para>
+            Name of the input file(s), containing a single two-dimensional or
+            three-dimensional floating point array in either ASCII text,
+            native floating point, native integer or HDF SDS format.
+            If an HDF file is used for input, it must contain an SDS.
+            The SDS need only contain a dimension record and the data, but if
+            it also contains maximum and minimum values and/or scales for each
+            axis, these will be used.
+            If the input format is ASCII text or native floating point or
+            native integer, see "Notes" below on how it must be organized.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-t[ype]</option> <replaceable>output-type</replaceable></term>
+        <listitem>
+          <para>
+            Optionally used for every input ASCII file to specify the data type
+            of the data-set to be written. If not specified default data type
+            is 32-bit floating point.
+            <replaceable>output-type</replaceable> can be any of the following:
+            FP32 (default), FP64, INT32, INT16, INT8.
+            It can be used only with ASCII files.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option></option></term>
+        <listitem>
+          <para>
+            
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-n</option></term>
+        <listitem>
+          <para>
+            This option is to be used only if the binary input file contains
+            64-bit floating point data and the default behaviour (default
+            behaviour is to write it to a 32-bit floating point data-set)
+            should be overridden to write it to a 64-bit floating point
+            data-set.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-t[ype]</option> <replaceable>output-type</replaceable></term>
+        <listitem>
+          <para>
+            Data from one or more input files are stored as one or more data
+            sets and/or images in one HDF output file,
+            "<replaceable>outfile</replaceable>".
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-r[aster]</option></term>
+        <listitem>
+          <para>
+            Store output as a raster image set in the output file.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-f[loat]</option></term>
+        <listitem>
+          <para>
+            Store output as a scientific data set in the output file.
+            This is the default if the "<option>-r</option>" option is not
+            specified.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>[ras_opts ...]</term>
+        <listitem>
+          <para>
+            <variablelist>
+
+              <varlistentry>
+                <term><option>-e[xpand]</option> <replaceable>horiz</replaceable> <replaceable>vert</replaceable> [<replaceable>depth</replaceable>]</term>
+                <listitem>
+                  <para>
+                    Expand float data via pixel replication to produce the
+                    image(s).
+                    "<replaceable>horiz</replaceable>" and
+                    "<replaceable>vert</replaceable>" give the horizontal and
+                    vertical resolution of the image(s) to be produced; and
+                    optionally, "<replaceable>depth</replaceable>" gives the
+                    number of images or depth planes (for 3D input data).
+                  </para>
+                </listitem>
+              </varlistentry>
+        
+              <varlistentry>
+                <term><option>-i[nterp]</option> <replaceable>horiz</replaceable> <replaceable>vert</replaceable> [<replaceable>depth</replaceable>]</term>
+                <listitem>
+                  <para>
+                    Apply bilinear, or trilinear, interpolation to the float
+                    data to produce the image(s).
+                    "<replaceable>horiz</replaceable>",
+                    "<replaceable>vert</replaceable>", and
+                    "<replaceable>depth</replaceable>" must be greater than or
+                    equal to the dimensions of the original dataset.
+                    If max and min are supplied in input file, this option clips
+                    values that are greater than max or less then min, setting
+                    them to the max and min, respectively.
+                  </para>
+                </listitem>
+              </varlistentry>
+        
+              <varlistentry>
+                <term><option>-p[alfile]</option> <replaceable>palfile</replaceable></term>
+                <listitem>
+                  <para>
+                    Store the palette with the image.
+                    Get the palette from "<replaceable>palfile</replaceable>";
+                    which may be an HDF file containing a palette, or a file
+                    containing a raw palette.
+                  </para>
+                </listitem>
+              </varlistentry>
+        
+              <varlistentry>
+                <term><option>-m[ean]</option> <replaceable>mean</replaceable></term>
+                <listitem>
+                  <para>
+                    If a floating point mean value is given, the image will be
+                    scaled about the mean.
+                    The new extremes (newmax and newmin), as given by:
+                    <screen>
+    <informalequation>
+      <alt>newmax = mean + max(abs(max-mean), abs(mean-min))</alt>
+    </informalequation>
+    <informalequation>
+      <alt>newmin = mean - max(abs(max-mean), abs(mean-min))</alt>
+    </informalequation>
+                    </screen>
+                    will be equidistant from the mean value.
+                    If no mean value is given, then the mean will be:
+                    <screen>
+    <informalequation>
+      <alt>0.5 * (max + min)</alt>
+    </informalequation>
+                    </screen>
+                  </para>
+                </listitem>
+              </varlistentry>
+        
+            </variablelist>
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Notes:</term>
+        <listitem>
+          <para>
+            If the input file format is ASCII text or native floating
+            point or native integer(32-bit, 16-bit, 8-bit), it must
+            have the following input fields:
+            <screen>
+format
+nplanes
+nrows
+cols
+max_value
+min_value
+[plane1 plane2 plane3 ...]
+row1 row2 row3 ...
+col1 col2 col3 ...
+data1 data2 data3 ...
+            </screen>
+          </para>
+          <para>
+            Where:
+            <variablelist>
+
+              <varlistentry>
+                <term>format:</term>
+                <listitem>
+                  <para>
+                    Format designator
+                    ("TEXT", "FP32", "FP64", "IN32", "IN16", "IN08").
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>nplanes, nrows, ncols:</term>
+                <listitem>
+                  <para>
+                    Dimensions are specified in the order slowest changing
+                    dimension first.
+                    ncols is dimension of the fastest changing dimension.
+                    (horizontal axis or X-axis in a 3D scale)
+                    nrows corresponds to dimension of the vertical axis or
+                    Y-axis in a 3D scale.
+                    nplanes corresponds to the slowest changing dimension i.e.
+                    dimension of the depth axis or the Z-axis in a 3D scale
+                    ("1" for 2D input).
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>max_value:</term>
+                <listitem>
+                  <para>
+                    Maximum data value.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>min_value:</term>
+                <listitem>
+                  <para>
+                    Minimum data value.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>plane1, plane2, plane3, ...:</term>
+                <listitem>
+                  <para>
+                    Scales for depth axis.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>row1, row2, row3, ...:</term>
+                <listitem>
+                  <para>
+                    Scales for the vertical axis.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>col1, col2, col3, ...:</term>
+                <listitem>
+                  <para>
+                    Scales for the horizontal axis.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>data1, data2, data3, ...:</term>
+                <listitem>
+                  <para>
+                    The data ordered by rows, left to right and top to bottom;
+                    then optionally, ordered by planes, front to back.
+                  </para>
+                </listitem>
+              </varlistentry>
+
+            </variablelist>
+          </para>
+          <para>
+            For FP32 and FP64 input format, "format", "nplanes", "nrows",
+            "ncols", and "nplanes" are native integers; where "format" is the
+            integer representation of the appropriate 4-character string
+            (0x46503332 for "FP32" and 0x46503634 for "FP64").
+            The remaining input fields are composed of native 32-bit floating
+            point values for FP32 input format, or native 64-bit floating
+            point values for FP64 input format.
+          </para>
+          <para>
+            For IN32, IN16 and IN08 input format, "format", "nplanes", "nrows",
+            "ncols", and "nplanes" are native integers; where "format" is the
+            integer representation of the appropriate 4-character string.
+            The remaining input fields are composed of native 32-bit integer
+            values for IN32 input format, or native 16-bit integer values for
+            IN16 input format or native 8-bit integer values for IN08 input
+            format.
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+
+  <refsect1 id='examples'>
+    <title>EXAMPLES</title>
+
+    <example>
+      <para>
+        Convert floating point data in "<filename>f1.txt</filename>" to SDS
+        format, and store it as an SDS in HDF file "<filename>o1</filename>":
+      </para>
+
+      <screen>
+<command>hdfimport</command> <filename>f1.txt</filename> <option>-o</option> <filename>o1</filename>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        Convert floating point data in "<filename>f2.hdf</filename>" to 8-bit
+        raster format, and store it as an RIS8 in HDF file
+        "<filename>o2</filename>":
+      </para>
+
+      <screen>
+<command>hdfimport</command> <filename>f2.hdf</filename> <option>-o</option> <filename>o2</filename> <option>-r</option>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        Convert floating point data in "<filename>f3.bin</filename>" to 8-bit
+        raster format and SDS format, and store both the RIS8 and the SDS in
+        HDF file "<filename>o3</filename>":
+      </para>
+
+      <screen>
+<command>hdfimport</command> <filename>f3.bin</filename> <option>-o</option> <filename>o3</filename> <option>-r</option> <option>-f</option>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        Convert floating point data in "<filename>f4</filename>" to a 500x600
+        raster image, and store the RIS8 in HDF file "<filename>o4</filename>".
+        Also store a palette from "<filename>palfile</filename>" with the image:
+      </para>
+
+      <screen>
+<command>hdfimport</command> <filename>f4</filename> <option>-o</option> <filename>o4</filename> <option>-r</option> <option>-e</option> <replaceable>500 600</replaceable> <option>-p</option> <filename>palfile</filename>
+      </screen>
+    </example>
+
+    <example>
+      <para>
+        Convert floating point data in "<filename>f5</filename>" to 200 planes
+        of 500x600 raster images, and store the RIS8 in HDF file
+        "<filename>o5</filename>".
+        Also scale the image data so that it is centered about a mean value of
+        10.0:
+      </para>
+
+      <screen>
+<command>hdfimport</command> <filename>f5</filename> <option>-o</option> <filename>o5</filename> <option>-r</option> <option>-i</option> <replaceable>500 600 200</replaceable> <option>-m</option> <replaceable>10.0</replaceable>
+      </screen>
+    </example>
+
+  </refsect1>
+
+</refentry>

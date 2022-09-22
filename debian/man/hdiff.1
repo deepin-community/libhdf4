@@ -1,0 +1,80 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH hdiff 1 "28 May 2016" "" ""
+.SH NAME
+hdiff \- compares two HDF files and reports the differences
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBhdiff\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+[\fB-V\fR] [\fB-b\fR] [\fB-g\fR] [\fB-s\fR] [\fB-d\fR] [\fB-D\fR] [\fB-S\fR] [\fB-v\fR \fIvar1[,...]\fR] [\fB-u\fR \fIvar1[,...]\fR] [\fB-e\fR \fIcount\fR] [\fB-t\fR \fIlimit\fR] [\fB-p\fR \fIrelative\fR] file1 file2 
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBhdiff\fR compares two HDF files and reports the
+differences.
+.SH OPTIONS
+.TP 
+\*(T<\fB\-V\fR\*(T>
+Display version of the HDF4 library and exit
+.TP 
+\*(T<\fB\-b\fR\*(T>
+Verbose mode
+.TP 
+\*(T<\fB\-g\fR\*(T>
+Compare global attributes only
+.TP 
+\*(T<\fB\-s\fR\*(T>
+Compare SD local attributes only
+.TP 
+\*(T<\fB\-d\fR\*(T>
+Compare SD data only
+.TP 
+\*(T<\fB\-D\fR\*(T>
+Compare Vdata data only
+.TP 
+\*(T<\fB\-S\fR\*(T>
+Print statistics
+.TP 
+\*(T<\fB\-v\fR\*(T> \fIvar1[,...]\fR
+Compare SD data on variable(s) \fIvar1\fR,...
+only
+.TP 
+\*(T<\fB\-u\fR\*(T> \fIvar1[,...]\fR
+Compare vdata on variable(s) \fIvar1\fR,... only
+.TP 
+\*(T<\fB\-e\fR\*(T> \fIcount\fR
+Print difference up to count number for each variable
+.TP 
+\*(T<\fB\-t\fR\*(T> \fIlimit\fR
+Print difference when it is greater than limit
+.TP 
+\*(T<\fB\-p\fR\*(T> \fIrelative\fR
+Print difference when it is greater than a relative limit
+.TP 
+\*(T<\fIfile1\fR\*(T>
+File name of the first HDF file
+.TP 
+\*(T<\fIfile2\fR\*(T>
+File name of the second HDF file
+.PP
+The '\fIcount\fR' value must be a positive integer
+.PP
+The '\fIlimit\fR'
+and '\fIrelative\fR'
+values must be positive numbers
+.PP
+The \*(T<\fB\-t\fR\*(T> compare criteria is |a - b| > limit
+.PP
+The \*(T<\fB\-p\fR\*(T> compare criteria is |(b-a)/a| > relative
+.PP
+Return codes: 0 (no differences found), 1 (differences found)

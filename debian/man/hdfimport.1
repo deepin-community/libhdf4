@@ -1,0 +1,250 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH hdfimport 1 "28 May 2016" "" ""
+.SH NAME
+hdfimport \- imports ASCII or binary data into HDF
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBhdfimport\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+<infile> [
+[\fB-t[ype]\fR \fIoutput-type\fR | \fB-n\fR]
+[
+<infile>
+[\fB-t[ype]\fR \fIoutput-type\fR | \fB-n\fR]
+\&...
+]
+] \fB-o[utfile]\fR \fIoutfile\fR [\fB-r[aster]\fR [ras_opts ...]] [\fB-f[loat]\fR]
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBhdfimport\fR converts floating point data to HDF
+Scientific Data Set (SDS) and/or 8-bit Raster Image Set (RIS8) format,
+storing the results in an HDF file.
+The image data can be scaled about a mean value.
+.SH OPTIONS
+.TP 
+\fIinfile(s)\fR
+Name of the input file(s), containing a single two-dimensional or
+three-dimensional floating point array in either ASCII text,
+native floating point, native integer or HDF SDS format.
+If an HDF file is used for input, it must contain an SDS.
+The SDS need only contain a dimension record and the data, but if
+it also contains maximum and minimum values and/or scales for each
+axis, these will be used.
+If the input format is ASCII text or native floating point or
+native integer, see "Notes" below on how it must be organized.
+.TP 
+\*(T<\fB\-t[ype]\fR\*(T> \fIoutput-type\fR
+Optionally used for every input ASCII file to specify the data type
+of the data-set to be written. If not specified default data type
+is 32-bit floating point.
+\fIoutput-type\fR can be any of the following:
+FP32 (default), FP64, INT32, INT16, INT8.
+It can be used only with ASCII files.
+.TP 
+.TP 
+\*(T<\fB\-n\fR\*(T>
+This option is to be used only if the binary input file contains
+64-bit floating point data and the default behaviour (default
+behaviour is to write it to a 32-bit floating point data-set)
+should be overridden to write it to a 64-bit floating point
+data-set.
+.TP 
+\*(T<\fB\-t[ype]\fR\*(T> \fIoutput-type\fR
+Data from one or more input files are stored as one or more data
+sets and/or images in one HDF output file,
+"\fIoutfile\fR".
+.TP 
+\*(T<\fB\-r[aster]\fR\*(T>
+Store output as a raster image set in the output file.
+.TP 
+\*(T<\fB\-f[loat]\fR\*(T>
+Store output as a scientific data set in the output file.
+This is the default if the "\*(T<\fB\-r\fR\*(T>" option is not
+specified.
+.TP 
+[ras_opts ...]
+.RS 
+.TP 
+\*(T<\fB\-e[xpand]\fR\*(T> \fIhoriz\fR \fIvert\fR [\fIdepth\fR]
+Expand float data via pixel replication to produce the
+image(s).
+"\fIhoriz\fR" and
+"\fIvert\fR" give the horizontal and
+vertical resolution of the image(s) to be produced; and
+optionally, "\fIdepth\fR" gives the
+number of images or depth planes (for 3D input data).
+.TP 
+\*(T<\fB\-i[nterp]\fR\*(T> \fIhoriz\fR \fIvert\fR [\fIdepth\fR]
+Apply bilinear, or trilinear, interpolation to the float
+data to produce the image(s).
+"\fIhoriz\fR",
+"\fIvert\fR", and
+"\fIdepth\fR" must be greater than or
+equal to the dimensions of the original dataset.
+If max and min are supplied in input file, this option clips
+values that are greater than max or less then min, setting
+them to the max and min, respectively.
+.TP 
+\*(T<\fB\-p[alfile]\fR\*(T> \fIpalfile\fR
+Store the palette with the image.
+Get the palette from "\fIpalfile\fR";
+which may be an HDF file containing a palette, or a file
+containing a raw palette.
+.TP 
+\*(T<\fB\-m[ean]\fR\*(T> \fImean\fR
+If a floating point mean value is given, the image will be
+scaled about the mean.
+The new extremes (newmax and newmin), as given by:
+
+.nf
+\*(T<
+    newmax = mean + max(abs(max\-mean), abs(mean\-min))
+    newmin = mean \- max(abs(max\-mean), abs(mean\-min))
+                    \*(T>
+.fi
+
+will be equidistant from the mean value.
+If no mean value is given, then the mean will be:
+
+.nf
+\*(T<
+    0.5 * (max + min)
+                    \*(T>
+.fi
+.RE
+.TP 
+Notes:
+If the input file format is ASCII text or native floating
+point or native integer(32-bit, 16-bit, 8-bit), it must
+have the following input fields:
+
+.nf
+\*(T<
+format
+nplanes
+nrows
+cols
+max_value
+min_value
+[plane1 plane2 plane3 ...]
+row1 row2 row3 ...
+col1 col2 col3 ...
+data1 data2 data3 ...
+            \*(T>
+.fi
+
+Where:
+.RS 
+.TP 
+format:
+Format designator
+("TEXT", "FP32", "FP64", "IN32", "IN16", "IN08").
+.TP 
+nplanes, nrows, ncols:
+Dimensions are specified in the order slowest changing
+dimension first.
+ncols is dimension of the fastest changing dimension.
+(horizontal axis or X-axis in a 3D scale)
+nrows corresponds to dimension of the vertical axis or
+Y-axis in a 3D scale.
+nplanes corresponds to the slowest changing dimension i.e.
+dimension of the depth axis or the Z-axis in a 3D scale
+("1" for 2D input).
+.TP 
+max_value:
+Maximum data value.
+.TP 
+min_value:
+Minimum data value.
+.TP 
+plane1, plane2, plane3, ...:
+Scales for depth axis.
+.TP 
+row1, row2, row3, ...:
+Scales for the vertical axis.
+.TP 
+col1, col2, col3, ...:
+Scales for the horizontal axis.
+.TP 
+data1, data2, data3, ...:
+The data ordered by rows, left to right and top to bottom;
+then optionally, ordered by planes, front to back.
+.RE
+
+For FP32 and FP64 input format, "format", "nplanes", "nrows",
+"ncols", and "nplanes" are native integers; where "format" is the
+integer representation of the appropriate 4-character string
+(0x46503332 for "FP32" and 0x46503634 for "FP64").
+The remaining input fields are composed of native 32-bit floating
+point values for FP32 input format, or native 64-bit floating
+point values for FP64 input format.
+
+For IN32, IN16 and IN08 input format, "format", "nplanes", "nrows",
+"ncols", and "nplanes" are native integers; where "format" is the
+integer representation of the appropriate 4-character string.
+The remaining input fields are composed of native 32-bit integer
+values for IN32 input format, or native 16-bit integer values for
+IN16 input format or native 8-bit integer values for IN08 input
+format.
+.SH EXAMPLES
+Convert floating point data in "\*(T<\fIf1.txt\fR\*(T>" to SDS
+format, and store it as an SDS in HDF file "\*(T<\fIo1\fR\*(T>":
+.PP
+.nf
+\*(T<
+\fBhdfimport\fR \fIf1.txt\fR \fB\-o\fR \fIo1\fR
+      \*(T>
+.fi
+.PP
+Convert floating point data in "\*(T<\fIf2.hdf\fR\*(T>" to 8-bit
+raster format, and store it as an RIS8 in HDF file
+"\*(T<\fIo2\fR\*(T>":
+.PP
+.nf
+\*(T<
+\fBhdfimport\fR \fIf2.hdf\fR \fB\-o\fR \fIo2\fR \fB\-r\fR
+      \*(T>
+.fi
+.PP
+Convert floating point data in "\*(T<\fIf3.bin\fR\*(T>" to 8-bit
+raster format and SDS format, and store both the RIS8 and the SDS in
+HDF file "\*(T<\fIo3\fR\*(T>":
+.PP
+.nf
+\*(T<
+\fBhdfimport\fR \fIf3.bin\fR \fB\-o\fR \fIo3\fR \fB\-r\fR \fB\-f\fR
+      \*(T>
+.fi
+.PP
+Convert floating point data in "\*(T<\fIf4\fR\*(T>" to a 500x600
+raster image, and store the RIS8 in HDF file "\*(T<\fIo4\fR\*(T>".
+Also store a palette from "\*(T<\fIpalfile\fR\*(T>" with the image:
+.PP
+.nf
+\*(T<
+\fBhdfimport\fR \fIf4\fR \fB\-o\fR \fIo4\fR \fB\-r\fR \fB\-e\fR \fI500 600\fR \fB\-p\fR \fIpalfile\fR
+      \*(T>
+.fi
+.PP
+Convert floating point data in "\*(T<\fIf5\fR\*(T>" to 200 planes
+of 500x600 raster images, and store the RIS8 in HDF file
+"\*(T<\fIo5\fR\*(T>".
+Also scale the image data so that it is centered about a mean value of
+10.0:
+.PP
+.nf
+\*(T<
+\fBhdfimport\fR \fIf5\fR \fB\-o\fR \fIo5\fR \fB\-r\fR \fB\-i\fR \fI500 600 200\fR \fB\-m\fR \fI10.0\fR
+      \*(T>
+.fi

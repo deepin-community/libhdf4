@@ -1,0 +1,166 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH hrepack 1 "28 May 2016" "" ""
+.SH NAME
+hrepack \- copies an HDF file to a new file
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBhrepack\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\fB-i\fR \fIinput\fR \fB-o\fR \fIoutput\fR [\fB-V\fR] [\fB-h\fR] [\fB-v\fR] [\fB-t\fR \fIcomp_info\fR] [\fB-c\fR \fIchunk_info\fR] [\fB-f\fR \fIcfile\fR] [\fB-m\fR \fIsize\fR]
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBhrepack\fR copies an HDF file to a new file with/without
+compression and/or chunking.
+.SH OPTIONS
+.TP 
+\*(T<\fB\-i\fR\*(T> \fIinput\fR
+input HDF File
+.TP 
+\*(T<\fB\-o\fR\*(T> \fIoutput\fR
+output HDF File
+.TP 
+\*(T<\fB\-V\fR\*(T>
+prints version of the HDF4 library and exits
+.TP 
+\*(T<\fB\-h\fR\*(T>
+prints usage information
+.TP 
+\*(T<\fB\-v\fR\*(T>
+verbose mode
+.TP 
+\*(T<\fB\-t\fR\*(T> \fIcomp_info\fR
+compression type: '\fIcomp_info\fR' is a
+string with the format
+<object list>:<type of compression><parameters>
+
+<object list> is a comma separated list of object names
+meaning apply compression only to those objects.
+\&'*' means all objects.
+
+<type of compression> can be:
+.RS 
+RLE
+
+for RLE compression
+
+HUFF
+
+for Huffman
+
+GZIP
+
+for gzip
+
+JPEG
+
+for JPEG (for images only)
+
+SZIP
+
+for szip
+
+NONE
+
+to uncompress
+.RE
+
+<parameters> is optional compression info
+.RS 
+RLE
+
+no parameter
+
+HUFF
+
+the skip-size
+
+GZIP
+
+the deflation level
+
+JPEG
+
+the quality factor
+
+SZIP
+
+pixels per block, compression mode (NN or EC)
+.RE
+
+.TP 
+\*(T<\fB\-c\fR\*(T> \fIchunk_info\fR
+apply chunking.
+\fIchunk_info\fR is a string with the format
+<object list>:<chunk information>
+
+<object list> is a comma separated list of object names
+meaning apply chunking only to those objects.
+\&'*' means all objects
+
+<chunk information> is the chunk size of each dimension:
+\fIdim_1 x dim_2 x ... dim_n\fR or
+NONE, to unchunk a previous chunked object
+.TP 
+\*(T<\fB\-f\fR\*(T> \fIcfile\fR
+file with compression information \*(T<\fB\-t\fR\*(T> and
+\*(T<\fB\-c\fR\*(T>
+.TP 
+\*(T<\fB\-m\fR\*(T> \fIsize\fR
+do not compress objects smaller than size (bytes)
+.SH EXAMPLES
+compresses all objects in the file \*(T<\fIfile1.hdf\fR\*(T>,
+using RLE compression
+.PP
+.nf
+\*(T<
+\fBhrepack\fR \fB\-v\fR \fB\-i\fR \fIfile1.hdf\fR \fB\-o\fR \fIfile2.hdf\fR \fB\-t\fR '*:RLE'
+      \*(T>
+.fi
+.PP
+applies Skipping Huffman compression with skip factor of 1,
+for objects /group1/A, /group2/B and C
+.PP
+.nf
+\*(T<
+\fBhrepack\fR \fB\-v\fR \fB\-i\fR \fIfile1.hdf\fR \fB\-o\fR \fIfile2.hdf\fR \fB\-t\fR '/group1/A,/group2/B,C:HUFF 1'
+      \*(T>
+.fi
+.PP
+applies RLE compression for object /group1/D.
+.PP
+applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions
+.PP
+.nf
+\*(T<
+\fBhrepack\fR \fB\-v\fR \fB\-i\fR \fIfile1.hdf\fR \fB\-o\fR \fIfile2.hdf\fR \fB\-t\fR '/group1/D:RLE' \fB\-c\fR 'D,E:10x10'
+      \*(T>
+.fi
+.PP
+uncompresses object A
+.PP
+.nf
+\*(T<
+\fBhrepack\fR \fB\-v\fR \fB\-i\fR \fIfile1.hdf\fR \fB\-o\fR \fIfile2.hdf\fR \fB\-t\fR 'A:NONE'
+      \*(T>
+.fi
+.PP
+applies SZIP compression to object A, with parameters 8 and NN
+.PP
+.nf
+\*(T<
+\fBhrepack\fR \fB\-v\fR \fB\-i\fR \fIfile1.hdf\fR \fB\-o\fR \fIfile2.hdf\fR \fB\-t\fR 'A:SZIP 8,NN'
+      \*(T>
+.fi
+.PP
+Note: the use of the verbose option -v is recommended

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<refentry id='h4redeploy'>
+
+  <refmeta>
+    <refentrytitle>h4redeploy</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>h4redeploy</refname>
+    <refpurpose>updates paths in h4cc/h4fc</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>h4redeploy</command>
+      <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>h4redeploy</command> updates paths in
+      <command>h4cc</command>/<command>h4fc</command> after the HDF4
+      pre-compiled binaries have been installed in a new location.
+    </para>
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+
+      <varlistentry>
+        <term><option>-help</option></term>
+        <listitem>
+          <para>
+            Display usage information
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-echo</option></term>
+        <listitem>
+          <para>
+            Show all the shell commands executed
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-force</option></term>
+        <listitem>
+          <para>
+            No prompt, just do it
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-prefix</option>=<replaceable>DIR</replaceable></term>
+        <listitem>
+          <para>
+            Prefix directory to find HDF4
+            <filename class='directory'>lib/</filename> and
+            <filename class='directory'>include/</filename> subdirectories
+            [default: current directory]
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-tool</option>=<replaceable>TOOL</replaceable></term>
+        <listitem>
+          <para>
+            Tool to update.
+            <replaceable>TOOL</replaceable> must be in the current directory
+            and writable.
+            [default: h4cc h4fc]
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-show</option></term>
+        <listitem>
+          <para>
+            Show the commands without executing them
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+
+</refentry>

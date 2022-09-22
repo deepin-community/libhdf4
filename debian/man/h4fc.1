@@ -1,0 +1,56 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH h4fc 1 "28 May 2016" "" ""
+.SH NAME
+h4fc \- compiles an HDF4 F90 program
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBh4fc\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+[\fIOPTIONS\fR] <\fIcompile line\fR> 
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBh4fc\fR compiles an HDF4 F90 program.
+.SH OPTIONS
+.TP 
+\*(T<\fB\-help\fR\*(T>
+Display usage information
+.TP 
+\*(T<\fB\-echo\fR\*(T>
+Show all the shell commands executed
+.TP 
+\*(T<\fB\-prefix\fR\*(T>=\fIDIR\fR
+Prefix directory to find HDF4
+\*(T<\fIlib/\fR\*(T> and
+\*(T<\fIinclude/\fR\*(T> subdirectories
+[default: /usr]
+.TP 
+\*(T<\fB\-show\fR\*(T>
+Show the commands without executing them
+.TP 
+<\fIcompile line\fR>
+the normal compile line options for your compiler.
+\fBh4fc\fR uses the same compiler you used to compile
+HDF4.
+Check with your compiler's man pages for more information on
+which options are needed.
+.PP
+You can override the compiler, linker, and whether or not to use static
+or shared libraries to compile your program by setting the following
+environment variables accordingly:
+.TP 
+HDF4_F77
+use a different Fortran 77 compiler
+.TP 
+HDF4_F77LINKER
+use a different linker

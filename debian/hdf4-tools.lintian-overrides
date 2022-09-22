@@ -1,0 +1,3 @@
+# Source uses __FILE__ macro
+file-references-package-build-path *
+

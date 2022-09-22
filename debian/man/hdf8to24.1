@@ -1,0 +1,26 @@
+.TH HDF8TO24 1 "October 30, 1999"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.SH NAME
+hdf8to24 \- convert an 8-bit image in an HDF file to a 24-bit image in another
+HDF file
+.SH SYNOPSIS
+\fBhdf8to24\fP [\fB-s\fP\fIscale\fP]
+[\fB-j\fP\fIquality\fP]
+\fIinput_hdf_file\fP
+\fIoutput_hdf_file\fP
+.SH DESCRIPTION
+\fBhdf8to24\fP converts an 8-bit image in an HDF file into a 24-bit image in an
+other HDF file.
+.SH OPTIONS
+.TP
+.BI -s scale
+set scale for magnifying the 8-bit input file.
+scales between 0 and 1 shrink the image, scales
+greater than 1 expand the image.  Defaults to 1
+.TP
+.BI -j quality
+use JPEG compression to store the 24-bit image
+Defaults to no compression, or quality level
+75, if no quality is specified.
+.SH "SEE ALSO"
+\fBhdf\fP(5), \fBhdf24to8\fP(1)

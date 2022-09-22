@@ -1,0 +1,50 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH h4redeploy 1 "28 May 2016" "" ""
+.SH NAME
+h4redeploy \- updates paths in h4cc/h4fc
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBh4redeploy\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+[\fIOPTIONS\fR]
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBh4redeploy\fR updates paths in
+\fBh4cc\fR/\fBh4fc\fR after the HDF4
+pre-compiled binaries have been installed in a new location.
+.SH OPTIONS
+.TP 
+\*(T<\fB\-help\fR\*(T>
+Display usage information
+.TP 
+\*(T<\fB\-echo\fR\*(T>
+Show all the shell commands executed
+.TP 
+\*(T<\fB\-force\fR\*(T>
+No prompt, just do it
+.TP 
+\*(T<\fB\-prefix\fR\*(T>=\fIDIR\fR
+Prefix directory to find HDF4
+\*(T<\fIlib/\fR\*(T> and
+\*(T<\fIinclude/\fR\*(T> subdirectories
+[default: current directory]
+.TP 
+\*(T<\fB\-tool\fR\*(T>=\fITOOL\fR
+Tool to update.
+\fITOOL\fR must be in the current directory
+and writable.
+[default: h4cc h4fc]
+.TP 
+\*(T<\fB\-show\fR\*(T>
+Show the commands without executing them

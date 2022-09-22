@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<refentry id='hdiff'>
+
+  <refmeta>
+    <refentrytitle>hdiff</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>hdiff</refname>
+    <refpurpose>compares two HDF files and reports the differences</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>hdiff</command>
+      <arg choice='opt'><option>-V</option></arg>
+      <arg choice='opt'><option>-b</option></arg>
+      <arg choice='opt'><option>-g</option></arg>
+      <arg choice='opt'><option>-s</option></arg>
+      <arg choice='opt'><option>-d</option></arg>
+      <arg choice='opt'><option>-D</option></arg>
+      <arg choice='opt'><option>-S</option></arg>
+      <arg choice='opt'><option>-v</option> <replaceable>var1[,...]</replaceable></arg>
+      <arg choice='opt'><option>-u</option> <replaceable>var1[,...]</replaceable></arg>
+      <arg choice='opt'><option>-e</option> <replaceable>count</replaceable></arg>
+      <arg choice='opt'><option>-t</option> <replaceable>limit</replaceable></arg>
+      <arg choice='opt'><option>-p</option> <replaceable>relative</replaceable></arg>
+      <arg choice='plain'><filename>file1</filename></arg>
+      <arg choice='plain'><filename>file2</filename></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>hdiff</command> compares two HDF files and reports the
+      differences.
+    </para>
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+
+      <varlistentry>
+        <term><option>-V</option></term>
+        <listitem>
+          <para>
+            Display version of the HDF4 library and exit
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-b</option></term>
+        <listitem>
+          <para>
+            Verbose mode
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-g</option></term>
+        <listitem>
+          <para>
+            Compare global attributes only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-s</option></term>
+        <listitem>
+          <para>
+            Compare SD local attributes only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-d</option></term>
+        <listitem>
+          <para>
+            Compare SD data only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-D</option></term>
+        <listitem>
+          <para>
+            Compare Vdata data only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-S</option></term>
+        <listitem>
+          <para>
+            Print statistics
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-v</option> <replaceable>var1[,...]</replaceable></term>
+        <listitem>
+          <para>
+            Compare SD data on variable(s) <replaceable>var1</replaceable>,...
+            only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-u</option> <replaceable>var1[,...]</replaceable></term>
+        <listitem>
+          <para>
+            Compare vdata on variable(s) <replaceable>var1</replaceable>,... only
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-e</option> <replaceable>count</replaceable></term>
+        <listitem>
+          <para>
+            Print difference up to count number for each variable
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-t</option> <replaceable>limit</replaceable></term>
+        <listitem>
+          <para>
+            Print difference when it is greater than limit
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-p</option> <replaceable>relative</replaceable></term>
+        <listitem>
+          <para>
+            Print difference when it is greater than a relative limit
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>file1</filename></term>
+        <listitem>
+          <para>
+            File name of the first HDF file
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>file2</filename></term>
+        <listitem>
+          <para>
+            File name of the second HDF file
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+    <para>
+      The '<replaceable>count</replaceable>' value must be a positive integer
+    </para>
+    <para>
+      The '<replaceable>limit</replaceable>'
+      and '<replaceable>relative</replaceable>'
+      values must be positive numbers
+    </para>
+    <para>
+      The <option>-t</option> compare criteria is |a - b| &gt; limit
+    </para>
+    <para>
+      The <option>-p</option> compare criteria is |(b-a)/a| &gt; relative
+    </para>
+    <para>
+      Return codes: 0 (no differences found), 1 (differences found)
+    </para>
+  </refsect1>
+
+</refentry>

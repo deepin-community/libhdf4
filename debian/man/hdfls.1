@@ -1,0 +1,101 @@
+.TH HDFLS 1 "October 31, 1999"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.SH NAME
+hdfls \- list basic information about an HDF file
+.SH SYNOPSIS
+\fBhdfls\fP
+[\fB-o\fP]
+[\fB-l\fP]
+[\fB-d\fP]
+[\fB-v\fP]
+[\fB-g\fP]
+[\fB-s\fP]
+[\fB-h\fP]
+[\fB-t\fP \fIn\fP]
+\fIhdf_file\fP
+.SH DESCRIPTION
+\fBhdfls\fP provides general information about the tags,
+reference numbers, and if requested, lengths of the data elements.
+.SH OPTIONS
+.TP
+.BI -o
+display the reference numbers in ascending order.
+.TP
+.BI -l
+long format.  Display more information about the file.
+.TP
+.BI -d
+Display offset and length information for each element in the file.
+.TP
+.BI -v
+verbose.  Display annotation and label text, along with the format
+triggered by the -l flag.
+.TP
+.BI -g
+Group.  List items by group.
+.TP
+.BI -s
+Special elements.  Display detailed information about special
+elements.
+.TP
+.BI -d
+Display offset and length information for each element in
+the file.
+.TP
+.BI -h
+Dump DD block information.
+.TP
+.BI -t " n"
+Tag.  Only list information about the specified tag. Must be followed
+by a tag number.
+.SH EXAMPLES
+A file called "aa.hdf" contains three items associated with a raster
+image; the image dimensions, a palette, and the raster image. To
+display information about the contents of this file, the following
+command is used.
+.sp
+hdfls aa.hdf
+.sp
+The following output is displayed:
+.nf
+
+
+        aa.hdf:
+
+Image Dimensions-8:                     (Raster-8): (tag 200)
+
+        Ref nos: 1
+
+Image Palette-8:                        (Raster-8): (tag 201)
+
+        Ref nos: 3
+
+Raster Image-8:                 (Raster-8): (tag 202)
+
+        Ref nos: 1
+
+.fi
+The following displays the same information with the length of each
+data element:
+.sp
+hdfls -l aa.hdf
+.sp
+This would result in the following information being displayed:
+.nf
+
+        aa.hdf:
+
+        Image Dimensions-8:             (Raster-8)      : (tag 200)
+
+        Ref no 1                4 bytes
+
+        Image Palette-8:                (Raster-8)      : (tag 201)
+
+        Ref no 3                768 bytes
+
+        Raster Image-8:         (Raster-8)      : (tag 202)
+
+        Ref no 1                120000 bytes
+.fi
+.SH "SEE ALSO"
+\fBhdf\fP(5)

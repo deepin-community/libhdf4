@@ -1,0 +1,3 @@
+# -fdebug-prefix-map
+file-references-package-build-path *.settings
+

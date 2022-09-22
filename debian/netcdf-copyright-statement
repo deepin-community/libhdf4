@@ -1,0 +1,94 @@
+From russ@unidata.ucar.edu Mon Jul  7 21:06:13 2008
+Delivered-To: f.lovergine@gmail.com
+Received: from gmail-pop.l.google.com [209.85.135.111]
+	by klecker.ba.issia.cnr.it with POP3 (fetchmail-6.3.9-rc2)
+	for <frankie@localhost> (single-drop); Mon, 07 Jul 2008 21:06:13 +0200 (CEST)
+Received: by 10.150.147.18 with SMTP id u18cs109784ybd;
+        Mon, 7 Jul 2008 12:05:32 -0700 (PDT)
+Received: by 10.141.49.6 with SMTP id b6mr2673644rvk.89.1215457530919;
+        Mon, 07 Jul 2008 12:05:30 -0700 (PDT)
+Return-Path: <russ@unidata.ucar.edu>
+Received: from master.debian.org (master.debian.org [70.103.162.29])
+        by mx.google.com with ESMTP id k2si6971569rvb.4.2008.07.07.12.05.30;
+        Mon, 07 Jul 2008 12:05:30 -0700 (PDT)
+Received-SPF: fail (google.com: domain of russ@unidata.ucar.edu does not designate 70.103.162.29 as permitted sender) client-ip=70.103.162.29;
+Authentication-Results: mx.google.com; spf=hardfail (google.com: domain of russ@unidata.ucar.edu does not designate 70.103.162.29 as permitted sender) smtp.mail=russ@unidata.ucar.edu
+Received: from laraine.unidata.ucar.edu ([128.117.140.62])
+	by master.debian.org with esmtp (Exim 4.63)
+	(envelope-from <russ@unidata.ucar.edu>)
+	id 1KFw1h-0004ek-Qm
+	for f.lovergine@gmail.com; Mon, 07 Jul 2008 19:05:29 +0000
+Received: from [128.117.156.29] (buddy.unidata.ucar.edu [128.117.156.29])
+	by laraine.unidata.ucar.edu (Postfix) with ESMTP id 975AECB19C
+	for <frankie@debian.org>; Mon,  7 Jul 2008 13:05:23 -0600 (MDT)
+Message-ID: <487268F3.8090607@unidata.ucar.edu>
+Date: Mon, 07 Jul 2008 13:05:23 -0600
+From: Russ Rew <russ@unidata.ucar.edu>
+User-Agent: Thunderbird 2.0.0.9 (X11/20080118)
+MIME-Version: 1.0
+To: "Francesco P. Lovergine" <frankie@debian.org>
+Subject: Debian concerns about past NetCDF license in HDF4
+X-Enigmail-Version: 0.95.1
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Status: RO
+Content-Length: 2189
+Lines: 56
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi Francesco,
+
+> I'm one of the current maintainers of HDF4/5 stuff in Debian GNU/Linux.
+>
+> We in Debian project (as many of you probably already know) are extremely
+> concerned about licensing and recently our ftpmasters found that
+> the NetCDF COPYRIGHT included in the HDF4 recent source (4.2r3)
+> includes the known old BSD-like 'advertising clause' which is
+> not GPL-compatible. Recent sources of NetCDF relaxed that
+> condition, but the orginal source used by HDF4 team to derive
+> NetCDF support in HDF4 does not.
+>
+> My idea is that an official statement by NetCDF group=20
+> to retroactively relicense the old stuff would help in order to=20
+> manage the license issue we found.
+>
+> A signed email by both parties would be great for instance,
+> so that next HDF4 release could be updated.
+
+In March 1996, I changed netCDF licensing to replace the obligation to
+credit UCAR/Unidata in products or publications that made use of netCDF,
+after email discussion with Richard Stallman convinced me that the
+original language caused a problem.  We also announced the licensing
+change on our "What's new with netCDF" web page in April 1996, as
+recorded here:
+
+  http://www.unidata.ucar.edu/software/netcdf/whatsnew.html
+
+where we also credit Stallman for suggesting the change.
+
+As head of the group that develops and maintains netCDF software, I'm
+happy to retroactively relicense the netCDF software released before
+April 1996 to use the copyright conditions under which netCDF software
+has been subsequently licensed:
+
+  http://www.unidata.ucar.edu/software/netcdf/copyright.html
+
+If you need anything more official, please let us know.
+
+- --Russ
+_____________________________________________________________________
+
+Russ Rew                                         UCAR Unidata Program
+Head, Data Services Group                 http://www.unidata.ucar.edu
+russ@unidata.ucar.edu
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (SunOS)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iEYEARECAAYFAkhyaPMACgkQH+XVv/37osWtxwCffuR9Mmb9wif04HiE799OC7Dq
+8IYAn14ujZM+8/F3oyUlALc2xqKJnblE
+=6Kqc
+-----END PGP SIGNATURE-----
+

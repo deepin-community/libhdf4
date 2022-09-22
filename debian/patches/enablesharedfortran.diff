@@ -1,0 +1,31 @@
+Description: Enable support for shared fortran libraries.
+Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -290,15 +290,16 @@ fi
+ ## Build static libraries by default. Furthermore, fortran shared libraries
+ ## are unsupported. Disallow a user from enabling both shared libraries and
+ ## fortran.
+-if test "X${enable_shared}" != "Xyes"; then
+-    enable_shared="no"
+-fi
+-
+-if test "X${enable_shared}" = "Xyes"; then
+-    if test "X${BUILD_FORTRAN}" = "Xyes"; then
+-        AC_MSG_ERROR([Cannot build shared fortran libraries. Please configure with --disable-fortran flag.])
+-    fi
+-fi
++#this test is overwritten in debian - we allow shared fortran libraries
++#if test "X${enable_shared}" != "Xyes"; then
++#    enable_shared="no"
++#fi
++#
++#if test "X${enable_shared}" = "Xyes"; then
++#    if test "X${BUILD_FORTRAN}" = "Xyes"; then
++#        AC_MSG_ERROR([Cannot build shared fortran libraries. Please configure with --disable-fortran flag.])
++#    fi
++#fi
+ 
+ AC_PROG_INSTALL
+ AC_PROG_LN_S

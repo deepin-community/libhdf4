@@ -1,0 +1,143 @@
+Source: libhdf4
+Maintainer: Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>
+Uploaders: Francesco Paolo Lovergine <frankie@debian.org>,
+           Johan Van de Wauw <johan@gisky.be>
+Section: graphics
+Priority: optional
+Build-Depends: debhelper-compat (= 12),
+               bison,
+               chrpath,
+               flex,
+               gfortran,
+               libaec-dev,
+               libjpeg-dev,
+               sharutils,
+               zlib1g-dev
+Standards-Version: 4.6.0
+Vcs-Browser: https://salsa.debian.org/debian-gis-team/hdf4
+Vcs-Git: https://salsa.debian.org/debian-gis-team/hdf4.git
+Homepage: http://www.hdfgroup.com/
+
+Package: libhdf4-0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Suggests: libhdf4-doc,
+          libhdf4-dev,
+          hdf4-tools
+Description: Hierarchical Data Format library (embedded NetCDF)
+ HDF is a multi-object file format for storing and transferring
+ graphical and numerical data mainly used in scientific computing. HDF
+ supports several different data models, including multidimensional
+ arrays, raster images, and tables. Each defines a specific aggregate
+ data type and provides an API for reading, writing, and organizing the
+ data and metadata. New data models can be added by the HDF developers
+ or users.
+ .
+ This package contains the HDF run-time libraries.
+
+Package: libhdf4-dev
+Architecture: any
+Section: libdevel
+Depends: libhdf4-0 (= ${binary:Version}),
+         libjpeg-dev,
+         zlib1g-dev,
+         ${misc:Depends}
+Breaks: libhdf4g-dev (<< 4.2r4-1)
+Conflicts: libhdf4-alt-dev
+Replaces: libhdf4g-dev (<< 4.2r4-1)
+Description: Hierarchical Data Format development files (embedded NetCDF)
+ HDF is a multi-object file format for storing and transferring
+ graphical and numerical data mainly used in scientific computing. HDF
+ supports several different data models, including multidimensional
+ arrays, raster images, and tables.
+ Each defines a specific aggregate data type and provides an API for
+ reading, writing, and organizing the data and metadata. New data models
+ can be added by the HDF developers or users.
+ .
+ This package contains development stuff, including files and static
+ library for the HDF package and some HDF API reference manpages.
+
+Package: libhdf4-0-alt
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Suggests: libhdf4-doc,
+          libhdf4-alt-dev,
+          hdf4-tools
+Description: Hierarchical Data Format library (without NetCDF)
+ HDF is a multi-object file format for storing and transferring
+ graphical and numerical data mainly used in scientific computing. HDF
+ supports several different data models, including multidimensional
+ arrays, raster images, and tables. Each defines a specific aggregate
+ data type and provides an API for reading, writing, and organizing the
+ data and metadata. New data models can be added by the HDF developers
+ or users.
+ .
+ This package contains the HDF run-time libraries which do not
+ collide with the NetCDF library namespace. Fortran functions
+ are missing in this flavor of the library set.
+
+Package: libhdf4-alt-dev
+Architecture: any
+Section: libdevel
+Depends: libhdf4-0-alt (= ${binary:Version}),
+         libjpeg-dev,
+         libnetcdf-dev,
+         zlib1g-dev,
+         ${misc:Depends}
+Breaks: libhdf4g-dev (<< 4.2r4-1)
+Conflicts: libhdf4-dev
+Replaces: libhdf4g-dev (<< 4.2r4-1)
+Description: Hierarchical Data Format development files (without NetCDF)
+ HDF is a multi-object file format for storing and transferring
+ graphical and numerical data mainly used in scientific computing. HDF
+ supports several different data models, including multidimensional
+ arrays, raster images, and tables.
+ Each defines a specific aggregate data type and provides an API for
+ reading, writing, and organizing the data and metadata. New data models
+ can be added by the HDF developers or users.
+ .
+ This package contains development stuff, including files and static
+ library for the HDF package in the flavor compatible with the
+ NetCDF library.
+
+Package: libhdf4-doc
+Architecture: all
+Multi-Arch: foreign
+Section: doc
+Depends: ${misc:Depends}
+Suggests: libhdf4-dev
+Breaks: libhdf4g-doc (<< 4.2r4-1)
+Provides: libhdf4g-doc
+Replaces: libhdf4g-doc (<< 4.2r4-1)
+Description: Hierarchical Data Format library -- documentation
+ HDF  is  a  multi-object  file  format  for  storing  and  transferring
+ graphical  and  numerical data mainly used in scientific computing.
+ HDF  supports  several different  data models, including  multidimensional
+ arrays, raster images,  and tables.
+ Each defines  a specific aggregate  data type  and provides an  API for
+ reading, writing, and organizing the data and metadata. New data models
+ can be added by the HDF developers or users.
+ .
+ This package contains user guide and reference manual for HDF format
+ and API
+
+Package: hdf4-tools
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Description: Hierarchical Data Format library -- runtime package
+ HDF is a multi-object file format for storing and transferring
+ graphical and numerical data mainly used in scientific computing. HDF
+ supports several different data models, including multidimensional
+ arrays, raster images, and tables.
+ Each defines a specific aggregate data type and provides an API for
+ reading, writing, and organizing the data and metadata. New data models
+ can be added by the HDF developers or users.
+ .
+ This package includes some basic utilities to view, pack, unpack,
+ HDF files.

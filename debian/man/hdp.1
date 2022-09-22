@@ -1,0 +1,293 @@
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>     -*- nroff -*-
+.TH HDP 1 "November 6, 1999"
+.SH NAME
+.ad l
+.nh
+hdp \- display general information about the contents of an HDF file
+.SH SYNOPSIS
+.HP
+\fBhdp\fP
+[\fB-H\fP \fIcommand\fP]
+\fIhdf-file\fP
+.ad b
+.hy
+.SH DESCRIPTION
+\fBhdp\fP provides quick and general information about all objects in
+the specified HDF file. It can list the contents of HDF files at
+various levels with different details. It can also dump the data of
+one or more specific objects in the file.
+.P
+Like \fBhdfed\fP, \fBhdp\fP provides a set of commands that allow the
+user to determine what kind of information is to be displayed.  The
+commands are documented in
+\fI/usr/share/doc/libhdf4g/html-userguide/Utils14.html\fP.
+.SH OPTIONS
+.TP
+.BR -H " [\fIcommand\fP]"
+Display usage information about the specified command. If no
+command is listed, information about all commands is displayed.
+.SH COMMANDS
+.TP
+.BI   list
+Displays the contents of the HDF files in the specified format.
+.TP
+.BI   dumpsds
+Displays the contents of the SDSs in the listed files.
+.TP
+.BI   dumpvd
+Displays the contents of the vdata objects in the listed files.
+.TP
+.BI   dumpvg
+Displays the contents of the vgroup objects in the listed files.
+.TP
+.BI   dumprig
+Displays the contents of the RIGs in the listed files.
+.SH "COMMAND DETAILS"
+\fBlist\fP displays the contents of the HDF files in the specified
+format.  As with the 'info' command, the listing for special elements
+will contain a special tag value (for DFTAG_VS it's 18347) and the
+text "Unknown Tag".  The \fBlist\fP command has the following syntax:
+.ad l
+.nh
+.HP
+\fBlist\fP [\fB-s\fP|\fB-l\fP|\fB-d\fP]
+[\fB-n\fP|\fB-c\fP|\fB-a\fP]
+[\fB-g\fP|\fB-t\fP \fInumber-or-name\fP]
+[\fB-ot\fP|\fB-of\fP|\fB-og\fP|\fB-on\fP]
+message
+.ad b
+.hy
+.P
+The \fBlist\fP command accepts these options:
+.TP
+.BI -s
+Short format.
+.TP
+.BI -l
+Long format.
+.TP
+.BI        -d
+Debug format.
+.TP
+.BI        -n
+Display the object name.
+.TP
+.BI -c
+Display the object class.
+.TP
+.BI -a
+Display the object description.
+.TP
+.BI -g
+Display groups only.
+.TP
+.BI -t " number-or-name"
+Display objects with the specified tag number or name.
+.TP
+.BI -ot
+Sort by tag.
+.TP
+.BI -of
+Sort by position in the data descriptor list.
+.TP
+.BI -og
+Sort by group.
+.TP
+.BI -on
+Sort by name.
+.P
+\fBdumpsds\fP displays SDS information in the specified format.  The
+\fBdumpsds\fP command has the following syntax:
+.ad l
+.nh
+.HP
+\fBdumpsds\fP
+[\fB-i\fP \fIindex\fP | \fB-r\fP \fIref-list\fP | \fB-n\fP
+\fIname-list\fP
+| \fB-a\fP]
+[\fB-v\fP|\fB-h\fP|\fB-d\fP]
+[\fB-o\fP \fIfilename\fP | \fB-b\fP | \fB-t\fP]
+.ad b
+.hy
+.P
+\fBdumpsds\fP accepts these options:
+.TP
+.BI -i " index"
+Dump SDSs with the specified index.
+.TP
+.BI -r " ref-list"
+Dump SDSs with the specified reference numbers.
+.TP
+.BI -n " name-list"
+Dump SDSs with the specified names.
+.TP
+.BI -a
+Dump all SDSs.
+.TP
+.BI -v
+Display all SDS contents including annotations.
+.TP
+.BI -h
+Display the SDS header only.
+.TP
+.BI -d
+Display the SDS data only.
+.TP
+.BI -o " outfile"
+Print information to the specified file.
+.TP
+.BI -b
+Specify output file as binary.
+.TP
+.BI -t
+Specify output file as text.
+.P
+\fBdumpvd\fP displays vdata information in the specified format.  The
+\fBdumpvd\fP command has this syntax:
+.ad l
+.nh
+.HP
+\fBdumpvd\fP
+[\fB-i\fP \fIindex\fP | \fB-r\fP \fIref-list\fP | \fB-n\fP
+\fIname-list\fP |
+\fB-c\fP \fIclass\fP |
+[\fB-a\fP] [\fB-v\fP|\fB-h\fP|\fB-f\fP|\fB-d\fP]
+[\fB-o\fP \fIfilename\fP | \fB-b\fP | \fB-t\fP]
+.ad b
+.hy
+.P
+\fBdumpvd\fP accepts these options:
+.TP
+.BI -i " index"
+Dump vdatas with the specified index.
+.TP
+.BI -r " ref-list"
+Dump vdatas with the specified reference numbers.
+.TP
+.BI -c " class"
+Dump vdatas with the specified class.
+.TP
+.BI -n " name-list"
+Dump vdatas with the specified names.
+.TP
+.BI -a
+Dump all vdatas.
+.TP
+.BI -v
+Display all vdata contents including annotations.
+.TP
+.BI -h
+Display the vdata header only.
+.TP
+.BI -d
+Display the vdata data only.
+.TP
+.BI -f
+Display the vdata field data only.
+.TP
+.BI -o " outfile"
+Print information to the specified file.
+.TP
+.BI -b
+Specify output file as binary.
+.TP
+.BI -t
+Specify output file as text.
+.P
+\fBdumpvg\fP displays vgroup information in the specified format.
+\fBdumpvg\fP command has this syntax:
+.ad l
+.nh
+.HP
+\fBdumpvg\fP [\fB-i\fP \fIindex\fP | \fB-r\fP \fIref-list\fP |
+\fB-n\fP \fIname-list\fP | \fB-c\fP
+\fIclass\fP |
+[\fB-a\fP]
+[\fB-v\fP|\fB-h\fP|\fB-d\fP]
+[\fB-o\fP \fIfilename\fP | \fB-b\fP | \fB-t\fP]
+.ad b
+.hy
+.P
+\fBdumpvg\fP accepts these options:
+.TP
+.BI -i " index"
+Dump vgroups with the specified index.
+.TP
+.BI -r " ref-list"
+Dump vgroups with the specified reference numbers.
+.TP
+.BI -c " class"
+Dump vgroups with the specified class.
+.TP
+.BI -n " name-list"
+Dump vgroups with the specified names.
+.TP
+.BI -a
+Dump all vgroups.
+.TP
+.BI -v
+Display all vgroup contents including annotations.
+.TP
+.BI -h
+Display the vgroup header only.
+.TP
+.BI -d
+Display the vgroup data only.
+.TP
+.BI -o " outfile"
+Print information to the specified file.
+.TP
+.BI -b
+Specify output file as binary.
+.TP
+.BI -t
+Specify output file as text.
+.P
+\fBdumprig\fP displays RIG information in the specified format.
+\fBdumprig\fP command has this syntax:
+.ad l
+.nh
+.HP
+\fBdumprig\fP [\fB-i\fP \fIindex\fP |
+\fB-r\fP \fIref-list\fP |
+\fB-m\fP <8, 24> |
+[\fB-a\fP]
+[\fB-v\fP|\fB-h\fP|\fB-d\fP]
+[\fB-o\fP \fIfilename\fP | \fB-b\fP | \fB-t\fP]
+.ad b
+.hy
+.P
+\fBdumprig\fP accepts these options:
+.TP
+.BI -i " index"
+Dump RIGs with the specified index.
+.TP
+.BI -r " ref-list"
+Dump RIGs with the specified reference numbers.
+.TP
+.BI -m " data-length"
+Dump RIGs with the specified data length: 8- or 24-bit.
+.TP
+.BI -a
+Dump all RIGs.
+.TP
+.BI -v
+Display RIG contents including annotations.
+.TP
+.BI -h
+Display the RIG header only.
+.TP
+.BI -d
+Display the RIG data only.
+.TP
+.BI -o " outfile"
+Print information to the specified file.
+.TP
+.BI -b
+Specify output file as binary.
+.TP
+.BI -t
+Specify output file as text.
+.SH "SEE ALSO"
+\fBhdfed\fP(1), \fBhdf\fP(5),
+\fI/usr/share/doc/libhdf4g/html-userguide/Utils14.html\fP.
