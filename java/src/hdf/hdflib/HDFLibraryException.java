@@ -7,8 +7,8 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
+ * https://www.hdfgroup.org/licenses.  If you do not have access to the      *
+ * file, you may request a copy from help@hdfgroup.org.                      *
  ****************************************************************************/
 
 package hdf.hdflib;
@@ -26,22 +26,36 @@ package hdf.hdflib;
 
 public class HDFLibraryException extends HDFException {
 
-    public HDFLibraryException() {
-        super();
-    }
+    /**
+     * Constructs an <code>HDFLibraryException</code> with no specified detail
+     * message.
+     */
+    public HDFLibraryException() { super(); }
 
-    public HDFLibraryException(String s) {
-        super("HDFLibraryException: " + s);
-    }
+    /**
+     * Constructs an <code>HDFLibraryException</code> with the specified detail
+     * message.
+     *
+     * @param s
+     *            the detail message.
+     */
+    public HDFLibraryException(String s) { super("HDFLibraryException: " + s); }
 
-    public HDFLibraryException(int err) {
-        super(err);
-    }
+    /**
+     * Constructs an <code>HDFLibraryException</code> with the specified detail
+     * error number.
+     *
+     * @param err
+     *            the detail error number.
+     */
+    public HDFLibraryException(int err) { super(err); }
 
+    /** */
     @Override
-    public String getMessage() {
-        if (msg != null) {
-            return msg;
+    public String getMessage()
+    {
+        if (detailMessage != null) {
+            return detailMessage;
         }
 
         String s;
@@ -51,8 +65,8 @@ public class HDFLibraryException extends HDFException {
         catch (HDFException e) {
             s = new String("HDF error number: " + HDFerror + ", HEstring failed");
         }
-        msg = "HDFLibraryException: " + s;
-        return msg;
+        detailMessage = "HDFLibraryException: " + s;
+        return detailMessage;
     }
 
     /**
@@ -60,9 +74,10 @@ public class HDFLibraryException extends HDFException {
      * trace to the standard error stream.
      */
     @Override
-    public void printStackTrace() {
+    public void printStackTrace()
+    {
         System.err.println(this);
-        printStackTrace0(null); // the HDF Library error stack
+        printStackTrace0(null);  // the HDF Library error stack
         super.printStackTrace(); // the Java stack trace
     }
 
@@ -73,21 +88,21 @@ public class HDFLibraryException extends HDFException {
      * @param f
      *            the file print stream.
      */
-    public void printStackTrace(java.io.File f) {
+    public void printStackTrace(java.io.File f)
+    {
         if ((f == null) || !f.exists() || f.isDirectory() || !f.canWrite()) {
             printStackTrace();
         }
         else {
             try {
                 java.io.FileOutputStream o = new java.io.FileOutputStream(f);
-                java.io.PrintWriter p = new java.io.PrintWriter(o);
+                java.io.PrintWriter p      = new java.io.PrintWriter(o);
                 p.println(this);
                 p.close();
             }
             catch (Exception ex) {
                 System.err.println(this);
-            }
-            ;
+            };
             // the HDF Library error stack
             printStackTrace0(f.getPath());
             super.printStackTrace(); // the Java stack trace

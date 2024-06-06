@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*-----------------------------------------------------------------------------
  * File:    dfutilf.c
  * Purpose: C stubs for Fortran utility routines
@@ -21,8 +19,9 @@
  *  dfindnr_:       For a given tag, find the next ref after the given ref
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
+
 /*-----------------------------------------------------------------------------
  * Name:    dfindnr
  * Purpose: For this tag, find the ref after lref
@@ -35,10 +34,10 @@
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-ndfindnr(intf * dfile, intf * tag, intf * lref)
+intf
+ndfindnr(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16) *tag, (uint16) *lref));
+    return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
 }
 
 /*
@@ -57,8 +56,8 @@ ndfindnr(intf * dfile, intf * tag, intf * lref)
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-ndffindnextref(intf * dfile, intf * tag, intf * lref)
+intf
+ndffindnextref(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16) *tag, (uint16) *lref));
+    return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
 }

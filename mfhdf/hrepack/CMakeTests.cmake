@@ -22,18 +22,13 @@ add_custom_target(hrepack_files ALL COMMENT "Copying files needed by hrepack tes
 
 #-- Adding test for test_hrepack for generating testfiles
 add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
+target_include_directories(test_hrepack PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (test_hrepack STATIC)
   target_link_libraries (test_hrepack PRIVATE ${HDF4_MF_LIB_TARGET} ${LINK_COMP_LIBS})
 else ()
   TARGET_C_PROPERTIES (test_hrepack SHARED)
   target_link_libraries (test_hrepack PRIVATE ${HDF4_MF_LIBSH_TARGET} ${LINK_COMP_LIBS})
-endif ()
-
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "-shared")
 endif ()
 
 macro (ADD_H4_TEST testname testtype testfile)
@@ -52,12 +47,12 @@ macro (ADD_H4_TEST testname testtype testfile)
     set_tests_properties (HREPACK-${testname}-clearall-objects PROPERTIES DEPENDS HREPACK-test_hrepack LABELS ${PROJECT_NAME})
     add_test (
         NAME HREPACK-${testname}
-        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hrepack${tgt_ext}> -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}
+        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hrepack> -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}
     )
     set_tests_properties (HREPACK-${testname} PROPERTIES DEPENDS HREPACK-${testname}-clearall-objects LABELS ${PROJECT_NAME})
     add_test (
         NAME HREPACK-${testname}_DFF
-        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff${tgt_ext}> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
+        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
     )
     set_tests_properties (HREPACK-${testname}_DFF PROPERTIES DEPENDS HREPACK-${testname} LABELS ${PROJECT_NAME})
   endif ()
@@ -84,13 +79,13 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
       NAME HREPACK-hrepack_check
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack_check${tgt_ext}>"
+          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack_check>"
           -D "TEST_ARGS:STRING=${ARGN}"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=hrepack_check_help.out"
           -D "TEST_EXPECT=1"
           -D "TEST_REFERENCE=hrepack_check_help.txt"
-          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_DIR}/runTest.cmake"
   )
   set_tests_properties (HREPACK-hrepack_check PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
 endif ()
@@ -100,13 +95,13 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
       NAME HREPACK-hrepack_help
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack${tgt_ext}>"
+          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack>"
           -D "TEST_ARGS:STRING=${ARGN}"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=hrepack_help.out"
           -D "TEST_EXPECT=0"
           -D "TEST_REFERENCE=hrepack_help.txt"
-          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_DIR}/runTest.cmake"
   )
   set_tests_properties (HREPACK-hrepack_help PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
 endif ()

@@ -11,13 +11,12 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$ 
 C
 C------------------------------------------------------------------------------
 C File:     dfsdFf.f
 C Purpose:  Fortran stubs for Fortran SDS routines
 C Invokes:  dfsdF.c dfsd.c
-C Contents: 
+C Contents:
 C   dsgdims:        get dimensions of next SDG
 C   dsgdata:        get data for next SDG
 C   dssdast:        set strings for data for subsequent SDGs
@@ -270,7 +269,7 @@ C Input:    filename: name of HDF file
 C           ref: the ref number of the SDG
 C           ispre32: set to TRUE if the SDG/ref was written by old library;
 C                        to FALSE otherwise.
-C Retruns:  0 on success, -1 on failure
+C Returns:  0 on success, -1 on failure
 C Users:    HDF Fortran programmers
 C------------------------------------------------------------------------------
 
@@ -505,8 +504,8 @@ C------------------------------------------------------------------------------
 
 C------------------------------------------------------------------------------
 C Name:     dfsdgetdimstrs
-C Purpose:  return the label unit and format for the current SDGs 
-C Inputs:   
+C Purpose:  return the label unit and format for the current SDGs
+C Inputs:
 C Returns:  -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
 C Invokes:  dsinum
@@ -525,8 +524,8 @@ C------------------------------------------------------------------------------
 
 C------------------------------------------------------------------------------
 C Name:     dsgdist
-C Purpose:  return the label unit and format for the current SDGs 
-C Inputs:   
+C Purpose:  return the label unit and format for the current SDGs
+C Inputs:
 C Returns:  -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
 C Invokes:  dsinum
@@ -544,8 +543,8 @@ C------------------------------------------------------------------------------
 
 C------------------------------------------------------------------------------
 C Name:     dsgdast
-C Purpose:  return the label unit and format for the current SDGs 
-C Inputs:   
+C Purpose:  return the label unit and format for the current SDGs
+C Inputs:
 C Returns:  -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
 C Invokes:  dsinum
@@ -576,7 +575,7 @@ C------------------------------------------------------------------------------
       integer ref, dsiwref
 
       dswref = dsiwref(filename, len(filename), ref)
- 
+
       return
       end
 
@@ -594,7 +593,7 @@ C------------------------------------------------------------------------------
       integer dsisslab
 
       dssslab = dsisslab(filename, len(filename))
- 
+
       return
       end
 
@@ -617,7 +616,7 @@ C------------------------------------------------------------------------------
       character*(*) fname
       integer start, slabsize, stride, buffer, buffersize, dsirslab
 
-      dsrslab = dsirslab(fname, len(fname), start, slabsize, stride, 
+      dsrslab = dsirslab(fname, len(fname), start, slabsize, stride,
      +                   buffer, buffersize)
 
       return

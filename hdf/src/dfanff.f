@@ -11,13 +11,12 @@ C* If you do not have access to either file, you may request a copy from     *
 C* help@hdfgroup.org.                                                        *
 C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C
-C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     dfanFf.f
 C Purpose:    Fortran stub routines for annotations
 C Invokes:    dfanF.c
-C Contents: 
+C Contents:
 C    dagllen      : get length of label of tag/ref
 C    daglab       : get label of tag/ref
 C    dagdlen      : get length of description of tag/ref
@@ -34,7 +33,7 @@ C    dfangetdesc  : get description of tag/ref
 C    dfanputlabel : put label of tag/ref
 C    dfanputdesc  : put description of tag/ref
 C    dfanlablist  : get list of labels for a particular tag
-C    dfanaddfid   : add file ID to file 
+C    dfanaddfid   : add file ID to file
 
 C------------------------------------------------------------------------------
 
@@ -179,7 +178,7 @@ C          reflist: array to place refs in
 C          labellist: array of strings to place labels in
 C          listsize: size of ref and label lists
 C          maxlen: maximum length allowed for label
-C          startpos: beginning from the startpos'th entry, upto listsize
+C          startpos: beginning from the startpos'th entry, up to listsize
 C                entries will be returned.
 C Returns: number of entries on success, -1 on error with DFerror set
 C Users:   HDF users, utilities, other routines
@@ -361,7 +360,7 @@ C          reflist: array to place refs in
 C          labellist: array of strings to place labels in
 C          listsize: size of ref and label lists
 C          maxlen: maximum length allowed for label
-C          startpos: beginning from the startpos'th entry, upto listsize
+C          startpos: beginning from the startpos'th entry, up to listsize
 C                entries will be returned.
 C Returns: number of entries on success, -1 on error with DFerror set
 C Users:   HDF users, utilities, other routines

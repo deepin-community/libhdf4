@@ -15,6 +15,7 @@ if (HDF4_BUILD_GENERATORS AND NOT ONLY_SHARED_LIBS)
   )
 
   add_executable (hdifftst ${hdifftst_SRCS})
+  target_include_directories(hdifftst PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
   if (BUILD_SHARED_LIBS)
     TARGET_C_PROPERTIES (hdifftst STATIC)
     target_link_libraries (hdifftst PRIVATE ${HDF4_MF_LIB_TARGET})
@@ -42,15 +43,9 @@ if (HDF4_BUILD_GENERATORS AND NOT ONLY_SHARED_LIBS)
   set (last_test "hdifftst")
 endif ()
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "-shared")
-endif ()
-
 macro (ADD_H4_TEST resultfile resultcode)
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HDIFF-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff${tgt_ext}> ${ARGN})
+    add_test (NAME HDIFF-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff> ${ARGN})
     if (NOT ${resultcode} STREQUAL "0")
       set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME} WILL_FAIL "true")
     else ()
@@ -61,13 +56,13 @@ macro (ADD_H4_TEST resultfile resultcode)
         NAME HDIFF-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdiff${tgt_ext}>"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdiff>"
             -D "TEST_ARGS:STRING=${ARGN}"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/testfiles"
             -D "TEST_OUTPUT=${resultfile}.out"
             -D "TEST_EXPECT=${resultcode}"
             -D "TEST_REFERENCE=${resultfile}.txt"
-            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+            -P "${HDF_RESOURCES_DIR}/runTest.cmake"
     )
   endif ()
   if (NOT "${last_test}" STREQUAL "")

@@ -11,13 +11,12 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     dfr8Ff.f
 C Purpose:  Fortran stubs for Fortran RIS routines
 C Invokes:  dfr8F.c
-C Contents: 
+C Contents:
 C   d8gdims       : call d8igdim to get dimensions of next image
 C   d8gimg        : call d8igimg to get next image
 C   d8pimg        : call d8ipimg to put image to new file

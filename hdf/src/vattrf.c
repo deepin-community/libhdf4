@@ -11,38 +11,36 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 /*
-   *
-   * vattrf.c
-   * Part of the HDF Vset attribute interface.
-   *
-   * C routines (short names) to be called from fortran
-   *
-   *
-   ******************************************************/
+ *
+ * vattrf.c
+ * Part of the HDF Vset attribute interface.
+ *
+ * C routines (short names) to be called from fortran
+ *
+ ******************************************************/
 
-#define VSET_INTERFACE
-#include "hdf.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 #include "hproto_fortran.h"
 
-/* ----------------- vsfcfdx ---------------------- 
+/* ----------------- vsfcfdx ----------------------
  *  get field index
  *  VSfindex -- vsfcfdx -- vsffidx
  */
 
-FRETVAL(intf)
-nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex,
-         intf *fldnmlen)
+intf
+nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen)
 {
     intf  ret;
     char *fld;
 
-    fld = HDf2cstring(fldnm, (intn) *fldnmlen);
-    if (!fld) return(FAIL);
-    ret = (intf) VSfindex((int32) *vsid, fld, (int32 *) findex);
-    HDfree(fld);
-    return(ret);
+    fld = HDf2cstring(fldnm, (intn)*fldnmlen);
+    if (!fld)
+        return FAIL;
+    ret = (intf)VSfindex((int32)*vsid, fld, (int32 *)findex);
+    free(fld);
+    return ret;
 }
 
 /* -------------------------------------------------
@@ -51,44 +49,44 @@ nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex,
  * VSsetattr -- vsfcsat -- vsfsnat
  */
 
-FRETVAL(intf)
-nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
-         intf *count, intf *values, intf *attrnmlen)
+intf
+nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, intf *values, intf *attrnmlen)
 {
     intf  ret;
     char *attrname;
     int32 cfindex;
 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
     cfindex = *findex;
-    ret = (intf )VSsetattr((int32) *vsid, (int32) cfindex, attrname,
-              (int32) *dtype, (int32) *count, (VOIDP) values);
-    HDfree(attrname);
-    return(ret);
-} 
+    ret =
+        (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count, (void *)values);
+    free(attrname);
+    return ret;
+}
 
 /* ----------------------------------------------------
  * vsfcsca -- set char attr for vdata or its field
- * 
+ *
  * VSsetattr -- vsfcsca -- vsfscat
  */
 
-FRETVAL(intf)
-nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
-         intf *count, _fcd values, intf *attrnmlen)
+intf
+nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, _fcd values, intf *attrnmlen)
 {
-    intf ret;
+    intf  ret;
     char *attrname;
     int32 cfindex;
- 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
+
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
     cfindex = *findex;
-    ret = (intf) VSsetattr((int32) *vsid, (int32) cfindex, attrname,
-          (int32) *dtype, (int32) *count, (VOIDP) _fcdtocp(values));
-    HDfree(attrname);
-    return(ret);
+    ret     = (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count,
+                              (void *)_fcdtocp(values));
+    free(attrname);
+    return ret;
 }
 
 /* -------------------------------------------------------
@@ -97,13 +95,13 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
  * VSnattrs -- vsfnats
  */
 
-FRETVAL(intf)
+intf
 nvsfnats(intf *vsid)
 {
-   intf ret;
+    intf ret;
 
-   ret = (intf) VSnattrs((int32) *vsid); 
-   return(ret);
+    ret = (intf)VSnattrs((int32)*vsid);
+    return ret;
 }
 
 /* -------------------------------------------------------
@@ -112,15 +110,15 @@ nvsfnats(intf *vsid)
  * VSfnattrs -- vsffnas
  */
 
-FRETVAL(intf)
+intf
 nvsffnas(intf *vsid, intf *findex)
-{ 
-    intf ret;
+{
+    intf  ret;
     int32 cfindex;
 
     cfindex = *findex;
-    ret = (intf) VSfnattrs((int32) *vsid, (int32) cfindex);
-    return(ret);
+    ret     = (intf)VSfnattrs((int32)*vsid, (int32)cfindex);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -129,20 +127,21 @@ nvsffnas(intf *vsid, intf *findex)
  *    VSfindattr -- vsfcfda -- vsffdat
  */
 
-FRETVAL(intf)
+intf
 nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
 {
-    intf ret;
+    intf  ret;
     char *attrname;
     int32 cfindex;
 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
     cfindex = *findex;
-    
-    ret = (intf) VSfindattr((int32) *vsid, (int32) cfindex, attrname);
-    HDfree(attrname);
-    return(ret);
+
+    ret = (intf)VSfindattr((int32)*vsid, (int32)cfindex, attrname);
+    free(attrname);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -150,70 +149,65 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
  * VSattrinfo -- vsfcain -- vsfainf
  */
 
-FRETVAL(intf)
-nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
-         intf *dtype, intf *count, intf *size, intf *attrnamelen)
+intf
+nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, intf *count, intf *size,
+         intf *attrnamelen)
 {
-    CONSTR(FUNC, "vsfainf");
     intf ret = FAIL;
     /* temporary variables */
     int32 cfindex;
     int32 tdtype, tcount, tsize;
-    char  *tattrname;
+    char *tattrname;
 
     cfindex = *findex;
     /* Allocate space for fortran strings */
-    tattrname = (char *) HDmalloc(*attrnamelen + 1);
+    tattrname = (char *)malloc(*attrnamelen + 1);
     if (!tattrname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    ret = (intf) VSattrinfo((int32) *vsid, (int32) cfindex, (int32) *aindex,
-          tattrname, &tdtype, &tcount, &tsize);
-    if (ret != FAIL){
-	/* move values from temporary space to fortran variables */
-	*dtype = tdtype;
-	*count = tcount;
-	*size = tsize;
-	/* convert C-string results back to Fortran strings */
-	HDpackFstring(tattrname, _fcdtocp(attrname), (intn) *attrnamelen);
+    ret = (intf)VSattrinfo((int32)*vsid, (int32)cfindex, (int32)*aindex, tattrname, &tdtype, &tcount, &tsize);
+    if (ret != FAIL) {
+        /* move values from temporary space to fortran variables */
+        *dtype = tdtype;
+        *count = tcount;
+        *size  = tsize;
+        /* convert C-string results back to Fortran strings */
+        HDpackFstring(tattrname, _fcdtocp(attrname), (intn)*attrnamelen);
     }
-    HDfree(tattrname);
-    return(ret);
+    free(tattrname);
+    return ret;
 }
 
-
 /* ---------------------------------------------------------
- * vsfgnat -- get values of a numeric attribute 
+ * vsfgnat -- get values of a numeric attribute
  * VSgetattr -- vsfgnat
  */
 
-FRETVAL(intf)
+intf
 nvsfgnat(intf *vsid, intf *findex, intf *aindex, intf *values)
 {
-    intf ret;
+    intf  ret;
     int32 cfindex;
 
     cfindex = *findex;
-    ret = (intf) VSgetattr((int32) *vsid,(int32) cfindex,(int32) *aindex,
-                           (VOIDP) values);
-    return(ret);
+    ret     = (intf)VSgetattr((int32)*vsid, (int32)cfindex, (int32)*aindex, (void *)values);
+    return ret;
 }
 
 /* --------------------------------------------------------
- * vsfgcat -- get values of a char type attribute 
+ * vsfgcat -- get values of a char type attribute
  * VSgetattr -- vsfgcat
  */
 
-FRETVAL(intf)
-nvsfgcat(intf *vsid,intf *findex,intf *aindex,_fcd values)
+intf
+nvsfgcat(intf *vsid, intf *findex, intf *aindex, _fcd values)
 {
-    intf ret;
+    intf  ret;
     int32 cfindex;
 
     cfindex = *findex;
-    ret = (intf )VSgetattr((int32) *vsid, cfindex, (int32) *aindex,
-                    (VOIDP) _fcdtocp(values));
-    return(ret);
+    ret     = (intf)VSgetattr((int32)*vsid, cfindex, (int32)*aindex, (void *)_fcdtocp(values));
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -221,12 +215,12 @@ nvsfgcat(intf *vsid,intf *findex,intf *aindex,_fcd values)
  * VSisattr -- vsfisat
  */
 
-FRETVAL(intf)
+intf
 nvsfisat(intf *vsid)
 {
     intf ret;
-    ret = (intf) VSisattr((int32) *vsid);
-    return(ret);
+    ret = (intf)VSisattr((int32)*vsid);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -234,54 +228,52 @@ nvsfisat(intf *vsid)
  * Vsetattr -- vfcsatt -- vfsnatt
  */
 
-FRETVAL(intf)
-nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype,
-         intf *count, intf *values, intf *attrnmlen)
+intf
+nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype, intf *count, intf *values, intf *attrnmlen)
 {
     intf  ret;
     char *attrname;
 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
-    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype, 
-                   (int32) *count, (VOIDP) values);
-    HDfree(attrname);
-    return(ret);
-} 
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
+    ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)values);
+    free(attrname);
+    return ret;
+}
 
 /* ----------------------------------------------------
  * vfcscat -- set char attr for vgroup
- * 
+ *
  * Vsetattr -- vfcscat -- vfscatt
  */
 
-FRETVAL(intf)
-nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, 
-         _fcd values, intf *attrnmlen)
+intf
+nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, _fcd values, intf *attrnmlen)
 {
-    intf ret;
+    intf  ret;
     char *attrname;
- 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
-    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype, 
-           (int32) *count, (VOIDP) _fcdtocp(values));
-    HDfree(attrname);
-    return(ret);
+
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
+    ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)_fcdtocp(values));
+    free(attrname);
+    return ret;
 }
 
 /* -------------------------------------------------------
- * vfnatts -- get number of attributes of a vgroup 
+ * vfnatts -- get number of attributes of a vgroup
  * Vnattrs -- vfnatts
  */
 
-FRETVAL(intf)
+intf
 nvfnatts(intf *vgid)
 {
-   intf ret;
+    intf ret;
 
-   ret = (intf) Vnattrs((int32) *vgid); 
-   return(ret);
+    ret = (intf)Vnattrs((int32)*vgid);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -289,17 +281,18 @@ nvfnatts(intf *vgid)
  * Vfindattr -- vfcfdat -- vffdatt
  */
 
-FRETVAL(intf)
+intf
 nvfcfdat(intf *vgid, _fcd attrnm, intf *attrnmlen)
 {
-    intf ret;
+    intf  ret;
     char *attrname;
 
-    attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
-    if (!attrname) return(FAIL);
-    ret = (intf) Vfindattr((int32) *vgid, attrname);
-    HDfree(attrname);
-    return(ret);
+    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    if (!attrname)
+        return FAIL;
+    ret = (intf)Vfindattr((int32)*vgid, attrname);
+    free(attrname);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -307,42 +300,39 @@ nvfcfdat(intf *vgid, _fcd attrnm, intf *attrnmlen)
  * Vattrinfo -- vfainfo
  */
 
-FRETVAL(intf)
-nvfainfo(intf *vgid, intf *aindex, _fcd attrname,
-         intf *dtype, intf *count, intf *size)
+intf
+nvfainfo(intf *vgid, intf *aindex, _fcd attrname, intf *dtype, intf *count, intf *size)
 {
     intf ret;
-    ret = (intf) Vattrinfo((int32) *vgid, (int32) *aindex,
-          _fcdtocp(attrname), (int32 *) dtype, (int32 *) count, 
-          (int32 *) size);
-    return(ret);
+    ret = (intf)Vattrinfo((int32)*vgid, (int32)*aindex, _fcdtocp(attrname), (int32 *)dtype, (int32 *)count,
+                          (int32 *)size);
+    return ret;
 }
 
 /* ---------------------------------------------------------
- * vfgnatt -- get values of a numeric attribute 
+ * vfgnatt -- get values of a numeric attribute
  * Vgetattr -- vfgnatt
  */
 
-FRETVAL(intf)
+intf
 nvfgnatt(intf *vgid, intf *aindex, intf *values)
 {
     intf ret;
-    ret = (intf) Vgetattr((int32) *vgid, *aindex,
-                    (VOIDP) values);
-    return(ret);
+    ret = (intf)Vgetattr((int32)*vgid, *aindex, (void *)values);
+    return ret;
 }
 
 /* --------------------------------------------------------
- * vfgcatt -- get values of a char type attribute 
+ * vfgcatt -- get values of a char type attribute
  * Vgetattr -- vfgcatt
  */
 
-FRETVAL(intf)
+intf
 nvfgcatt(intf *vgid, intf *aindex, _fcd values)
 {
     intf ret;
-    ret = (intf) Vgetattr((int32) *vgid,(int32) *aindex,(VOIDP) _fcdtocp(values));
-    return(ret);
+    ret = (intf)Vgetattr((int32)*vgid, (int32)*aindex, (void *)_fcdtocp(values));
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -350,11 +340,10 @@ nvfgcatt(intf *vgid, intf *aindex, _fcd values)
  * Vgetversion -- vfgver
  */
 
-FRETVAL(intf)
+intf
 nvfgver(intf *vgid)
 {
     intf ret;
-    ret = (intf) Vgetversion((int32) *vgid);
-    return(ret);
+    ret = (intf)Vgetversion((int32)*vgid);
+    return ret;
 }
-

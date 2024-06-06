@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_JAVA_JNI C)
 
 set (HDF4_JAVA_JNI_CSRCS
@@ -31,11 +31,19 @@ if (BUILD_SHARED_LIBS)
   target_include_directories(${HDF4_JAVA_JNI_LIB_TARGET}
       PRIVATE "${HDF4_BINARY_DIR};${HDF4_JAVA_JNI_SOURCE_DIR}"
   )
+  target_compile_options(${HDF4_JAVA_JNI_LIB_TARGET} PRIVATE "${HDF4_CMAKE_C_FLAGS}")
   TARGET_C_PROPERTIES (${HDF4_JAVA_JNI_LIB_TARGET} SHARED)
   target_link_libraries (${HDF4_JAVA_JNI_LIB_TARGET} PUBLIC ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET})
   set_target_properties (${HDF4_JAVA_JNI_LIB_TARGET} PROPERTIES FOLDER libraries/jni)
   SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_JAVA_JNI_LIB_TARGET}")
-  H4_SET_LIB_OPTIONS (${HDF4_JAVA_JNI_LIB_TARGET} ${HDF4_JAVA_JNI_LIB_NAME} SHARED)
+  H4_SET_LIB_OPTIONS (${HDF4_JAVA_JNI_LIB_TARGET} ${HDF4_JAVA_JNI_LIB_NAME} SHARED "JAVA")
+endif ()
+
+#-----------------------------------------------------------------------------
+# Add Target to clang-format
+#-----------------------------------------------------------------------------
+if (HDF4_ENABLE_FORMATTERS)
+  clang_format (HDF4_JNI_SRC_FORMAT ${HDF4_JAVA_JNI_LIB_TARGET})
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -50,7 +58,7 @@ if (HDF4_EXPORTED_TARGETS)
           ${HDF4_EXPORTED_TARGETS}
       LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries
       ARCHIVE DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries
-      RUNTIME DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries
+      RUNTIME DESTINATION ${HDF4_INSTALL_BIN_DIR} COMPONENT libraries
       FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT libraries
       INCLUDES DESTINATION include
   )

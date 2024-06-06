@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*-----------------------------------------------------------------------------
  * File:     df24.c
  * Purpose:  read and write 24-bit raster images
@@ -37,16 +35,16 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
-#include "dfgr.h"
+#include "hdf_priv.h"
+#include "dfgr_priv.h"
 
-static intn Newdata = 0;        /* does Readrig contain fresh data? */
-static intn dimsset = 0;        /* have dimensions been set? */
+static intn  Newdata   = 0; /* does Readrig contain fresh data? */
+static intn  dimsset   = 0; /* have dimensions been set? */
 static int32 last_xdim = 0;
-static int32 last_ydim = 0;     /* .....gheesh......... */
+static int32 last_ydim = 0; /* .....gheesh......... */
 
-#define LUT     0
-#define IMAGE   1
+#define LUT   0
+#define IMAGE 1
 
 /*--------------------------------------------------------------------------
  NAME
@@ -69,31 +67,21 @@ static int32 last_ydim = 0;     /* .....gheesh......... */
 intn
 DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
 {
-  CONSTR(FUNC, "DF24getdims");
-  intn        ncomps;
-  intn       ret_value = SUCCEED;
+    intn ncomps;
+    intn ret_value = SUCCEED;
 
-  do
-    {
-      if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
-        HGOTO_ERROR(DFE_NODIM, FAIL);
-    }
-  while (ncomps != 3);
+    do {
+        if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
+            HGOTO_ERROR(DFE_NODIM, FAIL);
+    } while (ncomps != 3);
 
-  last_xdim = *pxdim;
-  last_ydim = *pydim;
-  Newdata = 1;
+    last_xdim = *pxdim;
+    last_ydim = *pydim;
+    Newdata   = 1;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-  /* Normal function cleanup */
-
-
-  return ret_value;
-}   /* end DF24getdims() */
+    return ret_value;
+} /* end DF24getdims() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -113,12 +101,12 @@ done:
 intn
 DF24reqil(intn il)
 {
-  intn ret_value;
+    intn ret_value;
 
-  ret_value = (DFGRIreqil(il, IMAGE));
+    ret_value = (DFGRIreqil(il, IMAGE));
 
-  return ret_value;
-}   /* end DF24reqil() */
+    return ret_value;
+} /* end DF24reqil() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -142,46 +130,37 @@ DF24reqil(intn il)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24getimage(const char *filename, void * image, int32 xdim, int32 ydim)
+DF24getimage(const char *filename, void *image, int32 xdim, int32 ydim)
 {
-  CONSTR(FUNC, "DF24getimage");
-  intn        il;
-  int32       tx, ty;
-  int compressed, has_pal;
-  uint16 compr_type;
-  intn         ret_value = SUCCEED;
+    intn   il;
+    int32  tx, ty;
+    int    compressed, has_pal;
+    uint16 compr_type;
+    intn   ret_value = SUCCEED;
 
-  HEclear();
+    HEclear();
 
-  if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
-    HGOTO_ERROR(DFE_NODIM, FAIL);
+    if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
+        HGOTO_ERROR(DFE_NODIM, FAIL);
 
-  if (Newdata)
-    {
-      tx = last_xdim;
-      ty = last_ydim;
-    }     /* end if */
+    if (Newdata) {
+        tx = last_xdim;
+        ty = last_ydim;
+    } /* end if */
 
-  if ((tx > xdim) || (ty > ydim))
-    HGOTO_ERROR(DFE_BADDIM, FAIL);
+    if ((tx > xdim) || (ty > ydim))
+        HGOTO_ERROR(DFE_BADDIM, FAIL);
 
-  ret_value = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0,
-                            &compressed, &compr_type, &has_pal);
+    ret_value = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0, &compressed, &compr_type, &has_pal);
 
-  Newdata = 0;
+    Newdata = 0;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* end DF24getimage() */
+    return ret_value;
+} /* end DF24getimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -202,13 +181,13 @@ done:
 intn
 DF24setdims(int32 xdim, int32 ydim)
 {
-  intn ret_value;
+    intn ret_value;
 
-  dimsset = 1;
-  ret_value = (DFGRIsetdims(xdim, ydim, 3, IMAGE));
+    dimsset   = 1;
+    ret_value = (DFGRIsetdims(xdim, ydim, 3, IMAGE));
 
-  return ret_value;
-}   /* end DF24setdims() */
+    return ret_value;
+} /* end DF24setdims() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -228,12 +207,12 @@ DF24setdims(int32 xdim, int32 ydim)
 intn
 DF24setil(intn il)
 {
-  intn ret_value;
+    intn ret_value;
 
-  ret_value = (DFGRIsetil(il, IMAGE));
+    ret_value = (DFGRIsetil(il, IMAGE));
 
-  return ret_value;
-}   /* end DF24setil() */
+    return ret_value;
+} /* end DF24setil() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -256,14 +235,14 @@ DF24setil(intn il)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24setcompress(int32 type, comp_info * cinfo)
+DF24setcompress(int32 type, comp_info *cinfo)
 {
-  intn ret_value;
+    intn ret_value;
 
-  ret_value = (DFGRsetcompress(type, cinfo));
+    ret_value = (DFGRsetcompress(type, cinfo));
 
-  return ret_value;
-}   /* end DF24setcompress() */
+    return ret_value;
+} /* end DF24setcompress() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -283,12 +262,12 @@ DF24setcompress(int32 type, comp_info * cinfo)
 intn
 DF24restart(void)
 {
-  intn ret_value;
+    intn ret_value;
 
-  ret_value = (DFGRIrestart());
+    ret_value = (DFGRIrestart());
 
-  return ret_value;
-}   /* end DF24restart() */
+    return ret_value;
+} /* end DF24restart() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -311,27 +290,20 @@ DF24restart(void)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24addimage(const char *filename, const void * image, int32 xdim, int32 ydim)
+DF24addimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-  CONSTR(FUNC, "DF24addimage");
-  intn ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
 
-  /* 0 == C */
-  if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-    HGOTO_ERROR(DFE_BADDIM, FAIL);
-  dimsset = 0;    /* reset to new rig */
+    /* 0 == C */
+    if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
+        HGOTO_ERROR(DFE_BADDIM, FAIL);
+    dimsset = 0; /* reset to new rig */
 
-  ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
+    ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* end DF24addimage() */
+    return ret_value;
+} /* end DF24addimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -354,27 +326,20 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24putimage(const char *filename, const void * image, int32 xdim, int32 ydim)
+DF24putimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-  CONSTR(FUNC, "DF24putimage");
-  intn ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
 
-  /* 0 == C */
-  if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-    HGOTO_ERROR(DFE_BADDIM, FAIL);
-  dimsset = 0;    /* reset to new rig */
+    /* 0 == C */
+    if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
+        HGOTO_ERROR(DFE_BADDIM, FAIL);
+    dimsset = 0; /* reset to new rig */
 
-  ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
+    ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* end DF24putimage() */
+    return ret_value;
+} /* end DF24putimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -394,73 +359,62 @@ done:
 intn
 DF24nimages(const char *filename)
 {
-  CONSTR(FUNC, "DF24nimages");
-  int32       file_id;
-  int32       group_id;       /* group ID for looking at RIG's */
-  uint16      elt_tag, elt_ref;   /* tag/ref of items in a RIG */
-  intn        nimages;        /* total number of potential images */
-  uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
-  int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
-  uint8       GRtbuf[64];     /* local buffer to read the ID element into */
-  intn        ret_value = SUCCEED;
+    int32  file_id;
+    int32  group_id;           /* group ID for looking at RIG's */
+    uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
+    intn   nimages;            /* total number of potential images */
+    uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
+    int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
+    uint8  GRtbuf[64];         /* local buffer to read the ID element into */
+    intn   ret_value = SUCCEED;
 
-  HEclear();
+    HEclear();
 
-  /* should use reopen if same file as last time - more efficient */
-  if ((file_id = DFGRIopen(filename, DFACC_READ)) == FAIL)
-    HGOTO_ERROR(DFE_BADOPEN, FAIL);
+    /* should use reopen if same file as last time - more efficient */
+    if ((file_id = DFGRIopen(filename, DFACC_READ)) == FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-  /* go through the RIGs looking for 24-bit images */
-  nimages = 0;
-  find_tag = find_ref = 0;
-  while (Hfind(file_id, DFTAG_RIG, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-    {
-      /* read RIG into memory */
-      if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      while (!DFdiget(group_id, &elt_tag, &elt_ref))
-        {   /* get next tag/ref */
-          if (elt_tag == DFTAG_ID)
-            {     /* just look for ID tags to get the number of components */
-              if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-                {
-                  uint16      uint16var;
-                  int32       temp;   /* temporary holding variable */
-                  int16       ncomponents;    /* number of image components */
-                  uint8      *p;
+    /* go through the RIGs looking for 24-bit images */
+    nimages  = 0;
+    find_tag = find_ref = 0;
+    while (Hfind(file_id, DFTAG_RIG, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len,
+                 DF_FORWARD) == SUCCEED) {
+        /* read RIG into memory */
+        if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        while (!DFdiget(group_id, &elt_tag, &elt_ref)) { /* get next tag/ref */
+            if (elt_tag == DFTAG_ID) { /* just look for ID tags to get the number of components */
+                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
+                    uint16 uint16var;
+                    int32  temp;        /* temporary holding variable */
+                    int16  ncomponents; /* number of image components */
+                    uint8 *p;
 
-                  p = GRtbuf;
-                  INT32DECODE(p, temp);
-                  INT32DECODE(p, temp);
-                  UINT16DECODE(p, uint16var);
-                  UINT16DECODE(p, uint16var);
-                  INT16DECODE(p, ncomponents);
-                  if (ncomponents == 3)   /* whew, all that work and we finally found a 24-bit image */
-                    nimages++;
-                }   /* end if */
-              else	{
-              	DFdifree(group_id);
-                HGOTO_ERROR(DFE_GETELEM, FAIL);
-              }
-            }     /* end if */
-        }   /* end while */
-    }     /* end while */
+                    p = GRtbuf;
+                    INT32DECODE(p, temp);
+                    INT32DECODE(p, temp);
+                    UINT16DECODE(p, uint16var);
+                    UINT16DECODE(p, uint16var);
+                    INT16DECODE(p, ncomponents);
+                    if (ncomponents == 3) /* whew, all that work and we finally found a 24-bit image */
+                        nimages++;
+                } /* end if */
+                else {
+                    DFdifree(group_id);
+                    HGOTO_ERROR(DFE_GETELEM, FAIL);
+                }
+            } /* end if */
+        }     /* end while */
+    }         /* end while */
 
-  if (Hclose(file_id) == FAIL)
-    HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+    if (Hclose(file_id) == FAIL)
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
-  ret_value = nimages;
+    ret_value = nimages;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
-  return ret_value;
-}   /* end DF24nimages() */
+    return ret_value;
+} /* end DF24nimages() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -481,12 +435,12 @@ done:
 intn
 DF24readref(const char *filename, uint16 ref)
 {
-  intn ret_value;
+    intn ret_value;
 
-  ret_value = (DFGRreadref(filename, ref));
+    ret_value = (DFGRreadref(filename, ref));
 
-  return ret_value;
-}   /* end DF24readref() */
+    return ret_value;
+} /* end DF24readref() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -505,9 +459,9 @@ DF24readref(const char *filename, uint16 ref)
 uint16
 DF24lastref(void)
 {
-  uint16 ret_value;
+    uint16 ret_value;
 
-  ret_value = (DFGRIlastref());
+    ret_value = (DFGRIlastref());
 
-  return ret_value;
-}   /* end DF24lastref() */
+    return ret_value;
+} /* end DF24lastref() */

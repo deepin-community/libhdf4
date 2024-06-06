@@ -2,20 +2,17 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id$
  *********************************************************************/
-
-#define    STREQ(a, b)    (*(a) == *(b) && strcmp((a), (b)) == 0)
 
 /* lex specification for tokens for ncgen */
 
 char errstr[100];        /* for short error messages */
-extern long strtol();
 void expand_escapes();
 
-#include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 #include "ncgentab.h"
 %}
 
@@ -113,12 +110,8 @@ FloatInf|Infinity|Inf    {    /* float missing values */
             yyerror(errstr);
         }
 
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || __powerpc64__
-        if (dd < INT_MIN  ||  dd > INT_MAX)
-#else
-        if (dd < LONG_MIN  ||  dd > LONG_MAX)
-#endif
-                {
+        if (dd < INT32_MIN  ||  dd > INT32_MAX)
+        {
             double_val = dd;
             return DOUBLE_CONST;
         } else {

@@ -1,6 +1,5 @@
-usr/lib-alt/lib*.a        usr/lib
-usr/lib-alt/lib*.la       usr/lib
-usr/lib-alt/lib*.settings usr/lib
-usr/lib-alt/lib*.so       usr/lib
+usr/lib-alt/${DEB_HOST_MULTIARCH}/lib*.a        usr/lib/${DEB_HOST_MULTIARCH}
+usr/lib-alt/${DEB_HOST_MULTIARCH}/lib*.la       usr/lib/${DEB_HOST_MULTIARCH}
+usr/lib-alt/${DEB_HOST_MULTIARCH}/lib*.settings usr/lib/${DEB_HOST_MULTIARCH}
+usr/lib-alt/${DEB_HOST_MULTIARCH}/lib*.so       usr/lib/${DEB_HOST_MULTIARCH}
 usr/include-alt/hdf       usr/include
-usr/share/man/man3

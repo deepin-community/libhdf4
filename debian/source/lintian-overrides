@@ -1,6 +1,0 @@
-# Patches cannot be easily forwarded upstream
-patch-not-forwarded-upstream *
-
-# Upstream doesn't have a public bug tracker for HDF4
-upstream-metadata-missing-bug-tracking
-

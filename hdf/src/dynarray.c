@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*
 FILE
     dynarray.c - Internal storage routines for handling "dynamic arrays"
@@ -32,7 +30,7 @@ BUGS/LIMITATIONS
     of the dynarray can get quite excessive in proportion to the # of elements
     used if the elements used are "sparse" in the dynarray space.
 
-    These are strictly useable from C, adding a FORTRAN calling facility would
+    These are strictly usable from C, adding a FORTRAN calling facility would
     require some re-working of the routines.
 
 LOCAL ROUTINES
@@ -46,21 +44,16 @@ EXPORTED ROUTINES
      DAcreate_array - Create a dynarray
      DAdestroy_array - Destroy a dynarray
      DAsize_array    - Get the current dynarray size
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   1/7/96  - Starting writing specs & coding prototype
 */
 
-#define DYNARRAY_MASTER
-#include "hdf.h"
-#include "dynarray.h"
+#include "hdf_priv.h"
+#include "dynarray_priv.h"
 
-
-/* Private function prototypes */
-/* <none yet> */
+typedef struct dynarray_tag {
+    intn   num_elems; /* Number of elements in the array currently */
+    intn   incr_mult; /* Multiple to increment the array size by */
+    void **arr;       /* Pointer to the actual array of void *'s */
+} dynarr_t;
 
 /******************************************************************************
  NAME
@@ -74,47 +67,42 @@ MODIFICATION HISTORY
     Returns pointer to the dynarray created if successful and NULL otherwise
 
 *******************************************************************************/
-dynarr_p DAcreate_array(intn start_size,      /* IN: Initial array size */
-    intn incr_mult                  /* IN: multiple to create additional elements in */
+dynarr_p
+DAcreate_array(intn start_size, /* IN: Initial array size */
+               intn incr_mult   /* IN: multiple to create additional elements in */
 )
 {
-    CONSTR(FUNC, "DAcreate_array");	/* for HERROR */
-    dynarr_t   *new_arr=NULL;       /* ptr to the new dynarray */
-    dynarr_p    ret_value=NULL;
+    dynarr_t *new_arr   = NULL; /* ptr to the new dynarray */
+    dynarr_p  ret_value = NULL;
 
     HEclear();
-    if(start_size<0 || incr_mult<=0)
+    if (start_size < 0 || incr_mult <= 0)
         HGOTO_ERROR(DFE_ARGS, NULL);
 
-    new_arr=(dynarr_t *)HDcalloc(1,sizeof(dynarr_t));
-    if(new_arr==NULL)
+    new_arr = (dynarr_t *)calloc(1, sizeof(dynarr_t));
+    if (new_arr == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    new_arr->num_elems=start_size;
-    new_arr->incr_mult=incr_mult;
-    if(start_size>0)
-      { /* only allocate space if the initial size is positive */
-        new_arr->arr=(VOIDP *)HDcalloc(start_size,sizeof(VOIDP));
-        if(new_arr->arr==NULL)
+    new_arr->num_elems = start_size;
+    new_arr->incr_mult = incr_mult;
+    if (start_size > 0) { /* only allocate space if the initial size is positive */
+        new_arr->arr = (void **)calloc(start_size, sizeof(void *));
+        if (new_arr->arr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-      } /* end if */
-
-    ret_value=(dynarr_p)new_arr;
-
-done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-        if(new_arr!=NULL)
-          {
-            if(new_arr->arr!=NULL)
-                HDfree(new_arr->arr);
-            HDfree(new_arr);
-          } /* end if */
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAcreate_array() */
+    ret_value = (dynarr_p)new_arr;
+
+done:
+    if (ret_value == NULL) { /* Error condition cleanup */
+        if (new_arr != NULL) {
+            free(new_arr->arr);
+            free(new_arr);
+        }
+    }
+
+    return ret_value;
+} /* end DAcreate_array() */
 
 /******************************************************************************
  NAME
@@ -128,41 +116,32 @@ done:
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAdestroy_array(dynarr_p arr,  /* IN: Array to destroy */
-        intn free_elem              /* IN: whether to free each element */
+intn
+DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
+                intn     free_elem /* IN: whether to free each element */
 )
 {
-    CONSTR(FUNC, "DAdestroy_array");	/* for HERROR */
-    dynarr_t   *dest_arr;               /* ptr to the dynarray destroy*/
-    intn i;
-    intn    ret_value=SUCCEED;
+    dynarr_t *dest_arr; /* ptr to the dynarray destroy*/
+    intn      i;
+    intn      ret_value = SUCCEED;
 
     HEclear();
-    dest_arr=(dynarr_t *)arr;
-    if(dest_arr==NULL)
+    dest_arr = (dynarr_t *)arr;
+    if (dest_arr == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Chuck all the items stored in the array */
-    if(free_elem!=0)
-        for(i=0; i<arr->num_elems; i++)
-          {
-              if(arr->arr[i]!=NULL)
-                  HDfree(arr->arr[i]);
-          } /* end for */
+    if (free_elem != 0)
+        for (i = 0; i < arr->num_elems; i++) {
+            free(arr->arr[i]);
+        }
 
-    if(dest_arr->arr!=NULL)
-        HDfree(dest_arr->arr);
-    HDfree(dest_arr);
+    free(dest_arr->arr);
+    free(dest_arr);
 
 done:
-  if(ret_value == FAIL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAdestroy_array() */
+    return ret_value;
+} /* end DAdestroy_array() */
 
 /******************************************************************************
  NAME
@@ -175,29 +154,23 @@ done:
     Returns # of dynarray elements if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAsize_array(dynarr_p arr   /* IN: Array to get size of */
+intn
+DAsize_array(dynarr_p arr /* IN: Array to get size of */
 )
 {
-    CONSTR(FUNC, "DAsize_array");	/* for HERROR */
-    dynarr_t   *arr_ptr;            /* ptr to the dynarray destroy*/
-    intn    ret_value=SUCCEED;
+    dynarr_t *arr_ptr; /* ptr to the dynarray destroy*/
+    intn      ret_value = SUCCEED;
 
     HEclear();
-    arr_ptr=(dynarr_t *)arr;
-    if(arr_ptr==NULL)
+    arr_ptr = (dynarr_t *)arr;
+    if (arr_ptr == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    ret_value=arr_ptr->num_elems;
+    ret_value = arr_ptr->num_elems;
 
 done:
-  if(ret_value == FAIL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAsize_array() */
+    return ret_value;
+} /* end DAsize_array() */
 
 /******************************************************************************
  NAME
@@ -212,33 +185,27 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
-    intn elem                       /* IN: Array element to retrieve */
+void *
+DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
+           intn     elem     /* IN: Array element to retrieve */
 )
 {
-    CONSTR(FUNC, "DAget_elem");     /* for HERROR */
-    dynarr_t   *arr;                /* ptr to the dynarray */
-    VOIDP    ret_value=NULL;
+    dynarr_t *arr; /* ptr to the dynarray */
+    void     *ret_value = NULL;
 
     HEclear();
-    arr=(dynarr_t *)arr_ptr;
-    if(elem<0 || arr==NULL)
+    arr = (dynarr_t *)arr_ptr;
+    if (elem < 0 || arr == NULL)
         HGOTO_ERROR(DFE_ARGS, NULL);
 
-    if(elem>=arr->num_elems)
-        ret_value=NULL;
+    if (elem >= arr->num_elems)
+        ret_value = NULL;
     else
-        ret_value=arr->arr[elem];
-        
+        ret_value = arr->arr[elem];
+
 done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAget_elem() */
+    return ret_value;
+} /* end DAget_elem() */
 
 /******************************************************************************
  NAME
@@ -254,54 +221,45 @@ done:
     Returns SUCCEED if successful and NULL otherwise
 
 *******************************************************************************/
-intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
-    intn elem,                      /* IN: Array element to set */
-    VOIDP obj                       /* IN: Pointer to the object to store */
+intn
+DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
+           intn     elem,    /* IN: Array element to set */
+           void    *obj      /* IN: Pointer to the object to store */
 )
 {
-    CONSTR(FUNC, "DAset_elem");     /* for HERROR */
-    dynarr_t   *arr;                /* ptr to the dynarray */
-    intn        ret_value=SUCCEED;
+    dynarr_t *arr; /* ptr to the dynarray */
+    intn      ret_value = SUCCEED;
 
     HEclear();
-    arr=(dynarr_t *)arr_ptr;
-    if(elem<0 || arr==NULL)
+    arr = (dynarr_t *)arr_ptr;
+    if (elem < 0 || arr == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if(elem>=arr->num_elems)
-      {
-        intn new_size;        /* new number of elements in the array */
+    if (elem >= arr->num_elems) {
+        intn new_size; /* new number of elements in the array */
 
-        new_size=((elem/arr->incr_mult)+1)*arr->incr_mult;
-        if(arr->num_elems==0)
-          { /* array not currently allocated */
-            if((arr->arr=(VOIDP *)HDcalloc(new_size,sizeof(VOIDP)))==NULL)
+        new_size = ((elem / arr->incr_mult) + 1) * arr->incr_mult;
+        if (arr->num_elems == 0) { /* array not currently allocated */
+            if ((arr->arr = (void **)calloc(new_size, sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          } /* end if */
-        else
-          { /* extend the existing array */
-            VOIDP *new_arr;   /* storage for the new array of ptrs */
+        }                   /* end if */
+        else {              /* extend the existing array */
+            void **new_arr; /* storage for the new array of ptrs */
 
-            if((new_arr=(VOIDP *)HDrealloc(arr->arr,new_size*sizeof(VOIDP)))==NULL)
+            if ((new_arr = (void **)realloc(arr->arr, new_size * sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            HDmemset(&new_arr[arr->num_elems],0,sizeof(VOIDP)*(uintn)(new_size-arr->num_elems));
-            arr->arr=new_arr;
-          } /* end else */
-        arr->num_elems=new_size;
-      } /* end if */
-
-    /* Set the element value */
-    arr->arr[elem]=obj;
-        
-done:
-  if(ret_value == FAIL)
-    { /* Error condition cleanup */
-
+            memset(&new_arr[arr->num_elems], 0, sizeof(void *) * (uintn)(new_size - arr->num_elems));
+            arr->arr = new_arr;
+        } /* end else */
+        arr->num_elems = new_size;
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAset_elem() */
+    /* Set the element value */
+    arr->arr[elem] = obj;
+
+done:
+    return ret_value;
+} /* end DAset_elem() */
 
 /*****************************************************************************
  NAME
@@ -316,34 +274,26 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
-    intn elem                       /* IN: Array element to retrieve */
+void *
+DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
+           intn     elem     /* IN: Array element to retrieve */
 )
 {
-    CONSTR(FUNC, "DAdel_elem");     /* for HERROR */
-    dynarr_t   *arr;                /* ptr to the dynarray */
-    VOIDP    ret_value=NULL;
+    dynarr_t *arr; /* ptr to the dynarray */
+    void     *ret_value = NULL;
 
     HEclear();
-    arr=(dynarr_t *)arr_ptr;
-    if(elem<0 || arr==NULL)
+    arr = (dynarr_t *)arr_ptr;
+    if (elem < 0 || arr == NULL)
         HGOTO_ERROR(DFE_ARGS, NULL);
 
-    if(elem>=arr->num_elems)
-        ret_value=NULL;
-    else
-      {
-        ret_value=arr->arr[elem];
-        arr->arr[elem]=NULL;
-      } /* end else */
+    if (elem >= arr->num_elems)
+        ret_value = NULL;
+    else {
+        ret_value      = arr->arr[elem];
+        arr->arr[elem] = NULL;
+    } /* end else */
 
 done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end DAdel_elem() */
-
+    return ret_value;
+} /* end DAdel_elem() */

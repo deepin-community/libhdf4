@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_JAVA_HDF_HDF4 Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -61,7 +61,7 @@ create_javadoc(hdf4_java_doc
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH}
     WINDOWTITLE "HDF Java"
     DOCTITLE "<h1>HDF Java Wrapper</h1>"
-    INSTALLPATH ${HDF4_INSTALL_DATA_DIR}
+    INSTALLPATH ${HDF4_INSTALL_DOC_DIR}
     AUTHOR TRUE
     USE TRUE
     VERSION TRUE

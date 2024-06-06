@@ -1,7 +1,6 @@
 libdf.so.0 #PACKAGE# #MINVER#
 * Build-Depends-Package: libhdf4-dev
  ANIanncmp@Base 4.0.2
- ANIdestroy@Base 4.2.10
  ANannlen@Base 4.0.2
  ANannlist@Base 4.0.2
  ANatype2tag@Base 4.1r2
@@ -333,7 +332,6 @@ libdf.so.0 #PACKAGE# #MINVER#
  HCPencode_header@Base 4.1r2
  HCPendaccess@Base 4.0.2
  HCPgetcompinfo@Base 4.2r4
- HCPgetcompress@Base 4.2r4
  HCPgetcomptype@Base 4.2r4
  HCPgetdatasize@Base 4.2r4
  HCPinfo@Base 4.0.2
@@ -347,6 +345,7 @@ libdf.so.0 #PACKAGE# #MINVER#
  HCPmstdio_write@Base 4.0.2
  HCPquery_encode_header@Base 4.1r2
  HCPread@Base 4.0.2
+ HCPrm_szip_special_bit@Base 4.3.0
  HCPseek@Base 4.0.2
  HCPsetup_szip_parms@Base 4.2r4
  HCPstread@Base 4.0.2
@@ -408,9 +407,8 @@ libdf.so.0 #PACKAGE# #MINVER#
  HDputc@Base 4.0.2
  HDreuse_tagref@Base 4.1r2
  HDset_special_info@Base 4.0.2
- HDstrdup@Base 4.2.12
  HDvalidfid@Base 4.0.2
- HEPclear@Base 4.0.2
+ HEclear@Base 4.2.16
  HEprint@Base 4.0.2
  HEpush@Base 4.0.2
  HEreport@Base 4.0.2
@@ -435,18 +433,8 @@ libdf.so.0 #PACKAGE# #MINVER#
  HLgetblockinfo@Base 4.2r4
  HLgetdatainfo@Base 4.2.10
  HLsetblockinfo@Base 4.2r4
- HMCPchunkread@Base 4.1r2
- HMCPchunkwrite@Base 4.1r2
  HMCPcloseAID@Base 4.1r2
- HMCPendaccess@Base 4.1r2
  HMCPgetnumrecs@Base 4.2r4
- HMCPinfo@Base 4.1r2
- HMCPinquire@Base 4.1r2
- HMCPread@Base 4.1r2
- HMCPseek@Base 4.1r2
- HMCPstread@Base 4.1r2
- HMCPstwrite@Base 4.1r2
- HMCPwrite@Base 4.1r2
  HMCcreate@Base 4.1r2
  HMCgetcompress@Base 4.2r4
  HMCgetcomptype@Base 4.2r4
@@ -531,7 +519,6 @@ libdf.so.0 #PACKAGE# #MINVER#
  Hgetfileversion@Base 4.0.2
  Hgetlibversion@Base 4.0.2
  Hgetntinfo@Base 4.2.10
- Hgetspecinfo@Base 4.2.10
  Hinquire@Base 4.0.2
  Hishdf@Base 4.0.2
  Hlength@Base 4.0.2
@@ -696,18 +683,13 @@ libdf.so.0 #PACKAGE# #MINVER#
  atom_id_cache@Base 4.1r2
  atom_obj_cache@Base 4.1r2
  buf_funcs@Base 4.1r3
- bv_clear@Base 4.0.2
  bv_delete@Base 4.0.2
- bv_find@Base 4.0.2
- bv_flags@Base 4.0.2
+ bv_find_next_zero@Base 4.2.16
  bv_get@Base 4.0.2
  bv_new@Base 4.0.2
  bv_set@Base 4.0.2
  bv_size@Base 4.0.2
  cdeflate_funcs@Base 4.0.2
- chkcompare@Base 4.1r2
- chkdestroynode@Base 4.1r2
- chkfreekey@Base 4.1r2
  chunked_funcs@Base 4.1r2
  cnbit_funcs@Base 4.0.2
  cnone_funcs@Base 4.0.2
@@ -943,7 +925,6 @@ libdf.so.0 #PACKAGE# #MINVER#
  dswslab_@Base 4.1r3
  duf2im_@Base 4.1r3
  duif2i_@Base 4.0.2
- error_top@Base 4.0.2
  ext_funcs@Base 4.0.2
  functab@Base 4.0.2
  generate_scale@Base 4.0.2
@@ -952,6 +933,7 @@ libdf.so.0 #PACKAGE# #MINVER#
  hconfinfc_@Base 4.2r4
  hddontatexit_@Base 4.1r3
  hdf_empty_output_buffer@Base 4.0.2
+ hdf_error_exit@Base 4.3.0
  hdf_fill_input_buffer@Base 4.0.2
  hdf_init_destination@Base 4.0.2
  hdf_init_source@Base 4.0.2
@@ -1403,11 +1385,26 @@ libmfhdf.so.0 #PACKAGE# #MINVER#
  SDsetfillvalue@Base 4.1r2
  SDsetnbitdataset@Base 4.1r2
  SDsetrange@Base 4.1r2
+ SDsetup_szip_parms@Base 4.3.0
  SDstart@Base 4.1r2
  SDwritechunk@Base 4.1r2
  SDwritedata@Base 4.1r2
  cdf_routine_name@Base 4.1r2
  cdf_unmap_type@Base 4.1r2
+ h4_xdr_bytes@Base 4.3.0
+ h4_xdr_create@Base 4.3.0
+ h4_xdr_destroy@Base 4.3.0
+ h4_xdr_double@Base 4.3.0
+ h4_xdr_float@Base 4.3.0
+ h4_xdr_getbytes@Base 4.3.0
+ h4_xdr_getpos@Base 4.3.0
+ h4_xdr_int@Base 4.3.0
+ h4_xdr_opaque@Base 4.3.0
+ h4_xdr_putbytes@Base 4.3.0
+ h4_xdr_setpos@Base 4.3.0
+ h4_xdr_setup_nofile@Base 4.3.0
+ h4_xdr_sync@Base 4.3.0
+ h4_xdr_u_int@Base 4.3.0
  hdf_cdf_clobber@Base 4.1r2
  hdf_close@Base 4.1r2
  hdf_conv_scales@Base 4.1r2
@@ -1431,7 +1428,6 @@ libmfhdf.so.0 #PACKAGE# #MINVER#
  hdf_write_var@Base 4.1r2
  hdf_write_xdr_cdf@Base 4.1r2
  hdf_xdr_cdf@Base 4.1r2
- hdf_xdrfile_create@Base 4.1r2
  nc_serror@Base 4.1r2
  ncabor_@Base 4.1r3
  ncabort@Base 4.1r2

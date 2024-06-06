@@ -7,35 +7,12 @@
 # This file is part of HDF.  The full HDF copyright notice, including
 # terms governing use, modification, and redistribution, is contained in
 # the COPYING file, which can be found at the root of the source code
-# distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.
+# distribution tree, or in https://www.hdfgroup.org/licenses.
 # If you do not have access to either file, you may request a copy from
 # help@hdfgroup.org.
 #
 
 # Make a release of hdf4.
-#
-# Programmer: Robb Matzke
-# Creation date: on or before 1998-01-29.
-#
-# Modifications
-#   Robb Matzke, 1999-07-16
-#   The SunOS 5.6 sed *must* have slashes as delimiters. I changed things like
-#   `sed s+/CVS++' to `sed 's/\/CVS//'
-#
-#   Albert Cheng, 1999-10-26
-#   Moved the MANIFEST checking to a separate command file so that
-#   it can be invoked individually.
-#
-#   Albert Cheng, 2004-08-14
-#   Added the --private option.
-#
-#   James Laird, 2005-09-07
-#   Added the md5 method.
-#
-#   Larry Knox, 2017-06-16
-#   Added cmake-tgz and cmake-zip methods
-#   Replaced optional md5 method with automatic md5 checksum generation for
-#   all archives (from hdf5 release script)
 
 # Function definitions
 #
@@ -43,49 +20,50 @@
 USAGE()
 {
 cat << EOF
-Usage: $0 -d <dir> [-h] [--nocheck] [--private] <methods> ...
-   -d <dir>    The name of the directory where the releas(es) should be
+Usage: $0 -d <dir> [-h] [--private] [--revision [--branch BRANCHNAME]] <methods> ...
+   -d DIR       The name of the directory where the release(s) should be
                 placed.
+   --branch BRANCHNAME  This is to get the correct version of the branch name from the
+                        repository.  BRANCHNAME for v4.2.16 should be hdf4_2_16.
    -h           print the help page.
-   --nocheck    Ignore errors in MANIFEST file.
    --private    Make a private release with today's date in version information.
+   --revision   Make a private release with the code revision number in version information.
 
 This must be run at the top level of the source directory.
 The other command-line options are the names of the programs to use
 for compressing the resulting tar archive (if none are given then
 "tar" is assumed):
+
     tar         -- use tar and don't do any compressing.
     gzip        -- use gzip with "-9" and append ".gz" to the output name.
-    cmake-tgz   -- create a tar file using the gzip default level with a
-                   build-unix.sh command file and all other CMake files needed
-                   to build HDF4 source using CMake on unix machines.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
-    zip         -- convert all text files to DOS style and form a zip file for
-                   Windows use.
-    cmake-zip   -- convert all text files to DOS style and create a zip file
-                   including cmake scripts and .bat files to build HDF4 source
-                   using CMake on Windows.
+    zip         -- convert all text files to DOS style and form a zip file for Windows use.
+    cmake-tgz   -- create a tar file using the gzip default level with a build-unix.sh
+                   command file and all other CMake files needed to build HDF4 source
+                   using CMake on unix machines.
+    cmake-zip   -- convert all text files to DOS style and create a zip file including cmake
+                   scripts and .bat files to build HDF4 source using CMake on Windows.
 
-An md5 checksum is produced for each archive created and stored in the md5 file.
+A sha256 checksum is produced for each archive created and stored in the sha256 file.
 
 Examples:
 
     $ bin/release -d /tmp
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar
 
     $ bin/release -d /tmp gzip
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar.gz
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar.gz
 
     $ bin/release -d /tmp tar gzip zip
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar
-    /tmp/hdf-4.2.11.tar.gz
-    /tmp/hdf-4.2.11.zip
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar
+    /tmp/hdf-4.2.15.tar.gz
+    /tmp/hdf-4.2.15.zip
 
 EOF
 
@@ -93,11 +71,6 @@ EOF
 
 # Function name: tar2zip
 # Convert the release tarball to a Windows zipball.
-#
-# Programmer: Albert Cheng
-# Creation date: 2014-04-23
-#
-# Modifications
 #
 # Steps:
 # 1. untar the tarball in a temporary directory;
@@ -119,7 +92,7 @@ tar2zip()
         echo "usage: tar2zip <tarfilename> <zipfilename>"
         return 1
     fi
-    ztmpdir=/tmp/tmpdir$$
+    ztmpdir=/tmp/ztmpdir$$
     mkdir -p $ztmpdir
     version=$1
     tarfile=$2
@@ -141,11 +114,11 @@ tar2zip()
     # -q   quiet mode
     # grep redirect output to /dev/null because -q or -s are not portable.
     find $ztmpdir/$version | \
-    while read inf; do \
-        if file $inf | grep "$inf\: .*text" > /dev/null 2>&1 ; then \
-        unix2dos -q -k $inf; \
-        fi\
-    done
+        while read inf; do \
+            if file $inf | grep "$inf\: .*text" > /dev/null 2>&1 ; then \
+                unix2dos -q -k $inf; \
+            fi\
+        done
     # step 3: make zipball
     # -9 maximum compression
     # -y Store symbolic links as such in the zip archive
@@ -161,26 +134,21 @@ tar2zip()
 # Function name: tar2cmakezip
 # Convert the release tarball to a Windows zipball with files to run CMake build.
 #
-# Programmer: Larry Knox
-# Creation date: 2017-02-20
-#
-# Modifications
-#
 # Steps:
 # 1. untar the tarball in a temporary directory;
 #    Note: do this in a temporary directory to avoid changing
 #    the original source directory which may be around.
 # 2. add build-unix.sh script.
-# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 3. add LIBAEC.tar.gz, ZLib.tar.gz and cmake files to top level directory.
 # 4. create gzipped tar file with these contents:
 #        build-unix.sh          script
 #        hdf4-<version>         source code directory extracted from tar file
 #        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
-#        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        LIBAEC.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
-#        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG9e.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -192,16 +160,16 @@ tar2zip()
 #
 
 # need function to create another temporary directory, extract the
-# $tmpdir/$HDF4_VERS.tar into it, add (create) build-unix.sh,
-# CTestScript.cmake, HDF5config.cmake, SZIP.tar.gz, ZLib.tar.gz,
-# and JPEG8d.tar.gz, and then zip it.
+# $tmpdir/$HDF4_VERS.tar into it, create build-VS*.bat files,
+# add CTestScript.cmake, HDF4config.cmake, LIBAEC.tar.gz, ZLib.tar.gz,
+# and JPEG9e.tar.gz, HDF4 examples and then zip it.
 tar2cmakezip()
 {
     if [ $# -ne 3 ]; then
         echo "usage: tar2cmakezip <tarfilename> <zipfilename>"
         return 1
     fi
-    cmziptmpdir=/tmp/cmziptmpdir
+    cmziptmpdir=/tmp/cmziptmpdir$$
     cmziptmpsubdir=$cmziptmpdir/CMake-$HDF4_VERS
     mkdir -p $cmziptmpsubdir
     version=$1
@@ -218,18 +186,21 @@ tar2cmakezip()
         return 1
     fi
 
-    # step 2: add batch file for building CMake on window
-    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2013 -C Release -V -O hdf4.log" > build-VS2013-32.bat; chmod 755 build-VS2013-32.bat)
-    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201364 -C Release -V -O hdf4.log" > build-VS2013-64.bat; chmod 755 build-VS2013-64.bat)
+    # step 2: add batch file for building CMake on Windows
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2015 -C Release -V -O hdf4.log" > build-VS2015-32.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201564 -C Release -V -O hdf4.log" > build-VS2015-64.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2017 -C Release -V -O hdf4.log" > build-VS2017-32.bat; chmod 755 build-VS2017-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -V -O hdf4.log" > build-VS2017-64.bat; chmod 755 build-VS2017-64.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2019 -C Release -V -O hdf4.log" > build-VS2019-32.bat; chmod 755 build-VS2019-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201964 -C Release -V -O hdf4.log" > build-VS2019-64.bat; chmod 755 build-VS2019-64.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2022 -C Release -V -O hdf4.log" > build-VS2022-32.bat; chmod 755 build-VS2022-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS202264 -C Release -V -O hdf4.log" > build-VS2022-64.bat; chmod 755 build-VS2022-32.bat)
 
-    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
-    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmziptmpsubdir
+    # step 3: add LIBAEC.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/LIBAEC.tar.gz $cmziptmpsubdir
     cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmziptmpsubdir
-    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG9e.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/HDF4Examples-0.3.10-Source.zip $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmziptmpsubdir
@@ -246,6 +217,7 @@ tar2cmakezip()
                 unix2dos -q -k $inf; \
             fi\
         done
+
     # step 3: make zipball
     # -9 maximum compression
     # -y Store symbolic links as such in the zip archive
@@ -259,28 +231,24 @@ tar2cmakezip()
 }
 
 # Function name: tar2cmaketgz
-# Convert the release tarball to a Windows zipball with files to run CMake build.
+# Convert the release tarball to a gzipped tar file with files to run CMake build.
 #
-# Programmer: Larry Knox
-# Creation date: 2017-02-20
-#
-# Modifications
 #
 # Steps:
 # 1. untar the tarball in a temporary directory;
 #    Note: do this in a temporary directory to avoid changing
 #    the original source directory which may be around.
 # 2. add build-unix.sh script.
-# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 3. add LIBAEC.tar.gz, ZLib.tar.gz and cmake files to top level directory.
 # 4. create gzipped tar file with these contents:
 #        build-unix.sh          script
 #        hdf4-<version>         source code directory extracted from tar file
 #        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
-#        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        LIBAEC.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
-#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -290,7 +258,10 @@ tar2cmakezip()
 #
 # Returns 0 if successful; 1 otherwise
 #
-
+ # need function to create another temporary directory, extract the
+            # $tmpdir/$HDF4_VERS.tar into it, create build-unix.sh,
+            # add CTestScript.cmake, HDF4config.cmake, LIBAEC.tar.gz
+            # ZLib.tar.gz, JPEG9e.tar.gz, HDF4 examples and then tar.gz it.
 tar2cmaketgz()
 {
     if [ $# -ne 3 ]; then
@@ -308,7 +279,7 @@ tar2cmaketgz()
     (cd $cmgztmpsubdir; tar xf -) < $tarfile
     # sanity check
     if [ ! -d $cmgztmpsubdir/$version ]; then
-        echo "untar did not create $cmgztmpdir/$version source dir"
+        echo "untar did not create $cmgztmpsubdir/$version source dir"
         # cleanup
         rm -rf $cmgztmpdir
         return 1
@@ -318,10 +289,11 @@ tar2cmaketgz()
     # step 2: add build-unix.sh script
     (cd $cmgztmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=Unix -C Release -V -O hdf4.log" > build-unix.sh; chmod 755 build-unix.sh)
 
-    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
-    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmgztmpsubdir
+    # step 3: add LIBAEC.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/LIBAEC.tar.gz $cmgztmpsubdir
     cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmgztmpsubdir
-    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG9e.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/HDF4Examples-0.3.10-Source.tar.gz $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmgztmpsubdir
@@ -334,7 +306,7 @@ tar2cmaketgz()
 
 # This command must be run at the top level of the hdf4 source directory.
 # Verify this requirement.
-if [ ! \( -f configure -a -f bin/release \) ]; then
+if [ ! \( -f configure.ac -a -f bin/release \) ]; then
     echo "$0 must be run at the top level of the hdf4 source directory"
     exit 1
 fi
@@ -349,15 +321,25 @@ check=yes
 release_date=`date +%F`
 today=`date +%Y%m%d`
 pmode='no'
+revmode='no'
 tmpdir="../#release_tmp.$$"    # tmp work directory
+MAINT_MODE_ENABLED=""
+
+# If maintainer mode is enabled in configure, it should be disabled for release,
+# and enabled again after release files have been created.  If already disabled
+# there's no need to do either.
+MAINT_MODE_ENABLED=`grep ^AM_MAINTAINER_MODE ./configure.ac | grep enable`
+if [ "${MAINT_MODE_ENABLED}" != "" ]; then
+    bin/switch_maint_mode -disable ./configure.ac
+fi
 
 # Restore previous Version information
 RESTORE_VERSION()
 {
     if [ X-${VERS_OLD} != X- ]; then
-    echo restoring version information back to $VERS_OLD
-    bin/h4vers -s $VERS_OLD
-    VERS_OLD=
+        echo restoring version information back to $VERS_OLD
+        bin/h4vers -s $VERS_OLD
+        VERS_OLD=
     fi
 }
 
@@ -367,37 +349,41 @@ while [ -n "$1" ]; do
     arg=$1
     shift
     case "$arg" in
-    -d)
-        DEST=$1
-        shift
-        ;;
-    --nocheck)
-        check=no
-        ;;
-    -h)
-        USAGE
-        exit 0
-        ;;
-    --private)
-        pmode=yes
-        ;;
-    -*)
-        echo "Unknown switch: $arg" 1>&2
-        USAGE
-        exit 1
-        ;;
-    *)
-        methods="$methods $arg"
-        ;;
+        -d)
+            DEST=$1
+            shift
+            ;;
+        -h)
+            USAGE
+            exit 0
+            ;;
+        --private)
+            pmode=yes
+            ;;
+        --revision)
+            revmode=yes
+            ;;
+        --branch)
+            BRANCHNAME=$1
+            shift
+            ;;
+        -*)
+            echo "Unknown switch: $arg" 1>&2
+            USAGE
+            exit 1
+            ;;
+        *)
+            methods="$methods $arg"
+            ;;
     esac
 done
 
-# Default methods is tar and md5
+# Default method is tar
 if [ "X$methods" = "X" ]; then
     methods="tar"
 fi
 
-# Create the temporay work directory.
+# Create the temporary work directory.
 if mkdir $tmpdir; then
     echo "temporary work directory for release.  "\
          "Can be deleted after release completes." > $tmpdir/README
@@ -418,8 +404,28 @@ if [ X$pmode = Xyes ]; then
     bin/h4vers -s $VERS
 fi
 
-# Store hdf4-$VERS ("hdf-4.2.11", e.g.) to a variable to avoid typos
-HDF4_VERS=hdf-$VERS
+if [ X$revmode = Xyes ]; then
+    VERS_OLD=$VERS
+    echo "Save old version $VERS_OLD for restoration later."
+    if [ "${BRANCHNAME}" = "" ]; then
+        BRANCHNAME=`git symbolic-ref -q --short HEAD`
+    fi
+    revision=`git rev-parse --short HEAD`
+    # Set version information to m.n.r-r$revision.
+    # (h4vers does not correctly handle just m.n.r-$today.)
+    VERS=`echo $VERS | sed -e s/-.*//`-$revision
+    echo Private release of $VERS
+    HDF4_VERS=hdf4-$BRANCHNAME-$revision
+    echo file base of $HDF4_VERS
+    bin/h4vers -s $VERS
+    # use a generic directory name for revision releases
+    HDF4_IN_VERS=hdfsrc
+else
+    # Store hdf4-$VERS ("hdf-4.2.15", e.g.) to a variable to avoid typos
+    HDF4_VERS=hdf-$VERS
+    # directory name matches tar file name for non-revision releases
+    HDF4_IN_VERS=$HDF4_VERS
+fi
 
 test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2
 if [ ! -d $DEST ]; then
@@ -427,29 +433,17 @@ if [ ! -d $DEST ]; then
     exit 1
 fi
 
-# Check the validity of the MANIFEST file.
-bin/chkmanifest || fail=yes
-if [ "X$fail" = "Xyes" ]; then
-    if [ $check = yes ]; then
-        exit 1
-    else
-    echo "Continuing anyway..."
-    fi
-fi
+# Create a symlink to the source so files in the tarball have the prefix
+# we want (gnu's --transform isn't portable)
+ln -s `pwd` $tmpdir/$HDF4_IN_VERS || exit 1
 
-# Create a manifest that contains only files for distribution.
-MANIFEST=$tmpdir/H4_MANIFEST
-grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
-
-# Prepare the source tree for a release.
-ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
 # Save a backup copy of Makefile if exists.
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
 
-# Update README.txt and release_notes/RELEASE.txt with release information in
+# Update README.md and release_notes/RELEASE.txt with release information in
 # line 1.
-for f in README.txt release_notes/RELEASE.txt; do
+for f in README.md release_notes/RELEASE.txt; do
     echo "HDF version $VERS released on $release_date" >$f.x
     sed -e 1d $f >>$f.x
     mv $f.x $f
@@ -459,52 +453,54 @@ done
 
 # Create the tar file
 test "$verbose" && echo "   Running tar..." 1>&2
-( \
-    cd $tmpdir; \
-    tar cf $HDF4_VERS.tar $HDF4_VERS/Makefile \
-    `sed 's/^\.\//hdf-'$VERS'\//' $MANIFEST` || exit 1 \
-)
+(cd "$tmpdir" && exec tar -ch --exclude-vcs -f "$HDF4_VERS.tar" "./$HDF4_IN_VERS" || exit 1 )
 
 # Compress
-MD5file=$HDF4_VERS.md5
-cp /dev/null $DEST/$MD5file
+SHA256=$HDF4_VERS.sha256
+cp /dev/null $DEST/$SHA256
 for comp in $methods; do
     case $comp in
-    tar)
-        cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
-            (cd $DEST; md5sum $HDF4_VERS.tar >> $MD5file)
-        ;;
-    gzip)
-        test "$verbose" && echo "   Running gzip..." 1>&2
-        gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
-            (cd $DEST; md5sum $HDF4_VERS.tar.gz >> $MD5file)
-        ;;
+        tar)
+            cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
+            (cd $DEST; sha256sum $HDF4_VERS.tar >> $SHA256)
+            ;;
+        gzip)
+            test "$verbose" && echo "   Running gzip..." 1>&2
+            gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
+            (cd $DEST; sha256sum $HDF4_VERS.tar.gz >> $SHA256)
+            ;;
         cmake-tgz)
             test "$verbose" && echo "   Creating CMake tar.gz file..." 1>&2
-            tar2cmaketgz $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
-            (cd $DEST; md5sum CMake-$HDF4_VERS.tar.gz >> $MD5file)
+            tar2cmaketgz $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
+            (cd $DEST; sha256sum CMake-$HDF4_VERS.tar.gz >> $SHA256)
             ;;
-    bzip2)
-        test "$verbose" && echo "   Running bzip2..." 1>&2
-        bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
-            (cd $DEST; md5sum $HDF4_VERS.tar.bz2 >> $MD5file)
-        ;;
-    zip)
-        test "$verbose" && echo "   Creating zip ball..." 1>&2
-        tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
-            (cd $DEST; md5sum $HDF4_VERS.zip >> $MD5file)
-        ;;
+        bzip2)
+            test "$verbose" && echo "   Running bzip2..." 1>&2
+            bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
+            (cd $DEST; sha256sum $HDF4_VERS.tar.bz2 >> $SHA256)
+            ;;
+        zip)
+            test "$verbose" && echo "   Creating zip ball..." 1>&2
+            tar2zip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+            (cd $DEST; sha256sum $HDF4_VERS.zip >> $SHA256)
+            ;;
         cmake-zip)
             test "$verbose" && echo "   Creating CMake-zip ball..." 1>&2
-            tar2cmakezip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
-            (cd $DEST; md5sum CMake-$HDF4_VERS.zip >> $MD5file)
+            tar2cmakezip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
+            (cd $DEST; sha256sum CMake-$HDF4_VERS.zip >> $SHA256)
             ;;
-    *)
-        echo "***Error*** Unknown method $comp"
-        exit 1
-        ;;
+        *)
+            echo "***Error*** Unknown method $comp"
+            exit 1
+            ;;
     esac
 done
+
+# If AM_MAINTAINER_MODE was enabled before running this script
+# restore it to "enabled".
+if [ "${MAINT_MODE_ENABLED}" != "" ]; then
+    bin/switch_maint_mode -enable ./configure.ac
+fi
 
 # Copy the RELEASE.txt to the release area.
 cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
@@ -514,12 +510,15 @@ rm -f Makefile
 test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
 
 # Restore OLD version information, then no need for trap.
-if [ X$pmode = Xyes ]; then
+if [ X$pmode = Xyes ] || [ X$revmode = Xyes ]; then
+    echo "Restore the original version $VERS_OLD"
     RESTORE_VERSION
     trap 0
 fi
 
 # Remove temporary things
 rm -rf $tmpdir
+
+echo "DONE"
 
 exit 0

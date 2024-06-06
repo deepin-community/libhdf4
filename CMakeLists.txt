@@ -1,9 +1,21 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4 C)
 
 if (POLICY CMP0074)
+  # find_package() uses <PackageName>_ROOT variables.
   cmake_policy (SET CMP0074 NEW)
 endif ()
+
+if (POLICY CMP0083)
+  # To control generation of Position Independent Executable (PIE) or not,
+  # some flags are required at link time.
+  cmake_policy (SET CMP0083 NEW)
+endif ()
+
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif()
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
@@ -31,12 +43,6 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
       "        $ cmake [OPTIONS] ..\n"
       )
 endif ()
-
-# CMake version 3.14 added option --ignore-eol to compare files
-#     cmake -E compare_files --ignore-eol file1 file2
-#if(CMAKE_VERSION VERSION_LESS "3.14.0" AND WIN32)
-#    MESSAGE(FATAL_ERROR "Windows builds requires a minimum of CMake 3.14")
-#endif()
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Sub-Project Build
@@ -86,29 +92,29 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #   # Export configuration to this export variable
 #   set (HDF4_EXPORTED_TARGETS "project-targets")
 #
-#   # Setup all necessary overrides for zlib so that HDF4 uses our
-#   # internally compiled zlib rather than any other version
-#   if (HDF4_ENABLE_Z_LIB_SUPPORT)
-#    # We must tell the main HDF4 library that it depends on our zlib
-#     set (HDF4_LIB_DEPENDENCIES prjzlib)
-#     # Override the zlib header file
-#     if (PRJ_USE_SYSTEM_ZLIB)
-#       set (H4_ZLIB_HEADER "zlib.h")
+#   # Setup all necessary overrides for szip so that HDF4 uses our
+#   # internally compiled szip rather than any other version
+#   if (HDF4_ENABLE_SZIP_SUPPORT)
+#    # We must tell the main HDF4 library that it depends on our szip
+#     set (HDF4_LIB_DEPENDENCIES prjszip)
+#     # Override the szip header file
+#     if (PRJ_USE_SYSTEM_SZIP)
+#       set (H4_SZIP_HEADER "szip.h")
 #     else ()
-#      set (H4_ZLIB_HEADER "prj_zlib.h")
-#       # Set vars that FindZlib would have set if used in sub project
-#       set (ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
-#       set (ZLIB_LIBRARIES prjzlib)
+#      set (H4_SZIP_HEADER "prj_szip.h")
+#       # Set vars that FindSZIP would have set if used in sub project
+#       set (SZIP_INCLUDE_DIRS "${PRJ_SZIP_INCLUDE_DIRS}")
+#       set (SZIP_LIBRARIES prjszip)
 #     endif ()
 #  endif ()
 #
 #   # Add the sub project
-#   add_subdirectory (Utilities/hdf4.2.5)
+#   add_subdirectory (Utilities/hdf4.3.0)
 #   # Add the HDF4 dirs to our include path
 #   set (HDF4_INCLUDE_DIR
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
-#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/hdf/src
+#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.3.0
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/mfhdf/libsrc
 #   )
 #
 #-----------------------------------------------------------------------------
@@ -133,10 +139,10 @@ mark_as_advanced (HDF4_NO_PACKAGES)
 # Set the core names of all the libraries
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_CORENAME          "hdf")
+set (HDF4_SRC_LIB_SYM_CORENAME      "df")
 set (HDF4_SRC_FCSTUB_LIB_CORENAME   "hdf_fcstub")
 set (HDF4_SRC_FORTRAN_LIB_CORENAME  "hdf_fortran")
 set (HDF4_MF_LIB_CORENAME           "mfhdf")
-set (HDF4_MF_XDR_LIB_CORENAME       "xdr")
 set (HDF4_HDF_TEST_LIB_CORENAME     "hdf_test")
 set (HDF4_HDF_TEST_FCSTUB_LIB_CORENAME     "hdf_test_fcstub")
 set (HDF4_MF_FCSTUB_LIB_CORENAME    "mfhdf_fcstub")
@@ -151,10 +157,10 @@ set (HDF4_JAVA_TEST_LIB_CORENAME    "jartest4")
 # Set the true names of all the libraries if customized by external project
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_NAME          "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_LIB_CORENAME}")
+set (HDF4_SRC_LIB_SYM_NAME      "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_LIB_SYM_CORENAME}")
 set (HDF4_SRC_FCSTUB_LIB_NAME   "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_FCSTUB_LIB_CORENAME}")
 set (HDF4_SRC_FORTRAN_LIB_NAME  "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_FORTRAN_LIB_CORENAME}")
 set (HDF4_MF_LIB_NAME           "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_MF_LIB_CORENAME}")
-set (HDF4_MF_XDR_LIB_NAME       "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_MF_XDR_LIB_CORENAME}")
 set (HDF4_HDF_TEST_LIB_NAME     "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_HDF_TEST_LIB_CORENAME}")
 set (HDF4_HDF_TEST_FCSTUB_LIB_NAME     "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME}")
 set (HDF4_MF_FCSTUB_LIB_NAME    "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_MF_FCSTUB_LIB_CORENAME}")
@@ -169,10 +175,10 @@ set (HDF4_JAVA_TEST_LIB_NAME    "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_JAVA_TEST_LIB
 # Set the target names of all the libraries
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_TARGET          "${HDF4_SRC_LIB_CORENAME}-static")
+set (HDF4_SRC_LIB_SYM_TARGET      "${HDF4_SRC_LIB_SYM_CORENAME}-static")
 set (HDF4_SRC_FCSTUB_LIB_TARGET   "${HDF4_SRC_FCSTUB_LIB_CORENAME}-static")
 set (HDF4_SRC_FORTRAN_LIB_TARGET  "${HDF4_SRC_FORTRAN_LIB_CORENAME}-static")
 set (HDF4_MF_LIB_TARGET           "${HDF4_MF_LIB_CORENAME}-static")
-set (HDF4_MF_XDR_LIB_TARGET       "${HDF4_MF_XDR_LIB_CORENAME}-static")
 set (HDF4_HDF_TEST_LIB_TARGET     "${HDF4_HDF_TEST_LIB_CORENAME}-static")
 set (HDF4_HDF_TEST_FCSTUB_LIB_TARGET     "${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME}-static")
 set (HDF4_MF_FCSTUB_LIB_TARGET    "${HDF4_MF_FCSTUB_LIB_CORENAME}-static")
@@ -182,11 +188,11 @@ set (HDF4_TOOLS_LIB_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-static")
 set (HDF4_JAVA_JNI_LIB_TARGET     "${HDF4_JAVA_JNI_LIB_CORENAME}")
 set (HDF4_JAVA_HDF_LIB_TARGET     "${HDF4_JAVA_HDF_LIB_CORENAME}")
 set (HDF4_JAVA_TEST_LIB_TARGET    "${HDF4_JAVA_TEST_LIB_CORENAME}")
+set (HDF4_SRC_LIBSH_SYM_TARGET      "${HDF4_SRC_LIB_SYM_CORENAME}-shared")
 set (HDF4_SRC_LIBSH_TARGET          "${HDF4_SRC_LIB_CORENAME}-shared")
 set (HDF4_SRC_FCSTUB_LIBSH_TARGET   "${HDF4_SRC_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_SRC_FORTRAN_LIBSH_TARGET  "${HDF4_SRC_FORTRAN_LIB_CORENAME}-shared")
 set (HDF4_MF_LIBSH_TARGET           "${HDF4_MF_LIB_CORENAME}-shared")
-set (HDF4_MF_XDR_LIBSH_TARGET       "${HDF4_MF_XDR_LIB_CORENAME}-shared")
 set (HDF4_MF_FCSTUB_LIBSH_TARGET    "${HDF4_MF_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_MF_FORTRAN_LIBSH_TARGET   "${HDF4_MF_FORTRAN_LIB_CORENAME}-shared")
 set (HDF4_TOOLS_LIBSH_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-shared")
@@ -194,23 +200,26 @@ set (HDF4_TOOLS_LIBSH_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-shared")
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
+set (HDF_CONFIG_DIR           ${HDF4_SOURCE_DIR}/config)
 set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
-set (HDF_RESOURCES_EXT_DIR    ${HDF4_SOURCE_DIR}/config/cmake_ext_mod)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
 set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
 set (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
+set (HDF4_MFHDF_UTIL_DIR      ${HDF4_SOURCE_DIR}/mfhdf/util)
 set (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
-set (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 set (HDF4_JAVA_JNI_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/jni)
 set (HDF4_JAVA_HDF_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/hdf)
 set (HDF4_JAVA_TEST_SRC_DIR        ${HDF4_SOURCE_DIR}/java/test)
 set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
-set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.25.jar)
-set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.25.jar)
-set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.25.jar)
+set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.jar)
+set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
+set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
+set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
+set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
+
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
@@ -227,6 +236,74 @@ string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\"
 #message (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
 
 #-----------------------------------------------------------------------------
+# parse the full soversion number from config/lt_vers.am and include in H4_SOVERS_INFO
+#-----------------------------------------------------------------------------
+file (READ ${HDF4_SOURCE_DIR}/config/lt_vers.am _lt_vers_am_contents)
+string (REGEX REPLACE ".*LT_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+    "\\1" H4_DF_SOVERS_INTERFACE ${_lt_vers_am_contents})
+string (REGEX REPLACE ".*LT_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+    "\\1" H4_DF_SOVERS_MINOR ${_lt_vers_am_contents})
+string (REGEX REPLACE ".*LT_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+    "\\1" H4_DF_SOVERS_RELEASE ${_lt_vers_am_contents})
+math (EXPR H4_DF_SOVERS_MAJOR ${H4_DF_SOVERS_INTERFACE}-${H4_DF_SOVERS_RELEASE})
+message (VERBOSE "HDF SOVERSION: ${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+string (REGEX MATCH ".*LT_MF_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_MF_SOVERS_EXISTS ${_lt_vers_am_contents})
+if (H4_MF_SOVERS_EXISTS)
+  string (REGEX REPLACE ".*LT_MF_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_SOVERS_INTERFACE ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_MF_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_SOVERS_MINOR ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_MF_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_SOVERS_RELEASE ${_lt_vers_am_contents})
+  math (EXPR H4_MF_SOVERS_MAJOR ${H4_MF_SOVERS_INTERFACE}-${H4_MF_SOVERS_RELEASE})
+  message (VERBOSE "MFHDFSOVERSION: ${H4_MF_SOVERS_MAJOR}.${H4_MF_SOVERS_RELEASE}.${H4_MF_SOVERS_MINOR}")
+endif ()
+string (REGEX MATCH ".*LT_XDR_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_XDR_SOVERS_EXISTS ${_lt_vers_am_contents})
+if (H4_XDR_SOVERS_EXISTS)
+  string (REGEX REPLACE ".*LT_XDR_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_XDR_SOVERS_INTERFACE ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_XDR_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_XDR_SOVERS_MINOR ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_XDR_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_XDR_SOVERS_RELEASE ${_lt_vers_am_contents})
+  math (EXPR H4_XDR_SOVERS_MAJOR ${H4_XDR_SOVERS_INTERFACE}-${H4_XDR_SOVERS_RELEASE})
+  message (VERBOSE "SOVERSION_XDR: ${H4_XDR_SOVERS_MAJOR}.${H4_XDR_SOVERS_RELEASE}.${H4_XDR_SOVERS_MINOR}")
+endif ()
+string (REGEX MATCH ".*LT_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_F_SOVERS_EXISTS ${_lt_vers_am_contents})
+if (H4_F_SOVERS_EXISTS)
+  string (REGEX REPLACE ".*LT_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_F_SOVERS_INTERFACE ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_F_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_F_SOVERS_MINOR ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_F_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_F_SOVERS_RELEASE ${_lt_vers_am_contents})
+  math (EXPR H4_F_SOVERS_MAJOR ${H4_F_SOVERS_INTERFACE}-${H4_F_SOVERS_RELEASE})
+  message (VERBOSE "SOVERSION_F: ${H4_F_SOVERS_MAJOR}.${H4_F_SOVERS_RELEASE}.${H4_F_SOVERS_MINOR}")
+endif ()
+string (REGEX MATCH ".*LT_MF_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_MF_F_SOVERS_EXISTS ${_lt_vers_am_contents})
+if (H4_MF_F_SOVERS_EXISTS)
+  string (REGEX REPLACE ".*LT_MF_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_F_SOVERS_INTERFACE ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_MF_F_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_F_SOVERS_MINOR ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_MF_F_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_MF_F_SOVERS_RELEASE ${_lt_vers_am_contents})
+  math (EXPR H4_MF_F_SOVERS_MAJOR ${H4_MF_F_SOVERS_INTERFACE}-${H4_MF_F_SOVERS_RELEASE})
+  message (VERBOSE "SOVERSION_MF_F: ${H4_MF_F_SOVERS_MAJOR}.${H4_MF_F_SOVERS_RELEASE}.${H4_MF_F_SOVERS_MINOR}")
+endif ()
+string (REGEX MATCH ".*LT_JAVA_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_JAVA_SOVERS_EXISTS ${_lt_vers_am_contents})
+if(H4_JAVA_SOVERS_EXISTS)
+  string (REGEX REPLACE ".*LT_JAVA_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_JAVA_SOVERS_INTERFACE ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_JAVA_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_JAVA_SOVERS_MINOR ${_lt_vers_am_contents})
+  string (REGEX REPLACE ".*LT_JAVA_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
+      "\\1" H4_JAVA_SOVERS_RELEASE ${_lt_vers_am_contents})
+  math (EXPR H4_JAVA_SOVERS_MAJOR ${H4_JAVA_SOVERS_INTERFACE}-${H4_JAVA_SOVERS_RELEASE})
+  message (VERBOSE "SOVERSION_JAVA: ${H4_JAVA_SOVERS_MAJOR}.${H4_JAVA_SOVERS_RELEASE}.${H4_JAVA_SOVERS_MINOR}")
+endif ()
+
+#-----------------------------------------------------------------------------
 # Basic HDF4 stuff here
 #-----------------------------------------------------------------------------
 set (HDF4_PACKAGE "hdf4")
@@ -238,21 +315,63 @@ set (HDF4_PACKAGE_VERSION_STRING "${HDF4_PACKAGE_VERSION}")
 if (NOT "${H4_VERS_SUBRELEASE}" STREQUAL "")
   set (HDF4_PACKAGE_VERSION_STRING "${HDF4_PACKAGE_VERSION_STRING}-${H4_VERS_SUBRELEASE}")
 endif ()
+set (HDF4_DF_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+set (HDF4_DF_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+if (H4_MF_SOVERS_EXISTS)
+  set (HDF4_MF_PACKAGE_SOVERSION "${H4_MF_SOVERS_MAJOR}.${H4_MF_SOVERS_RELEASE}.${H4_MF_SOVERS_MINOR}")
+  set (HDF4_MF_PACKAGE_SOVERSION_MAJOR "${H4_MF_SOVERS_MAJOR}")
+else ()
+  set (HDF4_MF_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+  set (HDF4_MF_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+endif ()
+if (H4_XDR_SOVERS_EXISTS)
+  set (HDF4_XDR_PACKAGE_SOVERSION "${H4_XDR_SOVERS_MAJOR}.${H4_XDR_SOVERS_RELEASE}.${H4_XDR_SOVERS_MINOR}")
+  set (HDF4_XDR_PACKAGE_SOVERSION_MAJOR "${H4_XDR_SOVERS_MAJOR}")
+else ()
+  set (HDF4_XDR_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+  set (HDF4_XDR_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+endif ()
+if (H4_F_SOVERS_EXISTS)
+  set (HDF4_F_PACKAGE_SOVERSION "${H4_F_SOVERS_MAJOR}.${H4_F_SOVERS_RELEASE}.${H4_F_SOVERS_MINOR}")
+  set (HDF4_F_PACKAGE_SOVERSION_MAJOR "${H4_F_SOVERS_MAJOR}")
+else ()
+  set (HDF4_F_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+  set (HDF4_F_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+endif ()
+if (H4_MF_F_SOVERS_EXISTS)
+  set (HDF4_MF_F_PACKAGE_SOVERSION "${H4_MF_F_SOVERS_MAJOR}.${H4_MF_F_SOVERS_RELEASE}.${H4_MF_F_SOVERS_MINOR}")
+  set (HDF4_MF_F_PACKAGE_SOVERSION_MAJOR "${H4_MF_F_SOVERS_MAJOR}")
+else ()
+  set (HDF4_MF_F_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+  set (HDF4_MF_F_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+endif ()
+if (H4_JAVA_SOVERS_EXISTS)
+  set (HDF4_JAVA_PACKAGE_SOVERSION "${H4_JAVA_SOVERS_MAJOR}.${H4_JAVA_SOVERS_RELEASE}.${H4_JAVA_SOVERS_MINOR}")
+  set (HDF4_JAVA_PACKAGE_SOVERSION_MAJOR "${H4_JAVA_SOVERS_MAJOR}")
+else ()
+  set (HDF4_JAVA_PACKAGE_SOVERSION "${H4_DF_SOVERS_MAJOR}.${H4_DF_SOVERS_RELEASE}.${H4_DF_SOVERS_MINOR}")
+  set (HDF4_JAVA_PACKAGE_SOVERSION_MAJOR "${H4_DF_SOVERS_MAJOR}")
+endif ()
 set (HDF4_PACKAGE_STRING "${HDF4_PACKAGE_NAME} ${HDF4_PACKAGE_VERSION_STRING}")
 set (HDF4_PACKAGE_TARNAME "${HDF4_PACKAGE}${HDF_PACKAGE_EXT}")
 set (HDF4_PACKAGE_URL "http://www.hdfgroup.org")
 set (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
-set (HDF4_PACKAGE_SOVERSION "${H4_VERS_MAJOR}.${H4_VERS_RELEASE}.${H4_VERS_MINOR}")
-set (HDF4_PACKAGE_SOVERSION_MAJOR "${H4_VERS_MAJOR}")
+
+#-----------------------------------------------------------------------------
+# Set variables needed for installation
+#-----------------------------------------------------------------------------
+set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
+set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
+set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
 
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
-include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
+include (${HDF_RESOURCES_DIR}/HDFMacros.cmake)
 
 HDF_DIR_PATHS("HDF4")
 
-include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
+include (${HDF_RESOURCES_DIR}/HDFLibMacros.cmake)
 include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
 set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
@@ -286,6 +405,13 @@ include (${HDF_RESOURCES_DIR}/ConfigureChecks.cmake)
 set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 #-----------------------------------------------------------------------------
+# Include directories in the source or build tree should come before other
+# directories to prioritize headers in the sources over installed ones.
+#-----------------------------------------------------------------------------
+set (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+set (HDF4_COMP_INCLUDE_DIRECTORIES)
+
+#-----------------------------------------------------------------------------
 # Mac OS X Options
 #-----------------------------------------------------------------------------
 if (HDF4_BUILD_FRAMEWORKS AND NOT BUILD_SHARED_LIBS)
@@ -295,28 +421,41 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
+option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
+mark_as_advanced (ONLY_SHARED_LIBS)
 option (BUILD_STATIC_LIBS "Build Static Libraries" ON)
 set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (H4_ENABLE_SHARED_LIB NO)
-option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
-mark_as_advanced (ONLY_SHARED_LIBS)
+
+option (HDF4_BUILD_STATIC_TOOLS "Build Static Tools NOT Shared Tools" OFF)
+
+# only shared libraries/tools is true if user forces static OFF
+if (NOT BUILD_STATIC_LIBS)
+  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+endif ()
+
+# only shared libraries is set ON by user then force settings
+if (ONLY_SHARED_LIBS)
+  set (H4_ENABLE_STATIC_LIB NO)
+  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
+  set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
+  if (HDF4_BUILD_STATIC_TOOLS)
+    message (WARNING "Cannot build static tools without static libraries. Building shared tools.")
+  endif ()
+  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
+endif ()
+
+if (NOT BUILD_SHARED_LIBS AND NOT HDF4_BUILD_STATIC_TOOLS)
+  message (WARNING "Cannot build shared tools without shared libraries. Building static tools.")
+  set (HDF4_BUILD_STATIC_TOOLS ON CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
+endif ()
 
 if (BUILD_STATIC_LIBS)
   set (H4_ENABLE_STATIC_LIB YES)
 endif ()
 if (BUILD_SHARED_LIBS)
   set (H4_ENABLE_SHARED_LIB YES)
-endif ()
-
-# Force only shared libraries if all OFF
-if (NOT BUILD_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
-  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
-endif ()
-
-if (ONLY_SHARED_LIBS)
-  set (H4_ENABLE_STATIC_LIB NO)
-  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
 endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -329,20 +468,27 @@ add_definitions (-DHAVE_CONFIG_H)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
   foreach (flag_var
       CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-      CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
     if (${flag_var} MATCHES "O3")
       string (REGEX REPLACE "O3" "O2" ${flag_var} "${${flag_var}}")
     endif ()
   endforeach ()
 endif ()
 
+option (HDF4_ENABLE_ANALYZER_TOOLS "enable the use of Clang tools" OFF)
+mark_as_advanced (HDF4_ENABLE_ANALYZER_TOOLS)
 if (HDF4_ENABLE_ANALYZER_TOOLS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/tools.cmake)
 endif ()
+option (HDF4_ENABLE_SANITIZERS "execute the Clang sanitizer" OFF)
+mark_as_advanced (HDF4_ENABLE_SANITIZERS)
 if (HDF4_ENABLE_SANITIZERS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/sanitizers.cmake)
+endif ()
+option (HDF4_ENABLE_FORMATTERS "format source files" OFF)
+mark_as_advanced (HDF4_ENABLE_FORMATTERS)
+if (HDF4_ENABLE_FORMATTERS)
+  include (${HDF4_SOURCE_DIR}/config/sanitizer/formatting.cmake)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -355,7 +501,6 @@ if (HDF4_ENABLE_COVERAGE)
     add_code_coverage () # Adds instrumentation to all targets
   else ()
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage -O0 -fprofile-arcs -ftest-coverage")
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
       set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
       link_libraries (gcov)
@@ -376,30 +521,19 @@ else ()
 endif ()
 
 #-----------------------------------------------------------------------------
-# Include the main src and config directories
-#-----------------------------------------------------------------------------
-set (HDF4_INCLUDE_DIRECTORIES
-    ${HDF4_HDFSOURCE_DIR}
-    ${HDF4_MFHDFSOURCE_DIR}
-    ${HDF4_SOURCE_DIR}
-    ${HDF4_BINARY_DIR}
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-)
-INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
-
-#-----------------------------------------------------------------------------
 # When building utility executables that generate other (source) files :
 # we make use of the following variables defined in the root CMakeLists.
 # Certain systems may add /Debug or /Release to output paths
 # and we need to call the executable from inside the CMake configuration
 #-----------------------------------------------------------------------------
-set (EXE_EXT "")
-if (WIN32 OR MINGW)
-  set (EXE_EXT ".exe")
-  add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-  add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-  add_definitions (-D_CONSOLE)
+if (WIN32)
+  add_compile_definitions (_CRT_SECURE_NO_WARNINGS)
+  if (MSVC)
+    add_compile_definitions (_BIND_TO_CURRENT_VCLIBS_VERSION=1 _CONSOLE)
+  endif ()
 endif ()
+
+option (HDF4_MINGW_STATIC_GCC_LIBS "Statically link libgcc/libstdc++" OFF)
 
 if (MSVC)
   set (CMAKE_MFC_FLAG 0)
@@ -407,18 +541,8 @@ if (MSVC)
   set (WIN_LINK_FLAGS "")
 endif ()
 
-set (MAKE_SYSTEM)
-if (CMAKE_BUILD_TOOL MATCHES "make")
-  set (MAKE_SYSTEM 1)
-endif ()
-
-set (CFG_INIT "/${CMAKE_CFG_INTDIR}")
-if (MAKE_SYSTEM)
-  set (CFG_INIT "")
-endif ()
-
 include (${HDF_RESOURCES_DIR}/HDFCompilerFlags.cmake)
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Include user macros
@@ -431,92 +555,45 @@ include (UserMacros.cmake)
 include (CMakeFilters.cmake)
 
 #-----------------------------------------------------------------------------
-# Option for external libraries on windows
+# Options to build tools
 #-----------------------------------------------------------------------------
-option (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  if (HDF4_PACKAGE_EXTLIBS)
-    set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
-    if (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
-      PACKAGE_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-
-    if (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-      PACKAGE_ZLIB_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-
-    if (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-      PACKAGE_SZIP_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-  endif ()
-endif ()
+option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
+option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 xdr Library
+# Option to Build HDF4 versions of NetCDF-3 APIS
 #-----------------------------------------------------------------------------
-option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
-if (WIN32 OR MINGW OR APPLE)
-  set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-else ()
-  if (NOT HDF4_BUILD_XDR_LIB)
-    include (FindXDR)
-    if (XDR_FOUND)
-      set (CMAKE_REQUIRED_LIBRARIES "${XDR_LIBRARIES}" )
-      message (STATUS "HDF4 XDR Library found: ${XDR_LIBRARIES}")
-      set (LINK_LIBS ${LINK_LIBS} ${XDR_LIBRARIES})
-      set (LINK_SHARED_LIBS ${LINK_SHARED_LIBS} ${XDR_LIBRARIES})
-      include_directories(${XDR_INCLUDE_DIRS})
-    else ()
-      set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-      message (STATUS "HDF4 XDR Library will be built")
-    endif ()
-  endif ()
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  set (H4_NO_SYS_XDR_INC 1)
-  add_subdirectory (mfhdf/xdr)
+option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
+if (HDF4_ENABLE_NETCDF)
+  set (${HDF_PREFIX}_HAVE_NETCDF 1)
+  set (${HDF_PREFIX}_BUILD_NETCDF 1)
 endif ()
 
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
-add_subdirectory (hdf/src )
+add_subdirectory (hdf/src)
 add_subdirectory (mfhdf/libsrc)
 
-if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-    if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_DOC "Build documentation" OFF)
+if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+# check if Doxygen is installed
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." OFF)
+    mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
+    if (HDF4_ENABLE_DOXY_WARNINGS)
+      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")
+    else ()
+      set (HDF4_DOXY_WARNINGS "NO")
     endif ()
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
-    endif ()
-  endif ()
-  if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-    if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
-    endif ()
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
-    endif ()
-  endif ()
-  if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-    if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
-    endif ()
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
-    endif ()
-  endif ()
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (NOT ONLY_SHARED_LIBS)
-    add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
-  endif ()
-  if (BUILD_SHARED_LIBS)
-    add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    add_subdirectory (doxygen)
+  else ()
+    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
   endif ()
 endif ()
 
@@ -548,21 +625,30 @@ if (BUILD_TESTING)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to build Fortran bindings/tests/examples
+# Option to build Fortran bindings/tests
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
+# NOTE:
+# This interface is UNSAFE on 64-bit systems as the interface attempts to
+# store pointers in 32-bit integers.
 #-----------------------------------------------------------------------------
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
 if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
-  option (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
+  option (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF4_BUILD_FORTRAN)
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
+
+    if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 10.0)
+      set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fallow-argument-mismatch")
+      set (CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -fallow-argument-mismatch")
+    endif ()
+
     add_subdirectory (mfhdf/fortran)
     add_subdirectory (hdf/fortran)
   endif ()
@@ -575,38 +661,34 @@ add_subdirectory (hdf)
 add_subdirectory (mfhdf)
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 Examples
-#-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
-  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
-  if (HDF4_BUILD_EXAMPLES)
-    if (HDF4_BUILD_FORTRAN)
-      if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
-        add_subdirectory (hdf/fortran/examples)
-      endif ()
-      if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
-        add_subdirectory (mfhdf/fortran/examples)
-      endif ()
-    endif ()
-
-    add_subdirectory (hdf/examples)
-    add_subdirectory (mfhdf/examples)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
 if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
-  option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
+  option (HDF4_BUILD_JAVA "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
-    add_subdirectory (java)
+    if (NOT BUILD_SHARED_LIBS)
+      message (FATAL_ERROR "\nJava requires shared libraries!\n")
+    else ()
+      add_subdirectory (java)
+    endif ()
   endif ()
 endif ()
 
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
-configure_file (${HDF_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
+configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
+
+#-----------------------------------------------------------------------------
+# Option to build examples
+#-----------------------------------------------------------------------------
+if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
+  if (HDF4_BUILD_EXAMPLES)
+    include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
+    set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
+    add_subdirectory (HDF4Examples)
+  endif ()
+endif ()
 
 include (CMakeInstallation.cmake)

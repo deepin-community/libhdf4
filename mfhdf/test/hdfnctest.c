@@ -10,6 +10,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "mfhdf.h"
 
 #include "hdftest.h"
@@ -19,31 +22,30 @@ extern int test_unlim();
 extern int test_ncunlim();
 extern int test_ncvargetfill();
 
-int 
-main(int argc, char *argv[])
+int
+main(void)
 {
-    intn  status;          /* status flag */
-    int   num_errs = 0;    /* number of errors so far */
+    intn status;       /* status flag */
+    int  num_errs = 0; /* number of errors so far */
 
-    /* Tests reading/writing datasets with unlimited dimension via HDF
-       API (bugzilla 1378) -BMR, Jan 07, 2009 */
-    status = test_unlim();  /* in tunlim.c */
+    /* Tests reading/writing datasets with unlimited dimension via HDF API */
+    status   = test_unlim(); /* in tunlim.c */
     num_errs = num_errs + status;
 
-    /* Tests reading/writing variables with unlimited dimension via nc
-       API (bugzilla 1378) -BMR, Jan 07, 2009 */
-    status = test_ncunlim();  /* in tncunlim.c */
+    /* Tests reading/writing variables with unlimited dimension via nc API */
+    status   = test_ncunlim(); /* in tncunlim.c */
     num_errs = num_errs + status;
 
-    /* Tests ncvarget in filling fill-values where appropriate (HDFFR-1390)
-       -BMR, Sep 05, 2013 */
-    status = test_ncvargetfill();  /* in tncvargetfill.c */
+    /* Tests ncvarget in filling fill-values where appropriate (HDFFR-1390) */
+    status   = test_ncvargetfill(); /* in tncvargetfill.c */
     num_errs = num_errs + status;
 
-    if (num_errs == 0)
-	printf("*** HDF-nc test passes ***\n");
-    else                                                          \
-	printf("*** HDF-nc test fails ***\n");
-    return num_errs;
+    if (num_errs == 0) {
+        printf("*** HDF-nc test passes ***\n");
+        return EXIT_SUCCESS;
+    }
+    else {
+        printf("*** HDF-nc test fails ***\n");
+        return EXIT_FAILURE;
+    }
 }
-

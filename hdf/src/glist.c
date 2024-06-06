@@ -15,14 +15,10 @@
   Credits:
           Original code is part of the public domain 'Generic List Library'
           by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-          I modified it to adhere to HDF coding standards.
-
-  1996/06/04 - George V. 
  ************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "glist.h"
+#include "hdf_priv.h"
+#include "glist_priv.h"
 
 /*+
 ****************************************************************************
@@ -169,7 +165,7 @@ void *HDGSpeek_at_top(Generic_stack stack);
 Generic_stack HDGScopy_stack(Generic_stack stack);
 
 * This is a list fcn *
-intn HDGLis_empty(Generic_stack stack); 
+intn HDGLis_empty(Generic_stack stack);
 
 Generic Queues(HDGQxxx)
 ----------------------
@@ -212,35 +208,32 @@ structures.
 intn
 HDGLinitialize_list(Generic_list *list)
 {
-    CONSTR(FUNC, "HDGLinitialize_list");	/* for HERROR */
-    intn  ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
 
-    /* Allocate an intialize info struct */
-    list->info = (Generic_list_info *)HDmalloc(sizeof(Generic_list_info));
+    /* Allocate an initialize info struct */
+    list->info = (Generic_list_info *)malloc(sizeof(Generic_list_info));
 
-    if (list->info != NULL)
-      {
-          list->info->pre_element.pointer  = NULL;
-          list->info->pre_element.previous = &list->info->pre_element;
-          list->info->pre_element.next     = &list->info->post_element;
-          list->info->post_element.pointer = NULL;
-          list->info->post_element.previous = &list->info->pre_element;
-          list->info->post_element.next     = &list->info->post_element;
+    if (list->info != NULL) {
+        list->info->pre_element.pointer   = NULL;
+        list->info->pre_element.previous  = &list->info->pre_element;
+        list->info->pre_element.next      = &list->info->post_element;
+        list->info->post_element.pointer  = NULL;
+        list->info->post_element.previous = &list->info->pre_element;
+        list->info->post_element.next     = &list->info->post_element;
 
-          list->info->current = &list->info->pre_element;
-          list->info->deleted_element.pointer = NULL;
-          list->info->lt      = NULL;
-          list->info->num_of_elements = 0;
-      }
+        list->info->current                 = &list->info->pre_element;
+        list->info->deleted_element.pointer = NULL;
+        list->info->lt                      = NULL;
+        list->info->num_of_elements         = 0;
+    }
     else
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
-    if (ret_value == FAIL)
-      {
-      }
+    if (ret_value == FAIL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLinitialize_list() */
 
 /******************************************************************************
@@ -263,11 +256,10 @@ return ret_value;
     less-than function.  The only time it is valid to re-initialize a list
     is after it has been destroyed.
  RETURNS
-     SUCEED/FAIL
+     SUCCEED/FAIL
 *******************************************************************************/
 intn
-HDGLinitialize_sorted_list(Generic_list *list, 
-                       intn (*lt)(VOIDP /* a */, VOIDP /* b */))
+HDGLinitialize_sorted_list(Generic_list *list, intn (*lt)(void * /* a */, void * /* b */))
 {
     intn ret_value = SUCCEED;
 
@@ -278,11 +270,10 @@ HDGLinitialize_sorted_list(Generic_list *list,
         list->info->lt = lt; /* Set sort fcn */
 
 done:
-    if (ret_value == FAIL)
-      {
-      }
+    if (ret_value == FAIL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLinitialize_sorted_list() */
 
 /******************************************************************************
@@ -307,7 +298,7 @@ HDGLdestroy_list(Generic_list *list)
     HDGLremove_all(*list);
 
     /* Free the info struct last */
-    HDfree((VOIDP)list->info);
+    free(list->info);
 } /* HDGLdestroy_list() */
 
 /******************************************************************************
@@ -320,39 +311,35 @@ HDGLdestroy_list(Generic_list *list)
     SUCCEED/FAIL
 *******************************************************************************/
 intn
-HDGLadd_to_beginning(Generic_list list, 
-                 VOIDP pointer)
+HDGLadd_to_beginning(Generic_list list, void *pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_beginning");	/* for HERROR */
     Generic_list_element *element;
-    intn   ret_value = SUCCEED;
+    intn                  ret_value = SUCCEED;
 
     /* Check data element */
     if (pointer == NULL)
-        HGOTO_ERROR(DFE_ARGS,FAIL); 
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Allocate and add to beginning of list */
-    element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
-    if (element != NULL)
-      {
-          element->next     = list.info->pre_element.next;
-          element->previous = &list.info->pre_element;
-          element->pointer  = pointer;
+    element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
+    if (element != NULL) {
+        element->next     = list.info->pre_element.next;
+        element->previous = &list.info->pre_element;
+        element->pointer  = pointer;
 
-          list.info->pre_element.next->previous = element;
-          list.info->pre_element.next = element;
+        list.info->pre_element.next->previous = element;
+        list.info->pre_element.next           = element;
 
-          list.info->num_of_elements++;
-      }
+        list.info->num_of_elements++;
+    }
     else
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
-    if (ret_value == FAIL)
-      {
-      }
+    if (ret_value == FAIL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLadd_to_beginning() */
 
 /******************************************************************************
@@ -365,39 +352,35 @@ return ret_value;
     SUCCEED/FAIL
 *******************************************************************************/
 intn
-HDGLadd_to_end(Generic_list list, 
-           VOIDP pointer)
+HDGLadd_to_end(Generic_list list, void *pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_end");	/* for HERROR */
     Generic_list_element *element;
-    intn   ret_value = SUCCEED;
+    intn                  ret_value = SUCCEED;
 
     /* Check data element */
-    if (pointer == NULL) 
-        HGOTO_ERROR(DFE_ARGS,FAIL);
+    if (pointer == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Allocate and add to end of list */
-    element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
-    if (element != NULL)
-      {
-          element->next     = &list.info->post_element;
-          element->previous = list.info->post_element.previous;
-          element->pointer  = pointer;
+    element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
+    if (element != NULL) {
+        element->next     = &list.info->post_element;
+        element->previous = list.info->post_element.previous;
+        element->pointer  = pointer;
 
-          list.info->post_element.previous->next = element;
-          list.info->post_element.previous = element;
+        list.info->post_element.previous->next = element;
+        list.info->post_element.previous       = element;
 
-          list.info->num_of_elements++;
-      }
+        list.info->num_of_elements++;
+    }
     else
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
-    if (ret_value == FAIL)
-      {
-      }
+    if (ret_value == FAIL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLadd_to_end() */
 
 /******************************************************************************
@@ -410,50 +393,44 @@ return ret_value;
      SUCCEED/FAIL
 *******************************************************************************/
 intn
-HDGLadd_to_list(Generic_list list, 
-            VOIDP pointer)
+HDGLadd_to_list(Generic_list list, void *pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_list");	/* for HERROR */
     Generic_list_element *element, *new_element;
-    intn ret_value = SUCCEED;
+    intn                  ret_value = SUCCEED;
 
     /* Check to see if there is a sort fcn */
-    if (list.info->lt) 
-      {
-          /* Check data element */
-        if (pointer == NULL) 
-            HGOTO_ERROR(DFE_ARGS,FAIL);
+    if (list.info->lt) {
+        /* Check data element */
+        if (pointer == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
         element = list.info->pre_element.next;
-        while (element != &list.info->post_element &&
-                (*list.info->lt)(element->pointer, pointer))
+        while (element != &list.info->post_element && (*list.info->lt)(element->pointer, pointer))
             element = element->next;
-    
-       /* Allocate and add to list */
-        new_element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
-        if (new_element != NULL)
-          {
-              new_element->next     = element;
-              new_element->previous = element->previous;
-              new_element->pointer  = pointer;
 
-              element->previous->next = new_element;
-              element->previous = new_element;
+        /* Allocate and add to list */
+        new_element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
+        if (new_element != NULL) {
+            new_element->next     = element;
+            new_element->previous = element->previous;
+            new_element->pointer  = pointer;
 
-              list.info->num_of_elements++;
-          }
+            element->previous->next = new_element;
+            element->previous       = new_element;
+
+            list.info->num_of_elements++;
+        }
         else
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
+    }
     else /* no sort fcn so add to end of list */
         ret_value = HDGLadd_to_end(list, pointer);
 
 done:
-    if (ret_value == FAIL)
-      {
-      }
+    if (ret_value == FAIL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLadd_to_list() */
 
 /******************************************************************************
@@ -468,46 +445,42 @@ return ret_value;
  RETURNS
     Element removed if successful and NULL otherwise
 *******************************************************************************/
-VOIDP
-HDGLremove_from_list(Generic_list list, 
-                 VOIDP pointer)
+void *
+HDGLremove_from_list(Generic_list list, void *pointer)
 {
     Generic_list_element *element;
-    VOIDP ret_value = NULL;
+    void                 *ret_value = NULL;
 
     /* Find element in list */
     element = list.info->post_element.previous;
     while (element != &list.info->pre_element && element->pointer != pointer)
         element = element->previous;
 
-    if (element == &list.info->pre_element)
-      { /* No such element was found. */
+    if (element == &list.info->pre_element) { /* No such element was found. */
         ret_value = NULL;
         goto done;
-      }
+    }
 
     /* Have found element */
-    if (element == list.info->current) 
-      {
+    if (element == list.info->current) {
         list.info->deleted_element.previous = element->previous;
         list.info->deleted_element.next     = element->next;
         list.info->current                  = &list.info->deleted_element;
-      }
+    }
 
     element->previous->next = element->next;
     element->next->previous = element->previous;
 
-    HDfree(element); /* free element */
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return ptr to original element */
 
 done:
-    if (ret_value == NULL)
-      {
-      }
+    if (ret_value == NULL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLremove_from_list() */
 
 /******************************************************************************
@@ -519,40 +492,38 @@ return ret_value;
  RETURNS
     First Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
+void *
 HDGLremove_from_beginning(Generic_list list)
 {
     Generic_list_element *element;
-    VOIDP pointer;
-    VOIDP ret_value = NULL;
+    void                 *pointer;
+    void                 *ret_value = NULL;
 
     /* Check to see if there any elements in the list */
-    if(list.info->num_of_elements == 0)
-      { /* nope */
+    if (list.info->num_of_elements == 0) { /* nope */
         ret_value = NULL;
         goto done;
-      }
+    }
 
     /* Remove first element */
     element = list.info->pre_element.next;
     if (element == list.info->current)
         list.info->current = &list.info->pre_element;
 
-    pointer = element->pointer;
+    pointer                     = element->pointer;
     list.info->pre_element.next = element->next;
-    element->next->previous = &list.info->pre_element;
+    element->next->previous     = &list.info->pre_element;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return the fist element */
 
 done:
-    if (ret_value == NULL)
-      {
-      }
+    if (ret_value == NULL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLremove_from_beginning() */
 
 /******************************************************************************
@@ -562,41 +533,39 @@ return ret_value;
     This function will remove the last object from the end of the list and
     return it.  If the list is empty, NULL is returned.
  RETURNS
-    Last element if successfull and NULL otherwise
+    Last element if successful and NULL otherwise
 *******************************************************************************/
-VOIDP
+void *
 HDGLremove_from_end(Generic_list list)
 {
     Generic_list_element *element;
-    VOIDP pointer;
-    VOIDP ret_value = NULL;
+    void                 *pointer;
+    void                 *ret_value = NULL;
 
     /* Check to see if there any elements in the list */
-    if(list.info->num_of_elements == 0)
-      { /* nope */
+    if (list.info->num_of_elements == 0) { /* nope */
         ret_value = NULL;
         goto done;
-      }
+    }
 
     element = list.info->post_element.previous;
     if (element == list.info->current)
         list.info->current = &list.info->post_element;
 
-    pointer = element->pointer;
+    pointer                          = element->pointer;
     list.info->post_element.previous = element->previous;
-    element->previous->next = &list.info->post_element;
+    element->previous->next          = &list.info->post_element;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return last element */
 
 done:
-    if (ret_value == NULL)
-      {
-      }
+    if (ret_value == NULL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLremove_from_end() */
 
 /******************************************************************************
@@ -610,39 +579,37 @@ return ret_value;
  RETURNS
     Current element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
+void *
 HDGLremove_current(Generic_list list)
 {
     Generic_list_element *element;
-    VOIDP pointer;
-    VOIDP ret_value = NULL;
+    void                 *pointer;
+    void                 *ret_value = NULL;
 
     element = list.info->current;
-    if (element->pointer == NULL)
-      { /* current is empty */
+    if (element->pointer == NULL) { /* current is empty */
         ret_value = NULL;
         goto done;
-      }
+    }
 
     list.info->deleted_element.previous = element->previous;
     list.info->deleted_element.next     = element->next;
     list.info->current                  = &list.info->deleted_element;
 
-    pointer = element->pointer;
+    pointer                 = element->pointer;
     element->next->previous = element->previous;
     element->previous->next = element->next;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return current element */
 
 done:
-    if (ret_value == NULL)
-      {
-      }
+    if (ret_value == NULL) {
+    }
 
-return ret_value;
+    return ret_value;
 } /* HDGLremove_current() */
 
 /******************************************************************************
@@ -663,15 +630,14 @@ HDGLremove_all(Generic_list list)
 
     /* remove all the elements from the list */
     element = list.info->pre_element.next;
-    while (element != &list.info->post_element) 
-      {
+    while (element != &list.info->post_element) {
         element = element->next;
-        HDfree(element->previous);
-      }
+        free(element->previous);
+    }
 
-    list.info->pre_element.next = &list.info->post_element;
+    list.info->pre_element.next      = &list.info->post_element;
     list.info->post_element.previous = &list.info->pre_element;
-    list.info->num_of_elements = 0;
+    list.info->num_of_elements       = 0;
 } /* HDGLremove_all() */
 
 /******************************************************************************
@@ -683,7 +649,7 @@ HDGLremove_all(Generic_list list)
  RETURNS
     First element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLpeek_at_beginning(Generic_list list)
 {
     return list.info->pre_element.next->pointer;
@@ -698,7 +664,7 @@ HDGLpeek_at_beginning(Generic_list list)
  RETURNS
     Last element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLpeek_at_end(Generic_list list)
 {
     return list.info->post_element.previous->pointer;
@@ -713,7 +679,7 @@ HDGLpeek_at_end(Generic_list list)
  RETURNS
     First element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLfirst_in_list(Generic_list list)
 {
     list.info->current = list.info->pre_element.next->next->previous;
@@ -732,7 +698,7 @@ HDGLfirst_in_list(Generic_list list)
  RETURNS
     Current element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLcurrent_in_list(Generic_list list)
 {
     return list.info->current->pointer;
@@ -747,7 +713,7 @@ HDGLcurrent_in_list(Generic_list list)
  RETURNS
     Last element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLlast_in_list(Generic_list list)
 {
     list.info->current = list.info->post_element.previous->previous->next;
@@ -764,7 +730,7 @@ HDGLlast_in_list(Generic_list list)
  RETURNS
     Next element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLnext_in_list(Generic_list list)
 {
     list.info->current = list.info->current->next;
@@ -781,7 +747,7 @@ HDGLnext_in_list(Generic_list list)
  RETURNS
     Previous element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP
+void *
 HDGLprevious_in_list(Generic_list list)
 {
     list.info->current = list.info->current->previous;
@@ -846,21 +812,20 @@ HDGLnum_of_objects(Generic_list list)
 intn
 HDGLis_empty(Generic_list list)
 {
-    return (list.info->num_of_elements == 0);
+    return list.info->num_of_elements == 0;
 } /* HDGLis_empty() */
 
 /******************************************************************************
  NAME
      HDGLis_in_list
  DESCRIPTION
-     Detemines if the object is in the list.
+     Determines if the object is in the list.
  RETURNS
     This function will return TRUE (1) if the specified object is a member
     of the list, and FALSE (0) otherwise.
 *******************************************************************************/
 intn
-HDGLis_in_list(Generic_list list, 
-           VOIDP pointer)
+HDGLis_in_list(Generic_list list, void *pointer)
 {
     Generic_list_element *element;
 
@@ -869,7 +834,7 @@ HDGLis_in_list(Generic_list list,
     while (element != &list.info->post_element && element->pointer != pointer)
         element = element->next;
 
-    return (element != &list.info->post_element);
+    return element != &list.info->post_element;
 } /* HDGLis_in_list() */
 
 /******************************************************************************
@@ -880,46 +845,41 @@ HDGLis_in_list(Generic_list list,
     are not copied; only new references to them are made.  The new list
     loses its concept of the current object.
  RETURNS
-    A copy of the orginal list.
+    A copy of the original list.
 *******************************************************************************/
 Generic_list
 HDGLcopy_list(Generic_list list)
 {
-    Generic_list list_copy;
+    Generic_list          list_copy;
     Generic_list_element *element;
-    intn  ret_value = SUCCEED;
+    intn                  ret_value = SUCCEED;
 
-    list_copy.info = NULL; /* intialize info to NULL */
+    list_copy.info = NULL; /* initialize info to NULL */
 
     /* initialize new list */
-    if (HDGLinitialize_sorted_list(&list_copy, list.info->lt) == FAIL)
-      {
+    if (HDGLinitialize_sorted_list(&list_copy, list.info->lt) == FAIL) {
         ret_value = FAIL;
         goto done;
-      }
+    }
 
     /* copy over every element to new list */
     element = list.info->pre_element.next;
-    while (element != &list.info->post_element) 
-      {
-        if (HDGLadd_to_end(list_copy, element->pointer) == FAIL)
-            {
-                ret_value = FAIL;
-                break;
-            }
+    while (element != &list.info->post_element) {
+        if (HDGLadd_to_end(list_copy, element->pointer) == FAIL) {
+            ret_value = FAIL;
+            break;
+        }
         element = element->next;
-      }
+    }
 
-done:    
-    if (ret_value == FAIL)
-      { /* need to remove all elements from copy */
-          if (list_copy.info != NULL)
-            {
-                HDGLremove_all(list_copy);
-            }
+done:
+    if (ret_value == FAIL) { /* need to remove all elements from copy */
+        if (list_copy.info != NULL) {
+            HDGLremove_all(list_copy);
+        }
 
-          list_copy.info = NULL; /* set to NULL */
-      }
+        list_copy.info = NULL; /* set to NULL */
+    }
 
     return list_copy;
 } /* HDGLcopy_list() */
@@ -934,18 +894,15 @@ done:
     Nothing
 *******************************************************************************/
 void
-HDGLperform_on_list(Generic_list list, 
-                void (*fn)(VOIDP /* pointer */, VOIDP /* args */),
-                VOIDP args)
+HDGLperform_on_list(Generic_list list, void (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
     Generic_list_element *element;
 
     element = list.info->pre_element.next;
-    while (element != &list.info->post_element) 
-      { /* call fcn on each element */
+    while (element != &list.info->post_element) { /* call fcn on each element */
         (*fn)(element->pointer, args);
         element = element->next;
-      }
+    }
 } /* HDGLperform_on_list() */
 
 /******************************************************************************
@@ -960,19 +917,15 @@ HDGLperform_on_list(Generic_list list,
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
-HDGLfirst_that(Generic_list list, 
-           intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-           VOIDP args)
+void *
+HDGLfirst_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
     Generic_list_element *element;
 
     element = list.info->pre_element.next;
-    while (element != &list.info->post_element &&
-                            !(*fn)(element->pointer, args)) 
-      {
+    while (element != &list.info->post_element && !(*fn)(element->pointer, args)) {
         element = element->next;
-      }
+    }
 
     if (element->pointer)
         list.info->current = element;
@@ -993,19 +946,15 @@ HDGLfirst_that(Generic_list list,
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
-HDGLnext_that(Generic_list list, 
-          intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-          VOIDP args)
+void *
+HDGLnext_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
     Generic_list_element *element;
 
     element = list.info->current->next;
-    while (element != &list.info->post_element &&
-                            !(*fn)(element->pointer, args)) 
-      {
+    while (element != &list.info->post_element && !(*fn)(element->pointer, args)) {
         element = element->next;
-      }
+    }
 
     if (element->pointer)
         list.info->current = element;
@@ -1026,19 +975,15 @@ HDGLnext_that(Generic_list list,
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
-HDGLprevious_that(Generic_list list, 
-              intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-              VOIDP args)
+void *
+HDGLprevious_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
     Generic_list_element *element;
 
     element = list.info->current->previous;
-    while (element != &list.info->pre_element &&
-                            !(*fn)(element->pointer, args)) 
-      {
+    while (element != &list.info->pre_element && !(*fn)(element->pointer, args)) {
         element = element->previous;
-      }
+    }
 
     if (element->pointer)
         list.info->current = element;
@@ -1058,19 +1003,15 @@ HDGLprevious_that(Generic_list list,
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP
-HDGLlast_that(Generic_list list, 
-          intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-          VOIDP args)
+void *
+HDGLlast_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
     Generic_list_element *element;
 
     element = list.info->post_element.previous;
-    while (element != &list.info->pre_element &&
-                            !(*fn)(element->pointer, args)) 
-      {
+    while (element != &list.info->pre_element && !(*fn)(element->pointer, args)) {
         element = element->previous;
-      }
+    }
 
     if (element->pointer)
         list.info->current = element;
@@ -1091,46 +1032,38 @@ HDGLlast_that(Generic_list list,
     New list if successful and empty if not.
 *******************************************************************************/
 Generic_list
-HDGLall_such_that(Generic_list list, 
-              intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-              VOIDP args)
+HDGLall_such_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
-    Generic_list list_copy;
+    Generic_list          list_copy;
     Generic_list_element *element;
-    intn  ret_value = SUCCEED;
+    intn                  ret_value = SUCCEED;
 
     /* initialize copy of list */
-    if (HDGLinitialize_sorted_list(&list_copy, list.info->lt) == FAIL)
-      {
+    if (HDGLinitialize_sorted_list(&list_copy, list.info->lt) == FAIL) {
         ret_value = FAIL;
         goto done;
-      }
+    }
 
-    /* copy over elments that satisfy the fcn */
+    /* copy over elements that satisfy the fcn */
     element = list.info->pre_element.next;
-    while (element != &list.info->post_element) 
-      {
-        if ((*fn)(element->pointer, args))
-          {
-            if (HDGLadd_to_end(list_copy, element->pointer) == FAIL)
-              {
-                  ret_value = FAIL;
-                  break;
-              }
-          }
-        element = element->next;
-      }
-    
-done:    
-    if (ret_value == FAIL)
-      {
-          if (list_copy.info != NULL)
-            {
-                HDGLremove_all(list_copy);
+    while (element != &list.info->post_element) {
+        if ((*fn)(element->pointer, args)) {
+            if (HDGLadd_to_end(list_copy, element->pointer) == FAIL) {
+                ret_value = FAIL;
+                break;
             }
+        }
+        element = element->next;
+    }
 
-          list_copy.info = NULL; /* set to NULL */
-      }
+done:
+    if (ret_value == FAIL) {
+        if (list_copy.info != NULL) {
+            HDGLremove_all(list_copy);
+        }
+
+        list_copy.info = NULL; /* set to NULL */
+    }
 
     return list_copy;
 } /* HDGLall_such_that() */
@@ -1149,43 +1082,15 @@ done:
      Nothing
 *******************************************************************************/
 void
-HDGLremove_all_such_that(Generic_list list, 
-                     intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
-                     VOIDP args)
+HDGLremove_all_such_that(Generic_list list, intn (*fn)(void * /* pointer */, void * /* args */), void *args)
 {
-    VOIDP obj;
+    void *obj;
 
     /* reset to the beginning */
     HDGLreset_to_beginning(list);
 
-    while ((obj = HDGLnext_in_list(list)))
-      {
+    while ((obj = HDGLnext_in_list(list))) {
         if ((*fn)(obj, args))
             HDGLremove_current(list);
-      }
+    }
 } /* HDGLremove_HDGLall_such_that() */
-
-
-#if 0
-/****************************************************************************/
-/****************************************************************************/
-/**                                                                        **/
-/**                         Internal functions                             **/
-/**                                                                        **/
-/****************************************************************************/
-/****************************************************************************/
-
-static void *
-emalloc(unsigned int n)
-{
-    void *ptr;
-
-    ptr = (void *) malloc(n);
-    if ( ptr == NULL ) 
-      {
-        fprintf(stderr,"%s: error allocating memory\n", module);
-        exit(1);
-      }
-    return ptr;
-}
-#endif

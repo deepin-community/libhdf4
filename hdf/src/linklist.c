@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*
 FILE
     linklist.c - Internal storage routines for handling generic linked lists
@@ -22,15 +20,13 @@ REMARKS
     a variable number of items are needed to be kept track of without the
     additional overhead of a threaded binary tree.  The linked list can be
     either sorted or un-sorted, chosen at creation time.  The interface allows
-    objects (void *'s currently) to be stored and searched and interated
+    objects (void *'s currently) to be stored and searched and iterated
     through in a fairly easy manner
 
 DESIGN
     The lists are stored in a singly-linked list of node, each containing
     a pointer to a managed object.  The list may be sorted or unsorted, based
     on the comparison function.
-
-BUGS/LIMITATIONS
 
 LOCAL ROUTINES
     HULIget_list_node - Gets a list node
@@ -44,23 +40,17 @@ EXPORTED ROUTINES
     HULnext_node    - Get the next object in a linked-list
     HULremove_node  - Removes an object from a linked-list
     HULshutdown     - Close down the HUL interface
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   2/5/96  - Starting writing specs & coding prototype
-   2/12/96  - Finished writing specs & coding prototype, start testing
 */
 
-#define LIST_MASTER
-#include "hdf.h"
-#include "linklist.h"
+#include "hdf_priv.h"
+#include "linklist_priv.h"
 
+/* Pointer to the list node free list */
+static node_info_t *node_free_list = NULL;
 
 /* Private function prototypes */
 static node_info_t *HULIget_list_node(void);
-static void HULIrelease_list_node(node_info_t *nod);
+static void         HULIrelease_list_node(node_info_t *nod);
 
 /******************************************************************************
  NAME
@@ -74,37 +64,31 @@ static void HULIrelease_list_node(node_info_t *nod);
     Returns a pointer to the list if successful and NULL otherwise
 
 *******************************************************************************/
-list_head_t *HULcreate_list(HULfind_func_t find_func    /* IN: object comparison function */
+list_head_t *
+HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
 )
 {
-    CONSTR(FUNC, "HULcreate_list");	/* for HERROR */
-    list_head_t *ret_value=NULL;     /* ptr to the linked list "head" node */
+    list_head_t *ret_value = NULL; /* ptr to the linked list "head" node */
 
     HEclear();
 
     /* Allocate the head information */
-    if((ret_value=(list_head_t *)HDcalloc(1,sizeof(list_head_t)))==NULL)
+    if ((ret_value = (list_head_t *)calloc(1, sizeof(list_head_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     /* Set the counter */
-    ret_value->count=0;
+    ret_value->count = 0;
 
     /* Store the creation flags, etc */
-    if(find_func==NULL)
-        ret_value->flags=HUL_UNSORTED_LIST;
+    if (find_func == NULL)
+        ret_value->flags = HUL_UNSORTED_LIST;
     else
-        ret_value->flags=HUL_SORTED_LIST;
-    ret_value->cmp_func=find_func;
+        ret_value->flags = HUL_SORTED_LIST;
+    ret_value->cmp_func = find_func;
 
 done:
-  if(ret_value == NULL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULcreate_list() */
+    return ret_value;
+} /* end HULcreate_list() */
 
 /******************************************************************************
  NAME
@@ -120,39 +104,32 @@ done:
     Returns SUCCEED/FAIL.
 
 *******************************************************************************/
-intn HULdestroy_list(list_head_t *lst    /* IN: list to destroy */
+intn
+HULdestroy_list(list_head_t *lst /* IN: list to destroy */
 )
 {
-    CONSTR(FUNC, "HULdestroy_list");	/* for HERROR */
-    node_info_t *curr_node,         /* current node while walking through list */
-        *next_node;                 /* next node in the list */
-    intn ret_value=SUCCEED;         /* return value */
+    node_info_t *curr_node,   /* current node while walking through list */
+        *next_node;           /* next node in the list */
+    intn ret_value = SUCCEED; /* return value */
 
     HEclear();
-    if(lst==NULL)
-        HGOTO_ERROR(DFE_ARGS,FAIL);
+    if (lst == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Chuck the list */
-    curr_node=lst->node_list;
-    while(curr_node!=NULL)
-      {
-          next_node=curr_node->next;
-          HULIrelease_list_node(curr_node);
-          curr_node=next_node;
-      } /* end while */
+    curr_node = lst->node_list;
+    while (curr_node != NULL) {
+        next_node = curr_node->next;
+        HULIrelease_list_node(curr_node);
+        curr_node = next_node;
+    } /* end while */
 
     /* Chuck the list-head */
-    HDfree(lst);
+    free(lst);
 
 done:
-  if(ret_value == FAIL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULdestroy_list() */
+    return ret_value;
+} /* end HULdestroy_list() */
 
 /******************************************************************************
  NAME
@@ -167,66 +144,57 @@ done:
     Returns SUCCEED/FAIL.
 
 *******************************************************************************/
-intn HULadd_node(list_head_t *lst,  /* IN: list to modify */
-    VOIDP obj                       /* IN: object to add to the list */
+intn
+HULadd_node(list_head_t *lst, /* IN: list to modify */
+            void        *obj  /* IN: object to add to the list */
 )
 {
-    CONSTR(FUNC, "HULadd_node");	/* for HERROR */
-    node_info_t *new_node;          /* new node to insert into the list */
-    intn ret_value=SUCCEED;         /* return value */
+    node_info_t *new_node;            /* new node to insert into the list */
+    intn         ret_value = SUCCEED; /* return value */
 
     HEclear();
-    if(lst==NULL || obj==NULL)
-        HGOTO_ERROR(DFE_ARGS,FAIL);
+    if (lst == NULL || obj == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Allocate & initialize the new node */
-    if((new_node=HULIget_list_node())==NULL)
-        HGOTO_ERROR(DFE_NOSPACE,FAIL);
-    new_node->obj_ptr=obj;
+    if ((new_node = HULIget_list_node()) == NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    new_node->obj_ptr = obj;
 
-    if(((lst->flags)&HUL_SORTED_LIST)!=0)
-      { /* insert node into a sorted list */
-        node_info_t *curr_node,         /* current node while walking through list */
-            *prev_node;                 /* previous node in the list */
+    if (((lst->flags) & HUL_SORTED_LIST) != 0) { /* insert node into a sorted list */
+        node_info_t *curr_node,                  /* current node while walking through list */
+            *prev_node;                          /* previous node in the list */
 
-        prev_node=NULL;
-        curr_node=lst->node_list;
-        while(curr_node!=NULL)
-          {
-            if(lst->cmp_func(curr_node->obj_ptr,new_node->obj_ptr)>=0)
-              { /* 'curr_node' object is greater than or equal to 'new_node' */
-                new_node->next=curr_node;
-                if(prev_node==NULL)
-                    lst->node_list=new_node;
+        prev_node = NULL;
+        curr_node = lst->node_list;
+        while (curr_node != NULL) {
+            if (lst->cmp_func(curr_node->obj_ptr, new_node->obj_ptr) >=
+                0) { /* 'curr_node' object is greater than or equal to 'new_node' */
+                new_node->next = curr_node;
+                if (prev_node == NULL)
+                    lst->node_list = new_node;
                 else
-                    prev_node->next=new_node;
-                HGOTO_DONE(SUCCEED);  /* Break out of the loop */
-              } /* end if */
-            prev_node=curr_node;
-            curr_node=curr_node->next;
-          } /* end while */
+                    prev_node->next = new_node;
+                HGOTO_DONE(SUCCEED); /* Break out of the loop */
+            }                        /* end if */
+            prev_node = curr_node;
+            curr_node = curr_node->next;
+        } /* end while */
 
         /* Walked off the list, so append to last node */
-        if(prev_node==NULL)
-            lst->node_list=new_node;
+        if (prev_node == NULL)
+            lst->node_list = new_node;
         else
-            prev_node->next=new_node;
-      } /* end if */
-    else
-      { /* insert node into an un-sorted list */
-        new_node->next=lst->node_list;
-        lst->node_list=new_node;
-      } /* end else */
+            prev_node->next = new_node;
+    }      /* end if */
+    else { /* insert node into an un-sorted list */
+        new_node->next = lst->node_list;
+        lst->node_list = new_node;
+    } /* end else */
 
 done:
-  if(ret_value == FAIL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULadd_node() */
+    return ret_value;
+} /* end HULadd_node() */
 
 /******************************************************************************
  NAME
@@ -239,35 +207,28 @@ done:
     Returns a pointer to the object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULsearch_node(list_head_t *lst,  /* IN: list to search */
-    HULsearch_func_t srch_func,       /* IN: function to use to find node */
-    VOIDP key                       /* IN: key of object to search for */
+void *
+HULsearch_node(list_head_t     *lst,       /* IN: list to search */
+               HULsearch_func_t srch_func, /* IN: function to use to find node */
+               void            *key        /* IN: key of object to search for */
 )
 {
-    CONSTR(FUNC, "HULsearch_node");	/* for HERROR */
-    node_info_t *curr_node;         /* current node we are on */
-    VOIDP ret_value=NULL;           /* default return value */
+    node_info_t *curr_node;        /* current node we are on */
+    void        *ret_value = NULL; /* default return value */
 
     HEclear();
-    if(lst==NULL || srch_func==NULL || key==NULL)
-        HGOTO_ERROR(DFE_ARGS,NULL);
+    if (lst == NULL || srch_func == NULL || key == NULL)
+        HGOTO_ERROR(DFE_ARGS, NULL);
 
-    curr_node=lst->node_list;
-    while(curr_node!=NULL)
-      {
-        if(srch_func(curr_node->obj_ptr,key)==1)
+    curr_node = lst->node_list;
+    while (curr_node != NULL) {
+        if (srch_func(curr_node->obj_ptr, key) == 1)
             HGOTO_DONE(curr_node->obj_ptr);
-      } /* end while */
+    } /* end while */
 
 done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULsearch_node() */
+    return ret_value;
+} /* end HULsearch_node() */
 
 /******************************************************************************
  NAME
@@ -275,37 +236,30 @@ done:
 
  DESCRIPTION
     Returns the first object in a linked-list and prepares the list for
-    interating through.
+    iterating through.
 
  RETURNS
     Returns a pointer to the first object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULfirst_node(list_head_t *lst   /* IN: list to search */
+void *
+HULfirst_node(list_head_t *lst /* IN: list to search */
 )
 {
-    CONSTR(FUNC, "HULfirst_node");	/* for HERROR */
-    VOIDP ret_value=NULL;           /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
-    if(lst==NULL)
-        HGOTO_ERROR(DFE_ARGS,NULL);
+    if (lst == NULL)
+        HGOTO_ERROR(DFE_ARGS, NULL);
 
-    if(lst->node_list!=NULL)
-      {
-        lst->curr_node=lst->node_list;
+    if (lst->node_list != NULL) {
+        lst->curr_node = lst->node_list;
         HGOTO_DONE(lst->node_list->obj_ptr);
-      } /* end if */
-
-done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULfirst_node() */
+done:
+    return ret_value;
+} /* end HULfirst_node() */
 
 /******************************************************************************
  NAME
@@ -318,32 +272,25 @@ done:
     Returns a pointer to the next object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULnext_node(list_head_t *lst   /* IN: list to search */
+void *
+HULnext_node(list_head_t *lst /* IN: list to search */
 )
 {
-    CONSTR(FUNC, "HULnext_node");	/* for HERROR */
-    VOIDP ret_value=NULL;           /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
-    if(lst==NULL)
-        HGOTO_ERROR(DFE_ARGS,NULL);
+    if (lst == NULL)
+        HGOTO_ERROR(DFE_ARGS, NULL);
 
-    if(lst->curr_node!=NULL)
-      {
-        lst->curr_node=lst->curr_node->next;
-        if(lst->curr_node!=NULL)
+    if (lst->curr_node != NULL) {
+        lst->curr_node = lst->curr_node->next;
+        if (lst->curr_node != NULL)
             HGOTO_DONE(lst->curr_node->obj_ptr);
-      } /* end if */
-
-done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULnext_node() */
+done:
+    return ret_value;
+} /* end HULnext_node() */
 
 /******************************************************************************
  NAME
@@ -357,45 +304,37 @@ done:
     Returns a pointer to the object deleted from the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
-    HULsearch_func_t srch_func,     /* IN: function to use to find node to remove */
-    VOIDP key                       /* IN: object to add to the list */
+void *
+HULremove_node(list_head_t     *lst,       /* IN: list to modify */
+               HULsearch_func_t srch_func, /* IN: function to use to find node to remove */
+               void            *key        /* IN: object to add to the list */
 )
 {
-    CONSTR(FUNC, "HULremove_node");	/* for HERROR */
-    node_info_t *curr_node,         /* current node we are on */
-        *prev_node;                 /* previous node we looked at */
-    VOIDP ret_value=NULL;           /* default return value */
+    node_info_t *curr_node, /* current node we are on */
+        *prev_node;         /* previous node we looked at */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
-    if(lst==NULL || srch_func==NULL || key==NULL)
-        HGOTO_ERROR(DFE_ARGS,NULL);
+    if (lst == NULL || srch_func == NULL || key == NULL)
+        HGOTO_ERROR(DFE_ARGS, NULL);
 
-    prev_node=NULL;
-    curr_node=lst->node_list;
-    while(curr_node!=NULL)
-      {
-        if(srch_func(curr_node->obj_ptr,key)==1)
-          {
-            if(prev_node==NULL)
-                lst->node_list=curr_node->next;
+    prev_node = NULL;
+    curr_node = lst->node_list;
+    while (curr_node != NULL) {
+        if (srch_func(curr_node->obj_ptr, key) == 1) {
+            if (prev_node == NULL)
+                lst->node_list = curr_node->next;
             else
-                prev_node->next=curr_node->next;
-            ret_value=curr_node->obj_ptr;
+                prev_node->next = curr_node->next;
+            ret_value = curr_node->obj_ptr;
             HULIrelease_list_node(curr_node);
             break;
-          } /* end if */
-      } /* end while */
+        } /* end if */
+    }     /* end while */
 
 done:
-  if(ret_value == NULL)
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-}   /* end HULremove_node() */
+    return ret_value;
+} /* end HULremove_node() */
 
 /******************************************************************************
  NAME
@@ -409,33 +348,24 @@ done:
     Returns list node ptr if successful and NULL otherwise
 
 *******************************************************************************/
-static node_info_t *HULIget_list_node(void)
+static node_info_t *
+HULIget_list_node(void)
 {
-    CONSTR(FUNC, "HULIget_list_node");	/* for HERROR */
-    node_info_t *ret_value=NULL;
+    node_info_t *ret_value = NULL;
 
     HEclear();
-    if(node_free_list!=NULL)
-      {
-        ret_value=node_free_list;
-        node_free_list=node_free_list->next;
-      } /* end if */
-    else
-      {
-        if((ret_value=(node_info_t *)HDmalloc(sizeof(node_info_t)))==NULL)
+    if (node_free_list != NULL) {
+        ret_value      = node_free_list;
+        node_free_list = node_free_list->next;
+    } /* end if */
+    else {
+        if ((ret_value = (node_info_t *)malloc(sizeof(node_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-      } /* end else */
+    } /* end else */
 
 done:
-  if(ret_value == NULL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* end HULIget_list_node() */
+    return ret_value;
+} /* end HULIget_list_node() */
 
 /******************************************************************************
  NAME
@@ -448,16 +378,13 @@ done:
     No return value
 
 *******************************************************************************/
-static void HULIrelease_list_node(node_info_t *nod)
+static void
+HULIrelease_list_node(node_info_t *nod)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HULIrelease_list_node");	/* for HERROR */
-#endif /* LATER */
-
     /* Insert the node at the beginning of the free list */
-    nod->next=node_free_list;
-    node_free_list=nod;
-}   /* end HULIrelease_list_node() */
+    nod->next      = node_free_list;
+    node_free_list = nod;
+} /* end HULIrelease_list_node() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -476,21 +403,18 @@ static void HULIrelease_list_node(node_info_t *nod)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn 
+intn
 HULshutdown(void)
 {
     node_info_t *curr;
 
     /* Release the free-list if it exists */
-    if(node_free_list!=NULL)
-      {
-        while(node_free_list!=NULL)
-          {
-            curr=node_free_list;
-            node_free_list=node_free_list->next;
-            HDfree(curr);
-          } /* end while */
-      } /* end if */
-  return (SUCCEED);
-}	/* end HULshutdown() */
-
+    if (node_free_list != NULL) {
+        while (node_free_list != NULL) {
+            curr           = node_free_list;
+            node_free_list = node_free_list->next;
+            free(curr);
+        }
+    }
+    return SUCCEED;
+} /* end HULshutdown() */

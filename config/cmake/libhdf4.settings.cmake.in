@@ -17,7 +17,7 @@ Compiling Options:
                Compilation Mode: @CMAKE_BUILD_TYPE@
                      C Compiler: @CMAKE_C_COMPILER@
                          CFLAGS: @CMAKE_C_FLAGS@
-                       CPPFLAGS: @CMAKE_CXX_FLAGS@
+                       CPPFLAGS: @CMAKE_CPP_FLAGS@
                Shared Libraries: @H4_ENABLE_SHARED_LIB@
                Static Libraries: YES
   Statically Linked Executables: @BUILD_STATIC_EXECS@
@@ -38,4 +38,6 @@ Languages:
 Features:
 ---------
                SZIP compression: @SZIP_INFO@
-   Support for netCDF API 2.3.2: @HDF4_ENABLE_NETCDF@
+ Export HDF4-built netCDF-2 API: @HDF4_ENABLE_NETCDF@ (ON: export undecorated netCDF names, OFF: prefix with 'sd_')
+    HDF4-built ncdump and ncgen: @HDF4_BUILD_NETCDF_TOOLS@
+ With deprecated public symbols: @HDF4_ENABLE_DEPRECATED_SYMBOLS@

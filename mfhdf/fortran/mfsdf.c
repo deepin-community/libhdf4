@@ -11,43 +11,26 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*
 
   This file contains the HDF-style C stubs for the multi-file SDS
   interface.
 
   The basic routines called by fortran will be of the form sfxxxx
-
-  If only a C stub is needed it will be named nsfxxxx have the FNAME()
-  function applied to it.
-
-  If a Fortran stub is also required the fortran stub will be called
-  sfxxxx and the one in here will be nscxxx and again be FNAME()ed
-
 */
+
+#include <stdlib.h>
+
 #include "mfsdf.h"
 
-#ifdef HDF
+intf nsfscfill(intf *id, _fcd val);
+intf nsfsfill(intf *id, void *val);
+intf nsfgfill(intf *id, void *val);
+intf nsfrnatt(intf *id, intf *index, void *buf);
+intf nscsnatt(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len);
+intf nsfsflmd(intf *id, intf *fillmode);
 
-#ifdef PROTOTYPE
-FRETVAL(intf) nsfscfill(intf *id, _fcd val);
-FRETVAL(intf) nsfsfill(intf *id, VOIDP val);
-FRETVAL(intf) nsfgfill(intf *id, VOIDP val);
-FRETVAL(intf) nsfrnatt(intf *id, intf *index, VOIDP buf);
-FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
-FRETVAL(intf) nsfsflmd(intf *id, intf *fillmode);
-#else
-FRETVAL(intf) nsfscfill();
-FRETVAL(intf) nsfsfill();
-FRETVAL(intf) nsfgfill();
-FRETVAL(intf) nsfrnatt();
-FRETVAL(intf) nscsnatt();
-FRETVAL(intf) nsfsflmd();
-#endif /* PROTOTYPE */
-
-#if defined _WIN32 && !defined CMAKE_INTDIR
+#if defined H4_HAVE_WIN32_API && !defined CMAKE_INTDIR
 
 /*-----------------------------------------------------------------------------
  * Name:    scend
@@ -56,16 +39,10 @@ FRETVAL(intf) nsfsflmd();
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscend(intf *file_id)
-#else
-nscend(file_id)
-    intf *file_id;
-#endif /* PROTOTYPE */
 {
-    return(SDend(*file_id));
+    return (SDend(*file_id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -75,17 +52,12 @@ nscend(file_id)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscendacc(intf *id)
-#else
-nscendacc(id)
-    intf *id;
-#endif /* PROTOTYPE */
 {
-    return(SDendaccess(*id));
+    return (SDendaccess(*id));
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scfinfo
  * Purpose: Call SDfileinfo to get number of datasets and global attrs in the file
@@ -93,25 +65,17 @@ nscendacc(id)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscfinfo(intf *file_id, intf *datasets, intf *gattr)
-#else
-nscfinfo(file_id, datasets, gattr)
-     intf *file_id;
-     intf *datasets;
-     intf *gattr;
-#endif /* PROTOTYPE */
 {
-  int32 dset, nattr, status;
+    int32 dset, nattr, status;
 
-  status = SDfileinfo((int32) *file_id, &dset, &nattr);
+    status = SDfileinfo((int32)*file_id, &dset, &nattr);
 
-  *datasets = (intf) dset;
-  *gattr    = (intf) nattr;
+    *datasets = (intf)dset;
+    *gattr    = (intf)nattr;
 
-  return (status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -122,17 +86,10 @@ nscfinfo(file_id, datasets, gattr)
  * Returns: sdsid on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscselct(intf *file_id, intf *index)
-#else
-nscselct(file_id, index)
-     intf *file_id;
-     intf *index;
-#endif /* PROTOTYPE */
 {
-    return(SDselect(*file_id, *index));
+    return (SDselect(*file_id, *index));
 }
 
 /*-----------------------------------------------------------------------------
@@ -143,23 +100,17 @@ nscselct(file_id, index)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscdimid(intf *id, intf *index)
-#else
-nscdimid(id, index)
-     intf *id;
-     intf *index;
-#endif /* PROTOTYPE */
 {
     int32 rank, nt, dims[100], status, cdim, nattrs;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
-    cdim = rank - (*index) -1;
+    if (status == FAIL)
+        return FAIL;
+    cdim = rank - (*index) - 1;
 
-    return(SDgetdimid(*id, cdim));
+    return (SDgetdimid(*id, cdim));
 }
 
 /*-----------------------------------------------------------------------------
@@ -171,24 +122,16 @@ nscdimid(id, index)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
-#else
-nscgcal(id, cal, cale, ioff, ioffe, nt)
-     intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
-     intf *nt;
-#endif /* PROTOTYPE */
 {
-  int32 nt32, status;
+    int32 nt32, status;
 
-  status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
+    status = SDgetcal((int32)*id, cal, cale, ioff, ioffe, &nt32);
 
-  *nt = (intf) nt32;
+    *nt = (intf)nt32;
 
-  return (status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -200,18 +143,10 @@ nscgcal(id, cal, cale, ioff, ioffe, nt)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
-#else
-nscscal(id, cal, cale, ioff, ioffe, nt)
-     intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
-     intf *nt;
-#endif /* PROTOTYPE */
 {
-    return(SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
+    return (SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
 }
 
 /*-----------------------------------------------------------------------------
@@ -224,18 +159,10 @@ nscscal(id, cal, cale, ioff, ioffe, nt)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscsdscale(intf *id, intf *count, intf *nt, VOIDP values)
-#else
-nscsdscale(id, count, nt, values)
-     intf *id;
-     intf *count, *nt;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nscsdscale(intf *id, intf *count, intf *nt, void *values)
 {
-    return(SDsetdimscale(*id, *count, *nt, values));
+    return (SDsetdimscale(*id, *count, *nt, values));
 }
 
 /*-----------------------------------------------------------------------------
@@ -246,17 +173,10 @@ nscsdscale(id, count, nt, values)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscgdscale(intf *id, VOIDP values)
-#else
-nscgdscale(id, values)
-     intf *id;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nscgdscale(intf *id, void *values)
 {
-    return(SDgetdimscale(*id, values));
+    return (SDgetdimscale(*id, values));
 }
 
 /*----------------------------------------------------------
@@ -267,17 +187,10 @@ nscgdscale(id, values)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *----------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscscfill(intf *id, _fcd val)
-#else
-nscscfill(id, val)
-     intf *id;
-     _fcd val;
-#endif /* PROTOTYPE */
 {
-    return(nscsfill(id, (VOIDP) _fcdtocp(val)));
+    return (nscsfill(id, (void *)_fcdtocp(val)));
 }
 
 /*------------------------------------------------------------
@@ -288,17 +201,10 @@ nscscfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *-----------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgcfill(intf *id, _fcd val)
-#else
-nscgcfill(id, val)
-     intf *id;
-     _fcd val;
-#endif /* PROTOTYPE */
 {
-    return(nscgfill(id, (VOIDP) _fcdtocp(val)));
+    return (nscgfill(id, (void *)_fcdtocp(val)));
 }
 
 /*---------------------------------------------------------
@@ -309,17 +215,10 @@ nscgcfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscsfill(intf *id, VOIDP val)
-#else
-nscsfill(id, val)
-     intf *id;
-     VOIDP val;
-#endif /* PROTOTYPE */
+intf
+nscsfill(intf *id, void *val)
 {
-    return(SDsetfillvalue(*id, val));
+    return (SDsetfillvalue(*id, val));
 }
 
 /*----------------------------------------------------------
@@ -330,17 +229,10 @@ nscsfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscgfill(intf *id, VOIDP val)
-#else
-nscgfill(id, val)
-     intf *id;
-     VOIDP val;
-#endif /* PROTOTYPE */
+intf
+nscgfill(intf *id, void *val)
 {
-    return(SDgetfillvalue(*id, val));
+    return (SDgetfillvalue(*id, val));
 }
 
 /*------------------------------------------------------------
@@ -352,18 +244,10 @@ nscgfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscgrange(intf *id, VOIDP max, VOIDP min)
-#else
-nscgrange(id, max, min)
-     intf *id;
-     VOIDP max;
-     VOIDP min;
-#endif /* PROTOTYPE */
+intf
+nscgrange(intf *id, void *max, void *min)
 {
-    return(SDgetrange(*id, max, min));
+    return (SDgetrange(*id, max, min));
 }
 
 /*-----------------------------------------------------------------------------
@@ -375,18 +259,10 @@ nscgrange(id, max, min)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscsrange(intf *id, VOIDP max, VOIDP min)
-#else
-nscsrange(id, max, min)
-     intf *id;
-     VOIDP max;
-     VOIDP min;
-#endif /* PROTOTYPE */
+intf
+nscsrange(intf *id, void *max, void *min)
 {
-    return(SDsetrange(*id, max, min));
+    return (SDsetrange(*id, max, min));
 }
 
 /*-----------------------------------------------------------------------------
@@ -398,18 +274,10 @@ nscsrange(id, max, min)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscrcatt(intf *id, intf *index, _fcd buf)
-#else
-nscrcatt(id, index, buf)
-     intf *id;
-     intf *index;
-     _fcd buf;
-#endif /* PROTOTYPE */
 {
-    return(nscrnatt(id, index, (VOIDP) _fcdtocp(buf)));
+    return (nscrnatt(id, index, (void *)_fcdtocp(buf)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -421,18 +289,10 @@ nscrcatt(id, index, buf)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscrnatt(intf *id, intf *index, VOIDP buf)
-#else
-nscrnatt(id, index, buf)
-     intf *id;
-     intf *index;
-     VOIDP buf;
-#endif /* PROTOTYPE */
+intf
+nscrnatt(intf *id, intf *index, void *buf)
 {
-    return(SDreadattr(*id, *index, buf));
+    return (SDreadattr(*id, *index, buf));
 }
 
 /*-----------------------------------------------------------------------------
@@ -444,18 +304,10 @@ nscrnatt(id, index, buf)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscrattr(intf *id, intf *index, VOIDP buf)
-#else
-nscrattr(id, index, buf)
-     intf *id;
-     intf *index;
-     VOIDP buf;
-#endif /* PROTOTYPE */
+intf
+nscrattr(intf *id, intf *index, void *buf)
 {
-    return(nscrnatt(id, index, buf));
+    return (nscrnatt(id, index, buf));
 }
 
 /*------------------------------------------------------------
@@ -470,35 +322,29 @@ nscrattr(id, index, buf)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *----------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nscrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
-#else
-nscrdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nscrdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
-    intf    ret;
-    int32   i, rank, dims[100], nt, nattrs, status;
-    int32   cstart[100], cstride[100], cend[100];
-    int     nostride;
+    intf  ret;
+    int32 i, rank, dims[100], nt, nattrs, status;
+    int32 cstart[100], cstride[100], cend[100];
+    int   nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
+    if (status == FAIL)
+        return FAIL;
 
     nostride = TRUE;
 
-    for(i = 0; i < rank; i++) {
+    for (i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if ((cstride[i] = stride[rank - i - 1]) != 1)
+            nostride = FALSE;
     }
 
-    ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
-    return(ret);
+    ret = (intf)SDreaddata(*id, cstart, (nostride ? NULL : cstride), cend, values);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -513,35 +359,29 @@ nscrdata(id, start, stride, end, values)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nscwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
-#else
-nscwdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nscwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
-    intf    ret;
-    int32   i, rank, dims[100], nt, nattrs, status;
-    int32   cstart[100], cstride[100], cend[100];
-    intn    nostride;
+    intf  ret;
+    int32 i, rank, dims[100], nt, nattrs, status;
+    int32 cstart[100], cstride[100], cend[100];
+    intn  nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
+    if (status == FAIL)
+        return FAIL;
 
     nostride = TRUE;
 
-    for(i = 0; i < rank; i++) {
+    for (i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if ((cstride[i] = stride[rank - i - 1]) != 1)
+            nostride = FALSE;
     }
 
-    ret = (intf) SDwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
-    return(ret);
+    ret = (intf)SDwritedata(*id, cstart, (nostride ? NULL : cstride), cend, values);
+    return (ret);
 }
 
 /*--------------------------------------------------------
@@ -556,18 +396,10 @@ nscwdata(id, start, stride, end, values)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
-#else
-nscrcdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     _fcd values;
-#endif /* PROTOTYPE */
 {
-     return(nscrdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+    return (nscrdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*--------------------------------------------------------
@@ -582,18 +414,10 @@ nscrcdata(id, start, stride, end, values)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
-#else
-nscwcdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     _fcd values;
-#endif /* PROTOTYPE */
 {
-     return(nscwdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+    return (nscwdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -602,18 +426,11 @@ nscwcdata(id, start, stride, end, values)
  * Inputs:  id: variable id
  * Returns: reference number of a NDG representing this dataset
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscid2ref(intf *id)
-#else
-nscid2ref(id)
-    intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDidtoref(*id));
+    return ((intf)SDidtoref(*id));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    scfr2idx
@@ -623,19 +440,11 @@ nscid2ref(id)
  *          ref: reference number to look up
  * Returns: index of a NDG representing this dataset
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscr2idx(intf *id, intf *ref)
-#else
-nscr2idx(id, ref)
-     intf *id;
-     intf *ref;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDreftoindex(*id, (int32) *ref));
+    return ((intf)SDreftoindex(*id, (int32)*ref));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    sciscvar
@@ -644,16 +453,10 @@ nscr2idx(id, ref)
  * Inputs:  id: sds id
  * Returns: TRUE/FALSE
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsciscvar(intf *id)
-#else
-nsciscvar(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDiscoordvar(*id));
+    return ((intf)SDiscoordvar(*id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -666,21 +469,11 @@ nsciscvar(id)
  *          fill_one: whether to fill the "background bits" with ones
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
-#else
-nscsnbit(id, start_bit, bit_len, sign_ext, fill_one)
-     intf *id;
-     intf *start_bit;
-     intf *bit_len;
-     intf *sign_ext;
-     intf *fill_one;
-#endif /* PROTOTYPE */
 {
-    return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
-    (intn)*sign_ext,(intn)*fill_one));
+    return ((intf)SDsetnbitdataset((int32)*id, (intn)*start_bit, (intn)*bit_len, (intn)*sign_ext,
+                                   (intn)*fill_one));
 }
 
 /*-----------------------------------------------------------------------------
@@ -691,17 +484,10 @@ nscsnbit(id, start_bit, bit_len, sign_ext, fill_one)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsacct(intf *id, intf *type)
-#else
-nscsacct(id, type)
-     intf *id;
-     intf *type;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetaccesstype(*id, *type));
+    return ((intf)SDsetaccesstype(*id, *type));
 }
 /*-----------------------------------------------------------------------------
  * Name:    scsdmvc
@@ -715,17 +501,10 @@ nscsacct(id, type)
  * Returns: SUCCESS on success, FAIL on failure
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsdmvc(intf *id, intf *compmode)
-#else
-nscsdmvc(id, compmode)
-     intf *id;
-     intf *compmode;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetdimval_comp(*id, *compmode));
+    return ((intf)SDsetdimval_comp(*id, *compmode));
 }
 
 /*-----------------------------------------------------------------------------
@@ -739,16 +518,10 @@ nscsdmvc(id, compmode)
             FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscisdmvc(intf *id)
-#else
-nscisdmvc(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDisdimval_bwcomp(*id));
+    return ((intf)SDisdimval_bwcomp(*id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -764,16 +537,10 @@ nscisdmvc(id)
  *          FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsflmd(intf *id, intf *fillmode)
-#else
-nscsflmd(id, fillmode)
-    intf *id, *fillmode;
-#endif  /* PROTOTYPE */
 {
-    return((intf) SDsetfillmode(*id, *fillmode));
+    return ((intf)SDsetfillmode(*id, *fillmode));
 }
 /*-----------------------------------------------------------------------------
  * Name:    scisrcrd
@@ -781,16 +548,10 @@ nscsflmd(id, fillmode)
  * Inputs:  id: sds id
  * Returns: TRUE/FALSE (1/0))
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfisrcrd(intf *id)
-#else
-nscisrcrd(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDisrecord(*id));
+    return ((intf)SDisrecord(*id));
 }
 /*-----------------------------------------------------------------------------
  * Name:    scsblsz
@@ -799,20 +560,13 @@ nscisrcrd(id)
             block_size:  block size  in bytes
  * Returns: SUCCEED/FAIL (0/-1)
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsblsz(intf *id, intf *block_size)
-#else
-nscsblsz(id, block_size)
-     intf *id;
-     intf *block_size;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetblocksize(*id, *block_size));
+    return ((intf)SDsetblocksize(*id, *block_size));
 }
 
-#endif /* _WIN32 && !CMAKE_INTDIR */
+#endif /* H4_HAVE_WIN32_API && !CMAKE_INTDIR */
 /*-----------------------------------------------------------------------------
  * Name:    scstart
  * Purpose: call SDstart to open HDF file
@@ -821,26 +575,18 @@ nscsblsz(id, block_size)
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscstart(_fcd name, intf *access, intf *namelen)
-#else
-nscstart(name, access, namelen)
-    _fcd name;
-    intf *access;
-    intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
-    intf ret;
+    intf  ret;
 
     fn = HDf2cstring(name, *namelen);
 
-    ret = (intf) SDstart(fn, *access);
-    HDfree((VOIDP)fn);
+    ret = (intf)SDstart(fn, *access);
+    free(fn);
 
-    return(ret);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -850,16 +596,10 @@ nscstart(name, access, namelen)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfend(intf *file_id)
-#else
-nsfend(file_id)
-    intf *file_id;
-#endif /* PROTOTYPE */
 {
-    return(SDend(*file_id));
+    return (SDend(*file_id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -869,16 +609,10 @@ nsfend(file_id)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfendacc(intf *id)
-#else
-nsfendacc(id)
-    intf *id;
-#endif /* PROTOTYPE */
 {
-    return(SDendaccess(*id));
+    return (SDendaccess(*id));
 }
 /*-----------------------------------------------------------------------------
  * Name:    sdffinfo
@@ -887,25 +621,17 @@ nsfendacc(id)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsffinfo(intf *file_id, intf *datasets, intf *gattr)
-#else
-nsffinfo(file_id, datasets, gattr)
-     intf *file_id;
-     intf *datasets;
-     intf *gattr;
-#endif /* PROTOTYPE */
 {
-  int32 dset, nattr, status;
+    int32 dset, nattr, status;
 
-  status = SDfileinfo((int32) *file_id, &dset, &nattr);
+    status = SDfileinfo((int32)*file_id, &dset, &nattr);
 
-  *datasets = (intf) dset;
-  *gattr    = (intf) nattr;
+    *datasets = (intf)dset;
+    *gattr    = (intf)nattr;
 
-  return (status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -916,17 +642,10 @@ nsffinfo(file_id, datasets, gattr)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfselect(intf *file_id, intf *index)
-#else
-nsfselect(file_id, index)
-     intf *file_id;
-     intf *index;
-#endif /* PROTOTYPE */
 {
-    return(SDselect(*file_id, *index));
+    return (SDselect(*file_id, *index));
 }
 
 /*-----------------------------------------------------------------------------
@@ -937,23 +656,17 @@ nsfselect(file_id, index)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfdimid(intf *id, intf *index)
-#else
-nsfdimid(id, index)
-     intf *id;
-     intf *index;
-#endif /* PROTOTYPE */
 {
     int32 rank, nt, dims[100], status, cdim, nattrs;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
-    cdim = rank - (*index) -1;
+    if (status == FAIL)
+        return FAIL;
+    cdim = rank - (*index) - 1;
 
-    return(SDgetdimid(*id, cdim));
+    return (SDgetdimid(*id, cdim));
 }
 
 /*-----------------------------------------------------------------------------
@@ -968,16 +681,8 @@ nsfdimid(id, index)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr, intf *len)
-#else
-nscginfo(id, name, rank, dimsizes, nt, nattr, len)
-     intf *id;
-     _fcd name;
-     intf *rank, *dimsizes, *nt, *nattr, *len;
-#endif /* PROTOTYPE */
 {
     char *iname;
     int32 status;
@@ -985,23 +690,23 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
     int32 rank32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
+    if (*len)
+        iname = (char *)malloc((uint32)*len + 1);
 
-    status = SDgetinfo((int32) *id, iname, &rank32, cdims, &nt32, &nattr32);
+    status = SDgetinfo((int32)*id, iname, &rank32, cdims, &nt32, &nattr32);
 
-    for(i = 0; i < rank32; i++)
+    for (i = 0; i < rank32; i++)
         dimsizes[i] = cdims[rank32 - i - 1];
 
-    HDpackFstring(iname,  _fcdtocp(name),  *len);
+    HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if(iname)  HDfree((VOIDP)iname);
+    free(iname);
 
-    *rank  = (intf) rank32;
-    *nt    = (intf) nt32;
-    *nattr = (intf) nattr32;
+    *rank  = (intf)rank32;
+    *nt    = (intf)nt32;
+    *nattr = (intf)nattr32;
 
-    return(status);
-
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1013,24 +718,16 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
-#else
-nsfgcal(id, cal, cale, ioff, ioffe, nt)
-     intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
-     intf *nt;
-#endif /* PROTOTYPE */
 {
-  int32 nt32, status;
+    int32 nt32, status;
 
-  status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
+    status = SDgetcal((int32)*id, cal, cale, ioff, ioffe, &nt32);
 
-  *nt = (intf) nt32;
+    *nt = (intf)nt32;
 
-  return (status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1042,18 +739,10 @@ nsfgcal(id, cal, cale, ioff, ioffe, nt)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
-#else
-nsfscal(id, cal, cale, ioff, ioffe, nt)
-     intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
-     intf *nt;
-#endif /* PROTOTYPE */
 {
-    return(SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
+    return (SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1066,18 +755,10 @@ nsfscal(id, cal, cale, ioff, ioffe, nt)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfsdscale(intf *id, intf *count, intf *nt, VOIDP values)
-#else
-nsfsdscale(id, count, nt, values)
-     intf *id;
-     intf *count, *nt;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nsfsdscale(intf *id, intf *count, intf *nt, void *values)
 {
-    return(SDsetdimscale(*id, *count, *nt, values));
+    return (SDsetdimscale(*id, *count, *nt, values));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1088,17 +769,10 @@ nsfsdscale(id, count, nt, values)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfgdscale(intf *id, VOIDP values)
-#else
-nsfgdscale(id, values)
-     intf *id;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nsfgdscale(intf *id, void *values)
 {
-    return(SDgetdimscale(*id, values));
+    return (SDgetdimscale(*id, values));
 }
 
 /*----------------------------------------------------------
@@ -1109,17 +783,10 @@ nsfgdscale(id, values)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *----------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfscfill(intf *id, _fcd val)
-#else
-nsfscfill(id, val)
-     intf *id;
-     _fcd val;
-#endif /* PROTOTYPE */
 {
-    return(nsfsfill(id, (VOIDP) _fcdtocp(val)));
+    return (nsfsfill(id, (void *)_fcdtocp(val)));
 }
 
 /*------------------------------------------------------------
@@ -1130,17 +797,10 @@ nsfscfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *-----------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfgcfill(intf *id, _fcd val)
-#else
-nsfgcfill(id, val)
-     intf *id;
-     _fcd val;
-#endif /* PROTOTYPE */
 {
-    return(nsfgfill(id, (VOIDP) _fcdtocp(val)));
+    return (nsfgfill(id, (void *)_fcdtocp(val)));
 }
 
 /*---------------------------------------------------------
@@ -1151,17 +811,10 @@ nsfgcfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfsfill(intf *id, VOIDP val)
-#else
-nsfsfill(id, val)
-     intf *id;
-     VOIDP val;
-#endif /* PROTOTYPE */
+intf
+nsfsfill(intf *id, void *val)
 {
-    return(SDsetfillvalue(*id, val));
+    return (SDsetfillvalue(*id, val));
 }
 
 /*----------------------------------------------------------
@@ -1172,17 +825,10 @@ nsfsfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfgfill(intf *id, VOIDP val)
-#else
-nsfgfill(id, val)
-     intf *id;
-     VOIDP val;
-#endif /* PROTOTYPE */
+intf
+nsfgfill(intf *id, void *val)
 {
-    return(SDgetfillvalue(*id, val));
+    return (SDgetfillvalue(*id, val));
 }
 
 /*------------------------------------------------------------
@@ -1194,18 +840,10 @@ nsfgfill(id, val)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfgrange(intf *id, VOIDP max, VOIDP min)
-#else
-nsfgrange(id, max, min)
-     intf *id;
-     VOIDP max;
-     VOIDP min;
-#endif /* PROTOTYPE */
+intf
+nsfgrange(intf *id, void *max, void *min)
 {
-    return(SDgetrange(*id, max, min));
+    return (SDgetrange(*id, max, min));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1217,18 +855,10 @@ nsfgrange(id, max, min)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfsrange(intf *id, VOIDP max, VOIDP min)
-#else
-nsfsrange(id, max, min)
-     intf *id;
-     VOIDP max;
-     VOIDP min;
-#endif /* PROTOTYPE */
+intf
+nsfsrange(intf *id, void *max, void *min)
 {
-    return(SDsetrange(*id, max, min));
+    return (SDsetrange(*id, max, min));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1239,24 +869,16 @@ nsfsrange(id, max, min)
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscn2index(intf *id, _fcd name, intf *namelen)
-#else
-nscn2index(id, name, namelen)
-     intf *id;
-     _fcd name;
-     intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
-    intf ret;
+    intf  ret;
 
-    fn = HDf2cstring(name, *namelen);
-    ret = (intf) SDnametoindex(*id, fn);
-    HDfree((VOIDP)fn);
-    return(ret);
+    fn  = HDf2cstring(name, *namelen);
+    ret = (intf)SDnametoindex(*id, fn);
+    free(fn);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1272,35 +894,26 @@ nscn2index(id, name, namelen)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsccreate(intf *id, _fcd name, intf *nt, intf *rank, intf *dims, intf *namelen)
-#else
-nsccreate(id, name, nt, rank, dims, namelen)
-     intf *id;
-     _fcd name;
-     intf *nt, *rank;
-     intf *dims;
-     intf *namelen;
-#endif /* PROTOTYPE */
 {
-    char   *fn;
-    intf    ret;
-    int32 * cdims, i;
+    char  *fn;
+    intf   ret;
+    int32 *cdims, i;
 
-    fn = HDf2cstring(name, *namelen);
-    cdims = (int32 *) HDmalloc(sizeof(int32) * (*rank));
-    if(!cdims) return FAIL;
+    fn    = HDf2cstring(name, *namelen);
+    cdims = (int32 *)malloc(sizeof(int32) * (*rank));
+    if (!cdims)
+        return FAIL;
 
-    for(i = 0; i < *rank; i++)
+    for (i = 0; i < *rank; i++)
         cdims[i] = dims[*rank - i - 1];
 
-    ret = (intf) SDcreate(*id, fn, *nt, *rank, cdims);
+    ret = (intf)SDcreate(*id, fn, *nt, *rank, cdims);
 
-    HDfree((VOIDP)fn);
-    HDfree((VOIDP)cdims);
-    return(ret);
+    free(fn);
+    free(cdims);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1310,44 +923,37 @@ nsccreate(id, name, nt, rank, dims, namelen)
  *          label, unit and format strings and their lengths
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsdimstr(intf *id, _fcd l, _fcd u, _fcd f, intf *ll, intf *ul, intf *fl)
-#else
-nscsdimstr(id, l, u, f, ll, ul, fl)
-     intf *id;
-     _fcd l;
-     _fcd u;
-     _fcd f;
-     intf *ll, *ul, *fl;
-#endif /* PROTOTYPE */
 {
     char *lstr;
     char *ustr;
     char *fstr;
-    intf ret;
+    intf  ret;
 
-    if(ll)
+    if (ll)
         lstr = HDf2cstring(l, *ll);
     else
         lstr = NULL;
 
-    if(ul)
+    if (ul)
         ustr = HDf2cstring(u, *ul);
     else
         ustr = NULL;
 
-    if(fl)
+    if (fl)
         fstr = HDf2cstring(f, *fl);
     else
         fstr = NULL;
 
-    ret = (intf) SDsetdimstrs(*id, lstr, ustr, fstr);
-    if(ll) HDfree((VOIDP)lstr);
-    if(ul) HDfree((VOIDP)ustr);
-    if(fl) HDfree((VOIDP)fstr);
-    return(ret);
+    ret = (intf)SDsetdimstrs(*id, lstr, ustr, fstr);
+    if (ll)
+        free(lstr);
+    if (ul)
+        free(ustr);
+    if (fl)
+        free(fstr);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1357,28 +963,21 @@ nscsdimstr(id, l, u, f, ll, ul, fl)
  *          name and its length
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsdimname(intf *id, _fcd name, intf *len)
-#else
-nscsdimname(id, name, len)
-     intf *id;
-     _fcd name;
-     intf *len;
-#endif /* PROTOTYPE */
 {
     char *nstr;
-    intf ret;
+    intf  ret;
 
-    if(len)
+    if (len)
         nstr = HDf2cstring(name, *len);
     else
         nstr = NULL;
 
-    ret = (intf) SDsetdimname(*id, nstr);
-    if(len) HDfree((VOIDP)nstr);
-    return(ret);
+    ret = (intf)SDsetdimname(*id, nstr);
+    if (len)
+        free(nstr);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1388,52 +987,45 @@ nscsdimname(id, name, len)
  *          label, unit and format strings and their lengths
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsdatstr(intf *id, _fcd l, _fcd u, _fcd f, _fcd c, intf *ll, intf *ul, intf *fl, intf *cl)
-#else
-nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
-     intf *id;
-     _fcd l;
-     _fcd u;
-     _fcd f;
-     _fcd c;
-     intf *ll, *ul, *fl, *cl;
-#endif /* PROTOTYPE */
 {
     char *lstr;
     char *ustr;
     char *fstr;
     char *cstr;
-    intf ret;
+    intf  ret;
 
-    if(ll)
+    if (ll)
         lstr = HDf2cstring(l, *ll);
     else
         lstr = NULL;
 
-    if(ul)
+    if (ul)
         ustr = HDf2cstring(u, *ul);
     else
         ustr = NULL;
 
-    if(fl)
+    if (fl)
         fstr = HDf2cstring(f, *fl);
     else
         fstr = NULL;
 
-    if(cl)
+    if (cl)
         cstr = HDf2cstring(c, *cl);
     else
         cstr = NULL;
 
-    ret = (intf) SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
-    if(ll) HDfree((VOIDP)lstr);
-    if(ul) HDfree((VOIDP)ustr);
-    if(fl) HDfree((VOIDP)fstr);
-    if(cl) HDfree((VOIDP)cstr);
-    return(ret);
+    ret = (intf)SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
+    if (ll)
+        free(lstr);
+    if (ul)
+        free(ustr);
+    if (fl)
+        free(fstr);
+    if (cl)
+        free(cstr);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1445,18 +1037,10 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfrcatt(intf *id, intf *index, _fcd buf)
-#else
-nsfrcatt(id, index, buf)
-     intf *id;
-     intf *index;
-     _fcd buf;
-#endif /* PROTOTYPE */
 {
-    return(nsfrnatt(id, index, (VOIDP) _fcdtocp(buf)));
+    return (nsfrnatt(id, index, (void *)_fcdtocp(buf)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1468,18 +1052,10 @@ nsfrcatt(id, index, buf)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfrnatt(intf *id, intf *index, VOIDP buf)
-#else
-nsfrnatt(id, index, buf)
-     intf *id;
-     intf *index;
-     VOIDP buf;
-#endif /* PROTOTYPE */
+intf
+nsfrnatt(intf *id, intf *index, void *buf)
 {
-    return(SDreadattr(*id, *index, buf));
+    return (SDreadattr(*id, *index, buf));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1491,18 +1067,10 @@ nsfrnatt(id, index, buf)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfrattr(intf *id, intf *index, VOIDP buf)
-#else
-nsfrattr(id, index, buf)
-     intf *id;
-     intf *index;
-     VOIDP buf;
-#endif /* PROTOTYPE */
+intf
+nsfrattr(intf *id, intf *index, void *buf)
 {
-    return(nsfrnatt(id, index, buf));
+    return (nsfrnatt(id, index, buf));
 }
 
 /*------------------------------------------------------------
@@ -1517,35 +1085,29 @@ nsfrattr(id, index, buf)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *----------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
-#else
-nsfrdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nsfrdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
-    intf    ret;
-    int32   i, rank, dims[100], nt, nattrs, status;
-    int32   cstart[100], cstride[100], cend[100];
-    int     nostride;
+    intf  ret;
+    int32 i, rank, dims[100], nt, nattrs, status;
+    int32 cstart[100], cstride[100], cend[100];
+    int   nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
+    if (status == FAIL)
+        return FAIL;
 
     nostride = TRUE;
 
-    for(i = 0; i < rank; i++) {
+    for (i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if ((cstride[i] = stride[rank - i - 1]) != 1)
+            nostride = FALSE;
     }
 
-    ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
-    return(ret);
+    ret = (intf)SDreaddata(*id, cstart, (nostride ? NULL : cstride), cend, values);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1560,35 +1122,29 @@ nsfrdata(id, start, stride, end, values)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nsfwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
-#else
-nsfwdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     VOIDP values;
-#endif /* PROTOTYPE */
+intf
+nsfwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
-    intf    ret;
-    int32   i, rank, dims[100], nt, nattrs, status;
-    int32   cstart[100], cstride[100], cend[100];
-    intn    nostride;
+    intf  ret;
+    int32 i, rank, dims[100], nt, nattrs, status;
+    int32 cstart[100], cstride[100], cend[100];
+    intn  nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
-    if(status == FAIL) return FAIL;
+    if (status == FAIL)
+        return FAIL;
 
     nostride = TRUE;
 
-    for(i = 0; i < rank; i++) {
+    for (i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if ((cstride[i] = stride[rank - i - 1]) != 1)
+            nostride = FALSE;
     }
 
-    ret = (intf) SDwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
-    return(ret);
+    ret = (intf)SDwritedata(*id, cstart, (nostride ? NULL : cstride), cend, values);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1598,36 +1154,30 @@ nsfwdata(id, start, stride, end, values)
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel,
-         intf *lunit, intf *lformat, intf *mlen)
-#else
-nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
-     intf *dim;
-     _fcd label, unit, format;
-     intf *llabel, *lunit, *lformat;
-     intf *mlen;
-#endif /* PROTOTYPE */
+intf
+nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel, intf *lunit, intf *lformat,
+            intf *mlen)
 {
     char *ilabel, *iunit, *iformat;
-    intf ret;
+    intf  ret;
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
+    if (*llabel)
+        ilabel = (char *)malloc((uint32)*llabel + 1);
+    if (*lunit)
+        iunit = (char *)malloc((uint32)*lunit + 1);
+    if (*lformat)
+        iformat = (char *)malloc((uint32)*lformat + 1);
 
     ret = (intf)SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
-    HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
-    HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
+    HDpackFstring(ilabel, _fcdtocp(label), *llabel);
+    HDpackFstring(iunit, _fcdtocp(unit), *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
 
-    if(ilabel)  HDfree((VOIDP)ilabel);
-    if(iunit)   HDfree((VOIDP)iunit);
-    if(iformat) HDfree((VOIDP)iformat);
+    free(ilabel);
+    free(iunit);
+    free(iformat);
 
     return ret;
 }
@@ -1644,18 +1194,10 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
-#else
-nsfrcdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     _fcd values;
-#endif /* PROTOTYPE */
 {
-     return(nsfrdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+    return (nsfrdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*--------------------------------------------------------
@@ -1670,18 +1212,10 @@ nsfrcdata(id, start, stride, end, values)
  *          differences
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
-#else
-nsfwcdata(id, start, stride, end, values)
-     intf *id;
-     intf *start, *stride, *end;
-     _fcd values;
-#endif /* PROTOTYPE */
 {
-     return(nsfwdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+    return (nsfwdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1691,44 +1225,38 @@ nsfwcdata(id, start, stride, end, values)
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord,
-           intf *llabel, intf *lunit, intf *lformat, intf *lcoord, intf *len)
-#else
-nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
-     intf *id;
-     _fcd label, unit, format, coord;
-     intf *llabel, *lunit, *lformat, *lcoord;
-     intf *len;
-#endif /* PROTOTYPE */
+intf
+nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord, intf *llabel, intf *lunit,
+            intf *lformat, intf *lcoord, intf *len)
 {
-    char *ilabel, *iunit, *iformat, *icoord=NULL;
-    intf ret;
+    char *ilabel, *iunit, *iformat, *icoord = NULL;
+    intf  ret;
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
-    if(*lcoord)  icoord  = (char *) HDmalloc((uint32)*lcoord + 1);
+    if (*llabel)
+        ilabel = (char *)malloc((uint32)*llabel + 1);
+    if (*lunit)
+        iunit = (char *)malloc((uint32)*lunit + 1);
+    if (*lformat)
+        iformat = (char *)malloc((uint32)*lformat + 1);
+    if (*lcoord)
+        icoord = (char *)malloc((uint32)*lcoord + 1);
 
     ret = (intf)SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
-    HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
-    HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
+    HDpackFstring(ilabel, _fcdtocp(label), *llabel);
+    HDpackFstring(iunit, _fcdtocp(unit), *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
-    HDpackFstring(icoord,  _fcdtocp(coord),  *lcoord);
+    HDpackFstring(icoord, _fcdtocp(coord), *lcoord);
 
-    if(ilabel)  HDfree((VOIDP)ilabel);
-    if(iunit)   HDfree((VOIDP)iunit);
-    if(iformat) HDfree((VOIDP)iformat);
-    if(icoord)  HDfree((VOIDP)icoord);
+    free(ilabel);
+    free(iunit);
+    free(iformat);
+    free(icoord);
 
     return ret;
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    sfgainfo
@@ -1740,36 +1268,28 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgainfo(intf *id, intf *number, _fcd name, intf *nt, intf *count, intf *len)
-#else
-nscgainfo(id, number, name, nt, count, len)
-     intf *id, *number;
-     _fcd name;
-     intf *count, *len, *nt;
-#endif /* PROTOTYPE */
 {
-    char  * iname;
-    intn    status;
-    int32   nt32;
-    int32   cnt32;
+    char *iname;
+    intn  status;
+    int32 nt32;
+    int32 cnt32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
+    if (*len)
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
-    HDpackFstring(iname,  _fcdtocp(name),  *len);
+    HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if(iname)  HDfree((VOIDP)iname);
+    free(iname);
 
-    *nt    = (intf) nt32;
-    *count = (intf) cnt32;
+    *nt    = (intf)nt32;
+    *count = (intf)cnt32;
 
-    return((intf)status);
-
+    return ((intf)status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1782,35 +1302,28 @@ nscgainfo(id, number, name, nt, count, len)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, intf *nattr, intf *len)
-#else
-nscgdinfo(id, name, sz, nt, nattr, len)
-     intf *id;
-     _fcd name;
-     intf *sz, *nattr, *len, *nt;
-#endif /* PROTOTYPE */
 {
     char *iname;
     int32 status;
     int32 sz32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
+    if (*len)
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
-    HDpackFstring(iname,  _fcdtocp(name),  *len);
+    HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if(iname)  HDfree((VOIDP)iname);
+    free(iname);
 
-    *nt    = (intf) nt32;
-    *sz    = (intf) sz32;
-    *nattr = (intf) nattr32;
+    *nt    = (intf)nt32;
+    *sz    = (intf)sz32;
+    *nattr = (intf)nattr32;
 
-    return(status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1825,20 +1338,10 @@ nscgdinfo(id, name, sz, nt, nattr, len)
  * Remarks:
  * Returns: 0 on success, -1 on failure with error set
  *--------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscscatt(intf *id, _fcd name, intf *nt, intf *count, _fcd data, intf *len)
-#else
-nscscatt(id, name, nt, count, data, len)
-     intf *id;
-     _fcd name;
-     intf *nt, *count;
-     _fcd data;
-     intf *len;
-#endif /* PROTOTYPE */
 {
-    return(nscsnatt(id, name, nt, count, (VOIDP) _fcdtocp(data), len));
+    return (nscsnatt(id, name, nt, count, (void *)_fcdtocp(data), len));
 }
 
 /*-------------------------------------------------------------
@@ -1853,30 +1356,19 @@ nscscatt(id, name, nt, count, data, len)
  * Remarks: This routine and scscattr are used to replace scsattr
  * Returns: 0 on success, -1 on failure with error set
  *--------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
-#else
-nscsnatt(id, name, nt, count, data, len)
-     intf *id;
-     _fcd name;
-     intf *nt, *count;
-     VOIDP data;
-     intf *len;
-#endif /* PROTOTYPE */
+intf
+nscsnatt(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len)
 {
-    char   *an;
-    intf    ret;
+    char *an;
+    intf  ret;
 
     an = HDf2cstring(name, *len);
 
-    ret = (intf) SDsetattr(*id, an, *nt, *count, data);
+    ret = (intf)SDsetattr(*id, an, *nt, *count, data);
 
-    HDfree((VOIDP)an);
-    return(ret);
+    free(an);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    scsattr
@@ -1891,28 +1383,18 @@ nscsnatt(id, name, nt, count, data, len)
  * Returns: 0 on success, -1 on failure with error set
  * Remarks: This routine and sfsattr should be phased out.
  *          sfsattr declairs data as char *, scscatt assumes
- *          data as VOIDP.
+ *          data as void *.
  *--------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
-nscsattr(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
-#else
-nscsattr(id, name, nt, count, data, len)
-     intf *id;
-     _fcd name;
-     intf *nt, *count;
-     VOIDP data;
-     intf *len;
-#endif /* PROTOTYPE */
+intf
+nscsattr(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len)
 {
-    char   *an;
-    intf    ret;
+    char *an;
+    intf  ret;
 
-    an = HDf2cstring(name, *len);
-    ret = (intf) SDsetattr(*id, an, *nt, *count, data);
-    HDfree((VOIDP)an);
-    return(ret);
+    an  = HDf2cstring(name, *len);
+    ret = (intf)SDsetattr(*id, an, *nt, *count, data);
+    free(an);
+    return (ret);
 }
 
 /*---------------------------------------------------------------------
@@ -1922,26 +1404,18 @@ nscsattr(id, name, nt, count, data, len)
  *          name: name of attribute to find
  * Returns: attribute id on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscfattr(intf *id, _fcd name, intf *namelen)
-#else
-nscfattr(id, name, namelen)
-    _fcd name;
-    intf *id;
-    intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
-    intf ret;
+    intf  ret;
 
     fn = HDf2cstring(name, *namelen);
 
-    ret = (intf) SDfindattr(*id, fn);
-    HDfree((VOIDP)fn);
+    ret = (intf)SDfindattr(*id, fn);
+    free(fn);
 
-    return(ret);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1950,18 +1424,11 @@ nscfattr(id, name, namelen)
  * Inputs:  id: variable id
  * Returns: reference number of a NDG representing this dataset
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfid2ref(intf *id)
-#else
-nsfid2ref(id)
-    intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDidtoref(*id));
+    return ((intf)SDidtoref(*id));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    sfref2index
@@ -1971,19 +1438,11 @@ nsfid2ref(id)
  *          ref: reference number to look up
  * Returns: reference number of a NDG representing this dataset
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfref2index(intf *id, intf *ref)
-#else
-nsfref2index(id, ref)
-     intf *id;
-     intf *ref;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDreftoindex(*id, (int32) *ref));
+    return ((intf)SDreftoindex(*id, (int32)*ref));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    sfiscvar
@@ -1992,16 +1451,10 @@ nsfref2index(id, ref)
  * Inputs:  id: sds id
  * Returns: TRUE/FALSE
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfiscvar(intf *id)
-#else
-nsfiscvar(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDiscoordvar(*id));
+    return ((intf)SDiscoordvar(*id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2014,26 +1467,18 @@ nsfiscvar(id)
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscsextf(intf *id, _fcd name, intf *offset, intf *namelen)
-#else
-nscsextf(id, name, offset, namelen)
-     intf *id;
-     _fcd name;
-     intf *offset;
-     intf *namelen;
-#endif /* PROTOTYPE */
 {
-    char   *fn;
-    intf    ret;
+    char *fn;
+    intf  ret;
 
     fn = HDf2cstring(name, *namelen);
-    if (!fn) return(FAIL);
-    ret = (intf) SDsetexternalfile(*id, fn, *offset);
-    HDfree((VOIDP)fn);
-    return(ret);
+    if (!fn)
+        return (FAIL);
+    ret = (intf)SDsetexternalfile(*id, fn, *offset);
+    free(fn);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -2046,21 +1491,11 @@ nscsextf(id, name, offset, namelen)
  *          fill_one: whether to fill the "background bits" with ones
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
-#else
-nsfsnbit(id, start_bit, bit_len, sign_ext, fill_one)
-     intf *id;
-     intf *start_bit;
-     intf *bit_len;
-     intf *sign_ext;
-     intf *fill_one;
-#endif /* PROTOTYPE */
 {
-    return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
-    (intn)*sign_ext,(intn)*fill_one));
+    return ((intf)SDsetnbitdataset((int32)*id, (intn)*start_bit, (intn)*bit_len, (intn)*sign_ext,
+                                   (intn)*fill_one));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2071,18 +1506,12 @@ nsfsnbit(id, start_bit, bit_len, sign_ext, fill_one)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfsacct(intf *id, intf *type)
-#else
-nsfsacct(id, type)
-     intf *id;
-     intf *type;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetaccesstype(*id, *type));
+    return ((intf)SDsetaccesstype(*id, *type));
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    sfsdmvc
  * Purpose: Call SDsetdimval_comp to set the dim value backward
@@ -2095,17 +1524,10 @@ nsfsacct(id, type)
  * Returns: SUCCESS on success, FAIL on failure
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfsdmvc(intf *id, intf *compmode)
-#else
-nsfsdmvc(id, compmode)
-     intf *id;
-     intf *compmode;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetdimval_comp(*id, *compmode));
+    return ((intf)SDsetdimval_comp(*id, *compmode));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2119,16 +1541,10 @@ nsfsdmvc(id, compmode)
             FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfisdmvc(intf *id)
-#else
-nsfisdmvc(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDisdimval_bwcomp(*id));
+    return ((intf)SDisdimval_bwcomp(*id));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2144,22 +1560,15 @@ nsfisdmvc(id)
  *          FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfsflmd(intf *id, intf *fillmode)
-#else
-nsfsflmd(id, fillmode)
-    intf *id, *fillmode;
-#endif  /* PROTOTYPE */
 {
-    return((intf) SDsetfillmode(*id, *fillmode));
+    return ((intf)SDsetfillmode(*id, *fillmode));
 }
-#endif /* HDF */
 
 /*-------------------------------------------------------------------------
  * Name:    scgichnk
- * Puporse: Call SDgetchunkinfo
+ * Purpose: Call SDgetchunkinfo
  * Inputs:  id: SDS access id
  * Outputs: dim_length: chunk dimensions
  *          flags:            -1 - SDS is nonchunked
@@ -2171,7 +1580,7 @@ nsfsflmd(id, fillmode)
  *          comp_prm[0] = nbit_sign_ext,
  *          comp_prm[1] = nbit_fill_one,
  *          comp_prm[2] = nbit_start_bit,
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parameters
  *
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
@@ -2179,80 +1588,70 @@ nsfsflmd(id, fillmode)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-      nscgichnk(intf *id, intf *dim_length, intf *flags)
-#else
-       nscgichnk( id, dim_length, flags)
-       intf *id;
-       intf *dim_length;
-       intf *flags;
-#endif /* PROTOTYPE */
+intf
+nscgichnk(intf *id, intf *dim_length, intf *flags)
 {
 
-HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
-int32 sdsid;              /* SDS id               */
-int   i;
-int32 rank, status, cflags;
-intf ret;
+    HDF_CHUNK_DEF chunk_def; /* Chunk definition set */
+    int32         sdsid;     /* SDS id               */
+    int           i;
+    int32         rank, status, cflags;
+    intf          ret;
 
-int32 cdims[100], nt32, nattr32;
-sdsid = *id;
+    int32 cdims[100], nt32, nattr32;
+    sdsid = *id;
 
-/* Get  SDS rank */
+    /* Get  SDS rank */
 
-       status = SDgetinfo(sdsid, NULL, &rank, cdims, &nt32, &nattr32 );
-       if(status == FAIL) return FAIL;
+    status = SDgetinfo(sdsid, NULL, &rank, cdims, &nt32, &nattr32);
+    if (status == FAIL)
+        return FAIL;
 
-/* Get SDS info */
+    /* Get SDS info */
 
-       status = SDgetchunkinfo(sdsid, &chunk_def, &cflags);
-       if(status == FAIL) return FAIL;
+    status = SDgetchunkinfo(sdsid, &chunk_def, &cflags);
+    if (status == FAIL)
+        return FAIL;
 
+    switch (cflags)
 
-switch (cflags)
+    {
 
-  {
+        case HDF_NONE: /* Non-chunked SDS */
 
-  case HDF_NONE:       /* Non-chunked SDS */
+            *flags = -1;
+            ret    = 0;
+            return (ret);
 
-    *flags = -1;
-     ret = 0;
-     return(ret);
+        case HDF_CHUNK: /* Chunked, noncompressed SDS */
 
-  case HDF_CHUNK:    /* Chunked, noncompressed SDS */
+            *flags = 0;
+            for (i = 0; i < rank; i++)
+                dim_length[rank - i - 1] = chunk_def.chunk_lengths[i];
+            ret = 0;
+            return (ret);
 
-    *flags = 0;
-     for (i=0; i < rank; i++)
-          dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
-     ret = 0;
-     return(ret);
+        case (HDF_CHUNK | HDF_COMP): /* Chunked and compressed SDS
+                                        RLE, SKPHUFF or GZIP only */
 
-  case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed SDS
-                                      RLE, SKPHUFF or GZIP only */
+            *flags = 1;
+            for (i = 0; i < rank; i++)
+                dim_length[rank - i - 1] = chunk_def.comp.chunk_lengths[i];
+            ret = 0;
+            return (ret);
 
-     *flags = 1;
-     for (i=0; i < rank; i++)
-          dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
-     ret = 0;
-     return(ret);
+        case (HDF_CHUNK | HDF_NBIT): /* Chunked and NBIT compressed SDS */
 
-  case (HDF_CHUNK | HDF_NBIT):     /* Chunked and NBIT compressed SDS */
+            *flags = 2;
+            for (i = 0; i < rank; i++)
+                dim_length[rank - i - 1] = chunk_def.nbit.chunk_lengths[i];
+            ret = 0;
+            return (ret);
 
-     *flags = 2;
-     for (i=0; i < rank; i++)
-          dim_length[rank-i-1] =  chunk_def.nbit.chunk_lengths[i];
-     ret = 0;
-     return(ret);
+        default:
 
-  default:
-
-    return FAIL;
-
-  }
-
-
+            return FAIL;
+    }
 }
 /*-----------------------------------------------------------------------------
  * Name:     scrchnk
@@ -2262,51 +1661,44 @@ switch (cflags)
  * Outputs:  num_data  - buffer the data will be read into
  * Calls:    SDreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscrchnk(intf *id, intf *start, VOIDP num_data)
-#else
-       nscrchnk(id, start, num_data)
-                intf *id;
-                intf *start;
-                VOIDP num_data;
-#endif /* PROTOTYPE */
-
+intf
+nscrchnk(intf *id, intf *start, void *num_data)
 {
-       intf    ret;
-       int32   rank, status, i;
-       int32   *cstart;
+    intf   ret;
+    int32  rank, status, i;
+    int32 *cstart;
 
-       int32   cdims[100], nt32, nattr32;
-/* Get rank of SDS */
+    int32 cdims[100], nt32, nattr32;
+    /* Get rank of SDS */
 
-       status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
-       if(status == FAIL) return FAIL;
+    status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
+    if (status == FAIL)
+        return FAIL;
 
-/* Allocate memory for cstart array; use static array, if performance
-       becomes an issue */
+    /* Allocate memory for cstart array; use static array, if performance
+           becomes an issue */
 
-       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
-       if(!cstart) return FAIL;
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
+    if (!cstart)
+        return FAIL;
 
-/* Flip an array to account for array odering in Fortran and C */
+    /* Flip an array to account for array ordering in Fortran and C */
 
-       for ( i=0; i < rank; i++)
-             cstart[i] = start[rank-i-1] - 1;
+    for (i = 0; i < rank; i++)
+        cstart[i] = start[rank - i - 1] - 1;
 
-/* Call SDreadChunk function to read the data */
+    /* Call SDreadChunk function to read the data */
 
-       ret = SDreadchunk(*id, cstart, num_data);
+    ret = SDreadchunk(*id, cstart, num_data);
 
-/* Free memory */
+    /* Free memory */
 
-       HDfree((VOIDP)cstart);
-       return(ret);
-
+    free(cstart);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -2319,23 +1711,14 @@ switch (cflags)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscrcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nscrcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
+intf
+nscrcchnk(intf *id, intf *start, _fcd char_data)
 {
-       intf  ret;
+    intf ret;
 
-       ret = nscrchnk(id, start, (VOIDP) _fcdtocp(char_data));
+    ret = nscrchnk(id, start, (void *)_fcdtocp(char_data));
 
-       return(ret);
-
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -2348,28 +1731,19 @@ switch (cflags)
  * Calls:    SDsetchunkcache
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscscchnk(intf *id, intf *maxcache, intf *flags)
-#else
-       nscscchnk(id, maxcache, flags)
-                intf *id;
-                intf *maxcache;
-                intf *flags;
-#endif /* PROTOTYPE */
-
+intf
+nscscchnk(intf *id, intf *maxcache, intf *flags)
 {
-       intf  ret;
+    intf ret;
 
-       ret = SDsetchunkcache(*id, *maxcache, *flags);
+    ret = SDsetchunkcache(*id, *maxcache, *flags);
 
-       return(ret);
-
+    return (ret);
 }
 
 /*-------------------------------------------------------------------------
  * Name:    scschnk
- * Puporse: Call SDsetchunk
+ * Purpose: Call SDsetchunk
  * Inputs:  id: SDS access id
  *          dim_length: chunk dimensions
  *          comp_type:  type of compression
@@ -2382,7 +1756,7 @@ switch (cflags)
  *          comp_prm[0] = nbit_sign_ext,
  *          comp_prm[1] = nbit_fill_one,
  *          comp_prm[2] = nbit_start_bit,
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parameters
  *
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
@@ -2392,109 +1766,97 @@ switch (cflags)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-      nscschnk(intf *id, intf *dim_length, intf *comp_type,
-                intf *comp_prm)
-#else
-       nscschnk( id, dim_length, comp_type,
-                 comp_prm)
-       intf *id;
-       intf *dim_length;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
+intf
+nscschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm)
 {
 
-    HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
-    int32 sdsid;              /* SDS id               */
-    int32 cflags;             /* chunk flags          */
-    int   i, CASE;
-    int32 rank, status;
-    intf ret;
+    HDF_CHUNK_DEF chunk_def; /* Chunk definition set */
+    int32         sdsid;     /* SDS id               */
+    int32         cflags;    /* chunk flags          */
+    int           i, CASE;
+    int32         rank, status;
+    intf          ret;
 
     int32 cdims[100], nt32, nattr32;
 
     /* Get rank of SDS */
 
-       status = SDgetinfo((int32) *id, NULL , &rank, cdims, &nt32, &nattr32);
-       if(status == FAIL) return FAIL;
+    status = SDgetinfo((int32)*id, NULL, &rank, cdims, &nt32, &nattr32);
+    if (status == FAIL)
+        return FAIL;
 
-    CASE = *comp_type;
-    sdsid = *id;
+    CASE   = *comp_type;
+    sdsid  = *id;
     cflags = HDF_CHUNK | HDF_COMP;
 
-    switch (CASE)  {
+    switch (CASE) {
 
-       case 0:       /* No compression */
-         cflags = HDF_CHUNK;
-         for (i=0; i < rank; i++)
-               chunk_def.chunk_lengths[i] = dim_length[rank-i-1];
-         break;
+        case 0: /* No compression */
+            cflags = HDF_CHUNK;
+            for (i = 0; i < rank; i++)
+                chunk_def.chunk_lengths[i] = dim_length[rank - i - 1];
+            break;
 
-       case 1:       /* RLE compression */
-         cflags = HDF_CHUNK | HDF_COMP;
-         for (i=0; i < rank; i++)
-                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+        case 1: /* RLE compression */
+            cflags = HDF_CHUNK | HDF_COMP;
+            for (i = 0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank - i - 1];
 
-         chunk_def.comp.comp_type = COMP_CODE_RLE;
+            chunk_def.comp.comp_type = COMP_CODE_RLE;
 
-         break;
+            break;
 
+        case 2: /* N-bit encoding */
+            cflags = HDF_CHUNK | HDF_NBIT;
+            for (i = 0; i < rank; i++)
+                chunk_def.nbit.chunk_lengths[i] = dim_length[rank - i - 1];
 
-       case 2:      /* N-bit encoding */
-         cflags = HDF_CHUNK | HDF_NBIT;
-         for (i=0; i < rank; i++)
-                chunk_def.nbit.chunk_lengths[i] = dim_length[rank-i-1];
+            chunk_def.nbit.sign_ext  = comp_prm[0];
+            chunk_def.nbit.fill_one  = comp_prm[1];
+            chunk_def.nbit.start_bit = comp_prm[2];
+            chunk_def.nbit.bit_len   = comp_prm[3];
 
-         chunk_def.nbit.sign_ext = comp_prm[0];
-         chunk_def.nbit.fill_one = comp_prm[1];
-         chunk_def.nbit.start_bit = comp_prm[2];
-         chunk_def.nbit.bit_len = comp_prm[3];
+            break;
 
-         break;
+        case 3: /* Skipping Huffman encoding */
+            cflags = HDF_CHUNK | HDF_COMP;
+            for (i = 0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank - i - 1];
 
-       case 3:      /* Skipping Huffman encoding */
-         cflags = HDF_CHUNK | HDF_COMP;
-          for (i=0; i < rank; i++)
-                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+            chunk_def.comp.comp_type              = COMP_CODE_SKPHUFF;
+            chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0];
 
-          chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
-          chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0];
+            break;
 
-          break;
+        case 4: /* GZIP compression */
+            cflags = HDF_CHUNK | HDF_COMP;
+            for (i = 0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank - i - 1];
 
-       case 4:      /* GZIP compression */
-         cflags = HDF_CHUNK | HDF_COMP;
-          for (i=0; i < rank; i++)
-                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+            chunk_def.comp.comp_type           = COMP_CODE_DEFLATE;
+            chunk_def.comp.cinfo.deflate.level = comp_prm[0];
 
-          chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
-          chunk_def.comp.cinfo.deflate.level = comp_prm[0];
+            break;
 
-          break;
+        case 5: /* SZIP compression */
+            cflags = HDF_CHUNK | HDF_COMP;
+            for (i = 0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank - i - 1];
 
-       case 5:      /* SZIP compression */
-         cflags = HDF_CHUNK | HDF_COMP;
-          for (i=0; i < rank; i++)
-                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+            chunk_def.comp.comp_type                   = COMP_CODE_SZIP;
+            chunk_def.comp.cinfo.szip.options_mask     = comp_prm[0];
+            chunk_def.comp.cinfo.szip.pixels_per_block = comp_prm[1];
+            break;
 
-          chunk_def.comp.comp_type = COMP_CODE_SZIP;
-          chunk_def.comp.cinfo.szip.options_mask     = comp_prm[0];
-          chunk_def.comp.cinfo.szip.pixels_per_block = comp_prm[1];
-          break;
+        default:
 
-       default:
-
-          return FAIL;
-
-     }
+            return FAIL;
+    }
 
     ret = SDsetchunk(sdsid, chunk_def, cflags);
-    return(ret);
-
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:     scwchnk
  * Purpose:  write the specified chunk of NUMERIC data to the SDS
@@ -2503,53 +1865,47 @@ switch (cflags)
  *           num_data  - buffer for data
  * Calls:    SDwritechunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscwchnk(intf *id, intf *start, VOIDP num_data)
-#else
-       nscwchnk(id, start, num_data)
-                intf *id;
-                intf *start;
-                VOIDP num_data;
-#endif /* PROTOTYPE */
-
+intf
+nscwchnk(intf *id, intf *start, void *num_data)
 {
-       intf    ret;
-       int32   rank, status, i;
-       int32   *cstart;
+    intf   ret;
+    int32  rank, status, i;
+    int32 *cstart;
 
-       int32   cdims[100], nt32, nattr32;
-/* Get rank of SDS */
+    int32 cdims[100], nt32, nattr32;
+    /* Get rank of SDS */
 
-       status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
-       if(status == FAIL) return FAIL;
+    status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
+    if (status == FAIL)
+        return FAIL;
 
-/* Allocate memory for cstart array; use static array, if performance
-       becomes an issue */
+    /* Allocate memory for cstart array; use static array, if performance
+           becomes an issue */
 
-       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
-       if(!cstart) return FAIL;
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
+    if (!cstart)
+        return FAIL;
 
-/* Flip an array */
+    /* Flip an array */
 
-       for ( i=0; i < rank; i++)
-             cstart[i] = start[rank-i-1] - 1;
+    for (i = 0; i < rank; i++)
+        cstart[i] = start[rank - i - 1] - 1;
 
-/* Call SDwriteChunk function to write the data */
+    /* Call SDwriteChunk function to write the data */
 
-       ret = SDwritechunk(*id, cstart, num_data);
+    ret = SDwritechunk(*id, cstart, num_data);
 
-/* Free memory */
+    /* Free memory */
 
-       HDfree((VOIDP)cstart);
+    free(cstart);
 
-       return(ret);
-
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:     scwcchnk
  * Purpose:  write the specified chunk of CHARACTER data to the SDS
@@ -2560,28 +1916,19 @@ switch (cflags)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscwcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nscwcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
+intf
+nscwcchnk(intf *id, intf *start, _fcd char_data)
 {
-       intf  ret;
+    intf ret;
 
-       ret = nscwchnk(id, start, (VOIDP) _fcdtocp(char_data));
+    ret = nscwchnk(id, start, (void *)_fcdtocp(char_data));
 
-       return(ret);
-
+    return (ret);
 }
 
 /*-------------------------------------------------------------------------
  * Name:    scscompress
- * Puporse: Call SDsetcompress
+ * Purpose: Call SDsetcompress
  * Inputs:  id: SDS access id
  *          comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
@@ -2598,67 +1945,56 @@ switch (cflags)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscscompress(intf *id, intf *comp_type, intf *comp_prm)
-#else
-       nscscompress( id, comp_type, comp_prm)
-       intf *id;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
+intf
+nscscompress(intf *id, intf *comp_type, intf *comp_prm)
 {
 
-    int32 sdsid;              /* SDS id               */
-    comp_info c_info;         /* compression info     */
-    comp_coder_t c_type;              /* compression type definition */
+    int32        sdsid;  /* SDS id               */
+    comp_info    c_info; /* compression info     */
+    comp_coder_t c_type; /* compression type definition */
 
-    int   CASE;
+    int  CASE;
     intf ret;
 
-
-
-    CASE = *comp_type;
+    CASE  = *comp_type;
     sdsid = *id;
-    switch (CASE)  {
+    switch (CASE) {
 
-       case COMP_CODE_NONE:       /* No compression */
-         c_type = COMP_CODE_NONE;
-         break;
+        case COMP_CODE_NONE: /* No compression */
+            c_type = COMP_CODE_NONE;
+            break;
 
-       case COMP_CODE_RLE:             /* RLE compression */
-         c_type = COMP_CODE_RLE;
-         break;
+        case COMP_CODE_RLE: /* RLE compression */
+            c_type = COMP_CODE_RLE;
+            break;
 
-       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
-          c_type = COMP_CODE_SKPHUFF;
-          c_info.skphuff.skp_size = comp_prm[0];
-          break;
+        case COMP_CODE_SKPHUFF: /* Skipping Huffman encoding */
+            c_type                  = COMP_CODE_SKPHUFF;
+            c_info.skphuff.skp_size = comp_prm[0];
+            break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */
-          c_type = COMP_CODE_DEFLATE;
-          c_info.deflate.level = comp_prm[0];
-          break;
+        case COMP_CODE_DEFLATE: /* GZIP compression */
+            c_type               = COMP_CODE_DEFLATE;
+            c_info.deflate.level = comp_prm[0];
+            break;
 
-       case COMP_CODE_SZIP:      /* SZIP compression */
-          c_type = COMP_CODE_SZIP;
-          c_info.szip.options_mask = comp_prm[0];
-          c_info.szip.pixels_per_block = comp_prm[1];
-          break;
-       default:
+        case COMP_CODE_SZIP: /* SZIP compression */
+            c_type                       = COMP_CODE_SZIP;
+            c_info.szip.options_mask     = comp_prm[0];
+            c_info.szip.pixels_per_block = comp_prm[1];
+            break;
+        default:
 
-          return FAIL;
-
-                     }
+            return FAIL;
+    }
 
     ret = SDsetcompress(sdsid, c_type, &c_info);
-    return(ret);
-
+    return (ret);
 }
+
 /*-------------------------------------------------------------------------
  * Name:    scgcompress
- * Puporse: Call SDgetcompress
+ * Purpose: Call SDgetcompinfo
  * Inputs:  id: SDS access id
  * Outputs: comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
@@ -2686,99 +2022,84 @@ switch (cflags)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscgcompress(intf *id, intf *comp_type, intf *comp_prm)
-#else
-       nscgcompress( id, comp_type, comp_prm)
-       intf *id;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
+intf
+nscgcompress(intf *id, intf *comp_type, intf *comp_prm)
 {
 
-    comp_info c_info;         /* compression info     */
-    comp_coder_t c_type;              /* compression type definition */
+    comp_info    c_info; /* compression info     */
+    comp_coder_t c_type; /* compression type definition */
 
-    int   CASE;
+    int  CASE;
     intn c_ret;
     intf ret = -1;
 
-
     c_ret = SDgetcompinfo(*id, &c_type, &c_info);
     if (c_ret == 0) {
-    CASE = (int)c_type;
-    switch (CASE)  {
+        CASE = (int)c_type;
+        switch (CASE) {
 
-       case COMP_CODE_NONE:       /* No compression */
-         *comp_type = 0;
-    ret = 0;
-         break;
+            case COMP_CODE_NONE: /* No compression */
+                *comp_type = 0;
+                ret        = 0;
+                break;
 
-       case COMP_CODE_RLE:             /* RLE compression */
-         *comp_type = 1;
-    ret = 0;
-         break;
+            case COMP_CODE_RLE: /* RLE compression */
+                *comp_type = 1;
+                ret        = 0;
+                break;
 
-       case COMP_CODE_NBIT:      /* NBIT encoding */
-          *comp_type = 2;
-          comp_prm[0] = (intf)c_info.nbit.sign_ext;
-          comp_prm[1] = (intf)c_info.nbit.fill_one;
-          comp_prm[2] = (intf)c_info.nbit.start_bit;
-          comp_prm[3] = (intf)c_info.nbit.bit_len;
-    ret = 0;
-          break;
+            case COMP_CODE_NBIT: /* NBIT encoding */
+                *comp_type  = 2;
+                comp_prm[0] = (intf)c_info.nbit.sign_ext;
+                comp_prm[1] = (intf)c_info.nbit.fill_one;
+                comp_prm[2] = (intf)c_info.nbit.start_bit;
+                comp_prm[3] = (intf)c_info.nbit.bit_len;
+                ret         = 0;
+                break;
 
+            case COMP_CODE_SKPHUFF: /* Skipping Huffman encoding */
+                *comp_type  = 3;
+                comp_prm[0] = (intf)c_info.skphuff.skp_size;
+                ret         = 0;
+                break;
 
-       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
-          *comp_type = 3;
-          comp_prm[0] = (intf)c_info.skphuff.skp_size;
-    ret = 0;
-          break;
+            case COMP_CODE_DEFLATE: /* GZIP compression */
+                *comp_type  = 4;
+                comp_prm[0] = (intf)c_info.deflate.level;
+                ret         = 0;
+                break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */
-          *comp_type = 4;
-          comp_prm[0] = (intf)c_info.deflate.level;
-    ret = 0;
-          break;
+            case COMP_CODE_SZIP: /* SZIP encoding */
+                *comp_type  = 5;
+                comp_prm[0] = (intf)c_info.szip.options_mask;
+                comp_prm[1] = (intf)c_info.szip.pixels_per_block;
+                comp_prm[2] = (intf)c_info.szip.pixels_per_scanline;
+                comp_prm[3] = (intf)c_info.szip.bits_per_pixel;
+                comp_prm[4] = (intf)c_info.szip.pixels;
+                ret         = 0;
+                break;
 
-       case COMP_CODE_SZIP:      /* SZIP encoding */
-          *comp_type = 5;
-          comp_prm[0] = (intf)c_info.szip.options_mask;
-          comp_prm[1] = (intf)c_info.szip.pixels_per_block;
-          comp_prm[2] = (intf)c_info.szip.pixels_per_scanline;
-          comp_prm[3] = (intf)c_info.szip.bits_per_pixel;
-          comp_prm[4] = (intf)c_info.szip.pixels;
-    ret = 0;
-          break;
+            default:
 
-       default:
+                return FAIL;
 
-          return FAIL;
-
-                     } /*end CASE */
-    } /* end if */
-    return(ret);
-
+        } /*end CASE */
+    }     /* end if */
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    sfisrcrd
  * Purpose: call SDisrecord to see if a dataset is a record variable
  * Inputs:  id: sds id
  * Returns: TRUE/FALSE (1/0))
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfisrcrd(intf *id)
-#else
-nsfisrcrd(id)
-     intf *id;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDisrecord(*id));
+    return ((intf)SDisrecord(*id));
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    sfsblsz
  * Purpose: call SDsetblocksize
@@ -2786,18 +2107,12 @@ nsfisrcrd(id)
             block_size:  block size  in bytes
  * Returns: SUCCEED/FAIL (0/-1)
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nsfsblsz(intf *id, intf *block_size)
-#else
-nsfsblsz(id, block_size)
-     intf *id;
-     intf *block_size;
-#endif /* PROTOTYPE */
 {
-    return((intf) SDsetblocksize(*id, *block_size));
+    return ((intf)SDsetblocksize(*id, *block_size));
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scchempty
  * Purpose: call SDcheckempty
@@ -2805,22 +2120,16 @@ nsfsblsz(id, block_size)
             flag:        TRUE/FALSE flag
  * Returns: SUCCEED/FAIL (0/-1)
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscchempty(intf *id, intf *flag)
-#else
-nscchempty(id, flag)
-     intf *id;
-     intf *flag;
-#endif /* PROTOTYPE */
 {
     intn flag_c;
     intf status;
     status = SDcheckempty(*id, &flag_c);
-    *flag = flag_c;
-    return(status);
+    *flag  = flag_c;
+    return (status);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scgetfname
  * Purpose: Retrieves the name of the file given file identifier
@@ -2829,29 +2138,21 @@ nscchempty(id, flag)
  *          namelen: length of file name
  * Returns: real length on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgetfname(intf *file_id, _fcd name, intf *namelen)
-#else
-nscgetfname(file_id, name, namelen)
-     intf *file_id;
-     _fcd name;
-     intf *namelen;
-#endif /* PROTOTYPE */
-
 {
     char *fn;
-    intn ret;
+    intn  ret;
 
     fn = NULL;
-    if(*namelen) fn = (char *)HDmalloc((uint32)*namelen + 1);
+    if (*namelen)
+        fn = (char *)malloc((uint32)*namelen + 1);
 
-    ret = (intn) SDgetfilename(*file_id, fn);
-    HDpackFstring(fn,  _fcdtocp(name),  *namelen);
+    ret = (intn)SDgetfilename(*file_id, fn);
+    HDpackFstring(fn, _fcdtocp(name), *namelen);
 
-    if(fn) HDfree((VOIDP)fn);
-    return(ret);
+    free(fn);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -2861,76 +2162,58 @@ nscgetfname(file_id, name, namelen)
  * Outputs: namelen: name length
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgetnamelen(intf *obj_id, intf *namelen)
-#else
-nscgetnamelen(obj_id, namelen)
-     intf *obj_id;
-     intf *namelen;
-#endif /* PROTOTYPE */
-
 {
-    intn    ret;
-    uint16  c_namelen;
+    intn   ret;
+    uint16 c_namelen;
 
-    ret = (intn) SDgetnamelen(*obj_id, &c_namelen);
+    ret = (intn)SDgetnamelen(*obj_id, &c_namelen);
 
     *namelen = (intf)c_namelen;
-    return(ret);
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scidtype
  * Purpose: Retrieves type pf the object give an identifier
  * Inputs:  obj_id: object identifier
- * Outputs: obj_type: object type  -1 for invalide
+ * Outputs: obj_type: object type  -1 for invalid
  *                                  0 for file
  *                                  1 for data set
  *                                  2 for dimension scale
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscidtype(intf *obj_id, intf *obj_type)
-#else
-nscidtype(obj_id, obj_type)
-     intf *obj_id;
-     intf *obj_type;
-#endif /* PROTOTYPE */
-
 {
-    intn    ret = -1;
-    hdf_idtype_t  c_obj_type;;
+    intn         ret = -1;
+    hdf_idtype_t c_obj_type;
+    ;
 
     c_obj_type = SDidtype(*obj_id);
 
     *obj_type = (intf)c_obj_type;
-    if (c_obj_type >= 0) ret = 0;
-    return(ret);
+    if (c_obj_type >= 0)
+        ret = 0;
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scrmaxopenf
- * Purpose: Resets the max numebr of files can be opened at the same time
+ * Purpose: Resets the max number of files can be opened at the same time
  * Inputs:  req_max: requested max number of files
  * Returns: current max number of opened files on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscrmaxopenf(intf *req_max)
-#else
-nscrmaxopenf(req_max)
-     intf *req_max;
-#endif /* PROTOTYPE */
-
 {
-    intf    cur_max;
+    intf cur_max;
 
-    cur_max = (intf) SDreset_maxopenfiles(*req_max);
-    return(cur_max);
+    cur_max = (intf)SDreset_maxopenfiles(*req_max);
+    return (cur_max);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scgmaxopenf
  * Purpose: Retrieves current and maximum number of open files.
@@ -2938,50 +2221,39 @@ nscrmaxopenf(req_max)
  *          sys_limit: system limit on open files
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgmaxopenf(intf *cur_max, intf *sys_limit)
-#else
-nscgmaxopenf(cur_max, sys_limit)
-     intf *cur_max;
-     intf *sys_limit;
-#endif /* PROTOTYPE */
-
 {
     intf ret = 0;
     intn c_cur_max, c_sys_limit;
 
-    ret = (intf) SDget_maxopenfiles(&c_cur_max, &c_sys_limit);
-    if (ret < 0) return(FAIL);
-    *cur_max = (intf)c_cur_max;
+    ret = (intf)SDget_maxopenfiles(&c_cur_max, &c_sys_limit);
+    if (ret < 0)
+        return (FAIL);
+    *cur_max   = (intf)c_cur_max;
     *sys_limit = (intf)c_sys_limit;
-    return(ret);
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scgnumopenf
  * Purpose: Returns the number of files currently being opened
  * Outputs: cur_num: number of files currently being opened
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgnumopenf(intf *cur_num)
-#else
-nscgnumopenf(cur_num)
-     intf *cur_num;
-#endif /* PROTOTYPE */
-
 {
-    intf    ret = 0;
-    intn    c_cur_num;
+    intf ret = 0;
+    intn c_cur_num;
 
     c_cur_num = SDget_numopenfiles();
-    if (c_cur_num < 1) ret = -1;
+    if (c_cur_num < 1)
+        ret = -1;
     *cur_num = (intf)c_cur_num;
-    return(ret);
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scn2indices
  * Purpose: Retrieves indices of all variables with the same name.
@@ -2994,43 +2266,34 @@ nscgnumopenf(cur_num)
  *          type_list: list of types
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_list, intf *n_vars)
-#else
-nscn2indices(sd_id, name, namelen, var_list, type_list, n_vars)
-     intf *sd_id;
-     _fcd name;
-     intf *namelen;
-     intf *var_list;
-     intf *type_list;
-     intf *n_vars;
-#endif /* PROTOTYPE */
-
 {
-    char   *fn;
-    intn    ret;
+    char          *fn;
+    intn           ret;
     hdf_varlist_t *c_var_list;
-    int idx;
+    int            idx;
 
     fn = HDf2cstring(name, *namelen);
-    if (!fn) return(FAIL);
-    c_var_list = (hdf_varlist_t *)HDmalloc(*n_vars * sizeof(hdf_varlist_t));
-    if (!c_var_list) return(FAIL);
+    if (!fn)
+        return (FAIL);
+    c_var_list = (hdf_varlist_t *)malloc(*n_vars * sizeof(hdf_varlist_t));
+    if (!c_var_list)
+        return (FAIL);
 
-    ret = (intn) SDnametoindices(*sd_id, fn, c_var_list);
+    ret = (intn)SDnametoindices(*sd_id, fn, c_var_list);
 
     if (ret == 0) {
         for (idx = 0; idx < *n_vars; idx++) {
-            var_list[idx] = (intf)c_var_list[idx].var_index;
+            var_list[idx]  = (intf)c_var_list[idx].var_index;
             type_list[idx] = (intf)c_var_list[idx].var_type;
-            }
+        }
     } /*endif*/
-    HDfree(c_var_list);
-    HDfree((VOIDP)fn);
-    return(ret);
+    free(c_var_list);
+    free(fn);
+    return (ret);
 }
+
 /*-----------------------------------------------------------------------------
  * Name:    scgnvars_byname
  * Purpose: Gets the number of data sets having the same name
@@ -3040,32 +2303,22 @@ nscn2indices(sd_id, name, namelen, var_list, type_list, n_vars)
  * Outputs: n_vars: number of data sets
  * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
-
-   FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nscgnvars_byname(intf *sd_id, _fcd name, intf *namelen, intf *n_vars)
-#else
-nscgnvars_byname(sd_id, name, namelen, n_vars)
-     intf *sd_id;
-     _fcd name;
-     intf *namelen;
-     intf *n_vars;
-#endif /* PROTOTYPE */
-
 {
-    char   *fn;
-    int32   c_n_vars;
-    intn    ret;
+    char *fn;
+    int32 c_n_vars;
+    intn  ret;
 
     fn = HDf2cstring(name, *namelen);
-    if (!fn) return(FAIL);
+    if (!fn)
+        return (FAIL);
 
-    ret = (intn) SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
+    ret = (intn)SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
 
-    HDfree((VOIDP)fn);
-    if(ret == FAIL) return FAIL;
+    free(fn);
+    if (ret == FAIL)
+        return FAIL;
     *n_vars = (intf)c_n_vars;
-    return(ret);
+    return (ret);
 }
-
-

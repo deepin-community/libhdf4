@@ -7,8 +7,8 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
+ * https://www.hdfgroup.org/licenses.  If you do not have access to the      *
+ * file, you may request a copy from help@hdfgroup.org.                      *
  ****************************************************************************/
 
 package hdf.hdflib;
@@ -24,18 +24,19 @@ package hdf.hdflib;
  */
 
 public class HDFNotImplementedException extends HDFJavaException {
-    String msg;
 
-    public HDFNotImplementedException() {
-        HDFerror = 0;
-    }
+    /** */
+    public HDFNotImplementedException() { super(); }
 
-    public HDFNotImplementedException(String s) {
-        msg = "HDFJavaException: HDF function not implmented (yet): " + s;
-    }
-
-    @Override
-    public String getMessage() {
-        return msg;
+    /**
+     * Constructs an <code>HDFException</code> with the specified unimplemented
+     * message.
+     *
+     * @param s
+     *            the additional message detail.
+     */
+    public HDFNotImplementedException(String s)
+    {
+        super("HDFJavaException: HDF function not implemented (yet): " + s);
     }
 }

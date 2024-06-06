@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tsdmmsf (number_failed)
 C
@@ -24,7 +23,7 @@ C  Output files: o0, o1, ... o6
 C
       implicit none
       include 'fortest.inc'
-   
+
       integer number_failed
       character*20 myname
       parameter (myname = 'sdmms')
@@ -50,7 +49,7 @@ C quantities of precisely 1 byte big.  Integer*1 may have memory size
 C as large as a normal integer (e.g. Cray).
 C Cannot just use the character variables as for some compilers,
 C the argument address of a character argument is not compatible with
-C that of a numerial argument.
+C that of a numerical argument.
 
       integer surri8, surri8max, surri8min, surri8scale
       integer surrti8, surrti8max, surrti8min, surrti8scale
@@ -88,12 +87,12 @@ C      i8min = char(-128)
       i16min = -1200
       i32max = 99999999
       i32min = -999999999
-      
+
       rank = 2
       dims(1) = 10
       dims(2) = 10
       number_failed = 0
-      
+
 C
 C Set up some calibration info
 C
@@ -104,7 +103,7 @@ C
       ctype = DFNT_INT16
 
       call MESSAGE(5, 'Creating arrays...')
-      
+
       do 110 i=1,10
           do 100 j=1,10
             f64(i,j) = (i * 40) + j
@@ -121,9 +120,9 @@ C
   110 continue
 
       err1 = dssdims(rank, dims)
-      
+
 C
-C  Writing dimscale, max/min, and arrays to a single file 
+C  Writing dimscale, max/min, and arrays to a single file
 C
       call MESSAGE(5, 'Writing arrays to single file...')
 
@@ -150,41 +149,41 @@ C
       err2 = dssrang(surri8max, surri8min)
       err3 = dsadata('of.hdf', rank, dims, surri8)
       call errchkio(err1, err2, err3, number_failed, 'int8 write')
-      
-      
+
+
       err  = dssnt(DFNT_INT16)
       err1 = dssdisc(1, 10, i16scale)
       err2 = dssrang(i16max, i16min)
       err3 = dsadata('of.hdf', rank, dims, i16)
       call errchkio(err1, err2, err3, number_failed, 'int16 write')
-      
+
       err  = dssnt(DFNT_INT32)
       err1 = dssdisc(1, 10, i32scale)
       err2 = dssrang(i32max, i32min)
       err3 = dsadata('of.hdf', rank, dims, i32)
       call errchkio(err1, err2, err3, number_failed, 'int32 write')
-      
+
 C
 C  Reading back dimscales, max/min, and arrays from single file
 C
       err1 = dsgdata('of.hdf', rank, dims, tf64)
       err2 = dsgdisc(1, 10, tf64scale)
       err3 = dsgrang(tf64max, tf64min)
-      err4 = dsgcal(ical, icale, iioff, iioffe, ictype) 
+      err4 = dsgcal(ical, icale, iioff, iioffe, ictype)
       call errchkio(err1, err2, err3, number_failed, 'float64 read')
 
       if(err4.eq.(-1)) then
          number_failed = number_failed + 1
          print *, '>>> Reading calibration failed'
       endif
-      
+
       if((cal.ne.ical).or.(cale.ne.icale)) then
          if((ioff.ne.iioff).or.(ioff.ne.iioffe)) then
             if(ctype.ne.ictype) then
                print *, '>>>Returned calibration values are wrong'
                print *, ical, icale
                print *, iioff, iioffe
-               print *, ictype 
+               print *, ictype
                print *, cal, cale
                print *, ioff, ioffe
                print *, ctype
@@ -196,29 +195,29 @@ C
       err1 = dsgdata('of.hdf', rank, dims, tf32)
       err2 = dsgdisc(1, 10, tf32scale)
       err3 = dsgrang(tf32max, tf32min)
-      err4 = dsgcal(ical, icale, iioff, iioffe, ictype) 
+      err4 = dsgcal(ical, icale, iioff, iioffe, ictype)
       call errchkio(err1, err2, err3, number_failed, 'float32 read')
 
       if(err4.ne.(-1)) then
          number_failed = number_failed + 1
          print *, '>>> Read calibration where none stored'
       endif
-      
+
       err1 = dsgdata('of.hdf', rank, dims, surrti8)
       err2 = dsgdisc(1, 10, surrti8scale)
       err3 = dsgrang(surrti8max, surrti8min)
       call errchkio(err1, err2, err3, number_failed, 'int8 read')
-      
+
       err1 = dsgdata('of.hdf', rank, dims, ti16)
       err2 = dsgdisc(1, 10, ti16scale)
       err3 = dsgrang(ti16max, ti16min)
       call errchkio(err1, err2, err3, number_failed, 'int16 read')
-      
+
       err1 = dsgdata('of.hdf', rank, dims, ti32)
       err2 = dsgdisc(1, 10, ti32scale)
       err3 = dsgrang(ti32max, ti32min)
       call errchkio(err1, err2, err3, number_failed, 'int32 read')
-      
+
 C
 C  Checking dimscales, max/min and arrays from single file
 C
@@ -298,7 +297,7 @@ C  int32
 C
 C  Sum up
 C
-      
+
       if (number_failed .gt. 0 ) then
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else

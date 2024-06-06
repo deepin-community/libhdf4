@@ -13,7 +13,6 @@ C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
 C***************************************************
 C
-C $Id$
 C
 C **************************************************
 C *
@@ -26,17 +25,17 @@ C --------------- vsffidx ------------------------
 C    vsffidx -- find index of a named field in a vdata
 C    VSfindex -- vsfcfdx -- vsffidx
 C
-       integer function vsffidx(vsid, fldnm, fldidx) 
+       integer function vsffidx(vsid, fldnm, fldidx)
        integer vsid
        character*(*) fldnm
        integer fldidx
        integer vsfcfdx
 
-       vsffidx = vsfcfdx(vsid, fldnm, fldidx, 
+       vsffidx = vsfcfdx(vsid, fldnm, fldidx,
      +                  len(fldnm))
        end
 C --------------- vsfsnat -------------------------
-C    vsfsnat -- set a numeric attribute for a vdata 
+C    vsfsnat -- set a numeric attribute for a vdata
 C              or a field of a vdata
 C    VSsetattr -- vsfcsat -- vsfsnat
 C
@@ -46,12 +45,12 @@ C
        character*(*) attrnm
        integer  values
        integer vsfcsat
-     
+
        vsfsnat = vsfcsat(vsid, findex, attrnm, dtype,
      +                count, values, len(attrnm))
        end
 C --------------- vsfscat -------------------------
-C    vsfscat -- set a char type attribute for a vdata 
+C    vsfscat -- set a char type attribute for a vdata
 C              or a field of a vdata
 C    VSsetattr -- vsfcsca -- vsfscat
 C
@@ -61,7 +60,7 @@ C
        character*(*) attrnm
        character*(*) values
        integer vsfcsca
-     
+
        vsfscat = vsfcsca(vsid, findex, attrnm, dtype,
      +         count, values, len(attrnm))
        end
@@ -75,9 +74,9 @@ C
        character*(*) attrnm
        integer vsfcfda
 
-       vsffdat = vsfcfda(vsid, findex, attrnm, 
+       vsffdat = vsfcfda(vsid, findex, attrnm,
      +                   len(attrnm))
-       end 
+       end
 C ------------------- vsfainf -------------------------
 C    vsfainf -- get attribute info
 C    VSattrinfo -- vsfcain -- vsfainf
@@ -90,12 +89,12 @@ C
 
        vsfainf = vsfcain(vsid, findex, aindex, attrname,
      +                   dtype, count, size, len(attrname))
-       end 
+       end
 C ------------------- vfsnatt -------------------------
 C    vfsnatt -- set a numeric attr for a vgroup
-C    Vsetattr -- vfcsatt -- vfsnatt 
+C    Vsetattr -- vfcsatt -- vfsnatt
 C
-       integer function vfsnatt(vgid, attrnm, dtype, 
+       integer function vfsnatt(vgid, attrnm, dtype,
      +                        count, values)
        integer vgid, dtype, count, values
        character*(*) attrnm
@@ -130,6 +129,6 @@ C
        end
 C --------------------------------------------
 
- 
 
-     
+
+
