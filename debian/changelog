@@ -1,14 +1,91 @@
-libhdf4 (4.2.15.1-1+dde) UNRELEASED; urgency=medium
+libhdf4 (4.3.0-1) unstable; urgency=medium
 
-  * update
+  * Team upload.
+  * Move from experimental to unstable.
 
- -- Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>  Wed, 27 Jul 2022 11:05:58 +0800
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 09 Apr 2024 20:42:32 +0200
 
-libhdf4 (4.2.15.1-1+dde) unstable; urgency=medium
+libhdf4 (4.3.0-1~exp1) experimental; urgency=medium
 
-  * Add sunway support.
+  * Team upload.
+  * New upstream release.
+    (closes: #1068351)
+  * Update watch file to use GitHub tags.
+  * Update copyright file.
+  * Drop patches applied upstream. Refresh remaining patches.
+  * Refresh rename_hdf_hdfalt patch.
+  * Add patch to fix FTBFS when szip is enabled.
+  * Drop obsolete hdf.3 manpage rules.
+  * Drop obsolete hdf4_examples rules.
+  * Update symbols for 4.3.0.
+  * Add manpage for hdfunpac.
 
- -- Miao Changwei <miaochangwei@uniontech.com>  Thu, 19 May 2022 15:43:58 +0800
+ -- Bas Couwenberg <sebastic@debian.org>  Thu, 04 Apr 2024 07:29:48 +0200
+
+libhdf4 (4.2.16-4) unstable; urgency=medium
+
+  * Team upload.
+  * Use execute_{before,after} instead of override in rules file.
+  * Enable Salsa CI.
+  * Apply Multi-Arch patch by Yuriy M. Kaminskiy.
+    (closes: #1063999)
+  * Add libtirpc-dev to build dependencies.
+    (closes: #1065290)
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sat, 02 Mar 2024 12:50:52 +0100
+
+libhdf4 (4.2.16-3) unstable; urgency=medium
+
+  * Team upload.
+  * Fix dfi.h by reinstating APOLLO #ifdef.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 13 Jun 2023 22:44:59 +0200
+
+libhdf4 (4.2.16-2) unstable; urgency=medium
+
+  * Team upload.
+  * Bump debhelper compat to 13.
+  * Add patch to fix dfi.h include.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Tue, 13 Jun 2023 20:53:51 +0200
+
+libhdf4 (4.2.16-1) unstable; urgency=medium
+
+  * Team upload.
+  * Move from experimental to unstable.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Sun, 11 Jun 2023 13:26:43 +0200
+
+libhdf4 (4.2.16-1~exp2) experimental; urgency=medium
+
+  * Team upload.
+  * Ignore test failures on ppc64el.
+  * Don't hardcode RELEASE in rules.
+  * Restore kfreebsd patch to fix 'unknown host' configure error.
+  * Update upstream metadata for GitHub repo.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Thu, 09 Mar 2023 20:21:38 +0100
+
+libhdf4 (4.2.16-1~exp1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+    (closes: #1025745)
+  * Bump Standards-Version to 4.6.2, no changes.
+  * Update copyright file.
+  * Refresh patches.
+  * Update symbols for 4.2.16.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Wed, 08 Mar 2023 18:47:19 +0100
+
+libhdf4 (4.2.15-5) unstable; urgency=medium
+
+  * Team upload.
+  * Bump Standards-Version to 4.6.1, no changes.
+  * Add Rules-Requires-Root to control file.
+  * Update lintian overrides.
+
+ -- Bas Couwenberg <sebastic@debian.org>  Thu, 01 Dec 2022 11:28:15 +0100
 
 libhdf4 (4.2.15-4) unstable; urgency=medium
 

@@ -11,29 +11,20 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*-----------------------------------------------------------------------------
  * File:  dfutil.c
  *
  * Purpose:
  *    General purpose utility routines, and callable versions of hdf utilities
  *
- * Invokes:
- *    latest libdf.a
- *
  * Public functions:
  *    DFUfindnextref - For this tag, find the ref after given ref
- *
- * Lower level functions:
- *
- * Private functions:
  *
  * Remarks:
  *    This version assumes that all the values are floating point.
  *--------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdf_priv.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFfindnextref
@@ -51,29 +42,27 @@
 uint16
 DFfindnextref(int32 file_id, uint16 tag, uint16 lref)
 {
-    CONSTR(FUNC, "DFfindnextref");
-    uint16      newtag=DFTAG_NULL, newref=DFTAG_NULL;
-    int32       aid;
+    uint16 newtag = DFTAG_NULL, newref = DFTAG_NULL;
+    int32  aid;
 
     HEclear();
 
-    if (!HDvalidfid(file_id))
-      {
-          HERROR(DFE_ARGS);
-          return (uint16) FAIL;
-      }
+    if (!HDvalidfid(file_id)) {
+        HERROR(DFE_ARGS);
+        return (uint16)FAIL;
+    }
 
     aid = Hstartread(file_id, tag, lref);
     if (aid == FAIL)
-        return (uint16) FAIL;
+        return (uint16)FAIL;
 
     if (lref != DFREF_WILDCARD)
         if (Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT) == FAIL)
-            return (uint16) FAIL;
+            return (uint16)FAIL;
 
     if (HQuerytagref(aid, &newtag, &newref) == FAIL)
-        return (uint16) FAIL;
+        return (uint16)FAIL;
 
     Hendaccess(aid);
-    return (newref);
+    return newref;
 }

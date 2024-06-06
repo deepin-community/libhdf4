@@ -14,7 +14,6 @@ General Information:
 
 Compiling Options:
 ------------------
-               Compilation Mode: @CONFIG_MODE@
                      C compiler: @CC_VERSION@
                          CFLAGS: @CFLAGS@
                        CPPFLAGS: @CPPFLAGS@
@@ -22,9 +21,9 @@ Compiling Options:
                Static Libraries: @enable_static@
   Statically Linked Executables: @STATIC_EXEC@
                         LDFLAGS: @LDFLAGS@
- 	 	Extra libraries: @LIBS@
- 		       Archiver: @AR@
- 		 	 Ranlib: @RANLIB@
+                Extra libraries: @LIBS@
+                       Archiver: @AR@
+                         Ranlib: @RANLIB@
 
 Languages:
 ----------
@@ -38,4 +37,6 @@ Languages:
 Features:
 ---------
                SZIP compression: @SZIP_INFO@
-   Support for netCDF API 2.3.2: @BUILD_NETCDF@
+ Export HDF4-built netCDF-2 API: @BUILD_NETCDF@ (yes: export undecorated netCDF names, no: prefix with 'sd_')
+    HDF4-built ncdump and ncgen: @BUILD_NETCDF_TOOLS@
+ With deprecated public symbols: @DEPRECATED_SYMBOLS@

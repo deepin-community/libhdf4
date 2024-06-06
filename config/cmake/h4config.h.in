@@ -3,9 +3,6 @@
 #ifndef H4_CONFIG_H_
 #define H4_CONFIG_H_
 
-/* int* greater or equal to 8 bytes */
-#cmakedefine H4_BIG_LONGS @H4_BIG_LONGS@
-
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
@@ -26,29 +23,20 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #cmakedefine H4_HAVE_ARPA_INET_H @H4_HAVE_ARPA_INET_H@
 
-/* Define to 1 if you have the <arpa/nameser.h> header file. */
-#cmakedefine H4_HAVE_ARPA_NAMESER_H @H4_HAVE_ARPA_NAMESER_H@
-
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#cmakedefine H4_HAVE_DLFCN_H @H4_HAVE_DLFCN_H@
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine H4_HAVE_FCNTL_H @H4_HAVE_FCNTL_H@
 
 /* Define to 1 if you have the `fork' function. */
 #cmakedefine H4_HAVE_FORK @H4_HAVE_FORK@
 
-/* Define to 1 if you have the `htonl' function. */
-#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
+/* Define to 1 if you have the `getrusage' function. */
+#cmakedefine H4_HAVE_GETRUSAGE @H4_HAVE_GETRUSAGE@
 
-/* Define to 1 if you have the `htons' function. */
-#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
+/* Define to 1 if you have the <winsock2.h> header file. */
+#cmakedefine H4_HAVE_WINSOCK2_H @H4_HAVE_WINSOCK2_H@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine H4_HAVE_INTTYPES_H @H4_HAVE_INTTYPES_H@
-
-/* Define to 1 if you have the <io.h> header file. */
-#cmakedefine H4_HAVE_IO_H @H4_HAVE_IO_H@
 
 /* Define to 1 if you have the <jpeglib.h> header file. */
 #cmakedefine H4_HAVE_JPEGLIB_H @H4_HAVE_JPEGLIB_H@
@@ -62,44 +50,26 @@
 /* Define to 1 if you have the `z' library (-lz). */
 #cmakedefine H4_HAVE_LIBZ @H4_HAVE_LIBZ@
 
-/* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine H4_HAVE_MEMORY_H @H4_HAVE_MEMORY_H@
-
-/* Define if we support HDF NetCDF APIs version 2.3.2 */
+/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
 #cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
-
-/* Define to 1 if you have the <netdb.h> header file. */
-#cmakedefine H4_HAVE_NETDB_H @H4_HAVE_NETDB_H@
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #cmakedefine H4_HAVE_NETINET_IN_H @H4_HAVE_NETINET_IN_H@
 
-/* Define to 1 if you have the `ntohl' function. */
-#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
-
-/* Define to 1 if you have the `ntohs' function. */
-#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
-
-/* Define to 1 if you have the <resolv.h> header file. */
-#cmakedefine H4_HAVE_RESOLV_H @H4_HAVE_RESOLV_H@
-
-/* Define to 1 if you have the system XDR library. */
-#cmakedefine H4_HAVE_RPC @H4_HAVE_RPC@
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#cmakedefine H4_HAVE_STDDEF_H @H4_HAVE_STDDEF_H@
-
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine H4_HAVE_STDINT_H @H4_HAVE_STDINT_H@
+#define H4_HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#define H4_HAVE_STDIO_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine H4_HAVE_STDLIB_H @H4_HAVE_STDLIB_H@
+#define H4_HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine H4_HAVE_STRINGS_H @H4_HAVE_STRINGS_H@
+#define H4_HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-#cmakedefine H4_HAVE_STRING_H @H4_HAVE_STRING_H@
+#define H4_HAVE_STRING_H 1
 
 /* Define to 1 if you have the `system' function. */
 #cmakedefine H4_HAVE_SYSTEM @H4_HAVE_SYSTEM@
@@ -119,6 +89,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine H4_HAVE_SYS_TYPES_H @H4_HAVE_SYS_TYPES_H@
 
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#cmakedefine H4_HAVE_SYS_WAIT_H @H4_HAVE_SYS_WAIT_H@
+
 /* Define if szip has encoder */
 #cmakedefine H4_HAVE_SZIP_ENCODER @H4_HAVE_SZIP_ENCODER@
 
@@ -128,33 +101,24 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine H4_HAVE_UNISTD_H @H4_HAVE_UNISTD_H@
 
-/* Define to 1 if you have the `vfork' function. */
-#cmakedefine H4_HAVE_VFORK @H4_HAVE_VFORK@
-
 /* Define to 1 if you have the `wait' function. */
 #cmakedefine H4_HAVE_WAIT @H4_HAVE_WAIT@
 
+/* Define to 1 if you use the WIN32_API. */
+#cmakedefine H4_HAVE_WIN32_API @H4_HAVE_WIN32_API@
+
 /* Define to 1 if you have the <zlib.h> header file. */
 #cmakedefine H4_HAVE_ZLIB_H @H4_HAVE_ZLIB_H@
-
-/* Define to 1 if you have the `__builtin_bswap16' function. */
-#cmakedefine H4_HAVE___BUILTIN_BSWAP16 @H4_HAVE___BUILTIN_BSWAP16@
-
-/* Define to 1 if you have the `__builtin_bswap32' function. */
-#cmakedefine H4_HAVE___BUILTIN_BSWAP32 @H4_HAVE___BUILTIN_BSWAP32@
-
-/* Define to 1 if you have the `__builtin_bswap64' function. */
-#cmakedefine H4_HAVE___BUILTIN_BSWAP64 @H4_HAVE___BUILTIN_BSWAP64@
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #define H4_LT_OBJDIR "@HDF4_LT_OBJDIR@"
 
+/* Define if deprecated public API symbols are disabled */
+#cmakedefine H4_NO_DEPRECATED_SYMBOLS @H4_NO_DEPRECATED_SYMBOLS@
+
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #cmakedefine H4_NO_MINUS_C_MINUS_O @H4_NO_MINUS_C_MINUS_O@
-
-/* Not using system xdr */
-#cmakedefine H4_NO_SYS_XDR_INC @H4_NO_SYS_XDR_INC@
 
 /* Name of package */
 #define H4_PACKAGE "@HDF4_PACKAGE@"
@@ -177,24 +141,19 @@
 /* Define to the version of this package. */
 #define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
-/* The size of `int*', as computed by sizeof. */
-#cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
+/* The size of `long', as computed by sizeof. */
+#define H4_SIZEOF_LONG @H4_SIZEOF_LONG@
 
-/* Define to 1 if you have the ANSI C header files. */
-#cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
+#define H4_STDC_HEADERS 1
 
 /* Version number of package */
 #define H4_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
 #cmakedefine H4_WORDS_BIGENDIAN @H4_WORDS_BIGENDIAN@
-
-/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
-   `char[]'. */
-#cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
-
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#cmakedefine H4_HAVE_DOPRNT @H4_HAVE_DOPRNT@
 
 #endif

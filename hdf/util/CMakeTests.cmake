@@ -123,29 +123,23 @@ add_custom_target(hdf_util_files ALL COMMENT "Copying files needed by hdf_util t
 ##############################################################################
 ##############################################################################
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "-shared")
-endif ()
-
 if (HDF4_BUILD_TOOLS)
   macro (ADD_LS_TEST_NOL testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      add_test (NAME HDFLS_NOL-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls${tgt_ext}> ${testfile})
+      add_test (NAME HDFLS_NOL-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> ${testfile})
     else ()
       add_test (
           NAME HDFLS_NOL-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls${tgt_ext}>"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
               -D "TEST_ARGS:STRING=${testfile}"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
               -D "TEST_OUTPUT=${testfile}.tmp"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
@@ -158,20 +152,20 @@ if (HDF4_BUILD_TOOLS)
 
   macro (ADD_LS_TEST testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      add_test (NAME HDFLS-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls${tgt_ext}> -l ${testfile})
+      add_test (NAME HDFLS-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> -l ${testfile})
     else ()
       add_test (
           NAME HDFLS-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls${tgt_ext}>"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
               -D "TEST_ARGS:STRING=-l;${testfile}"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
               -D "TEST_OUTPUT=${testfile}.tmp"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
@@ -184,20 +178,20 @@ if (HDF4_BUILD_TOOLS)
 
   macro (ADD_H4_TEST_ED testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      add_test (NAME HEDIT-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed${tgt_ext}> -batch)
+      add_test (NAME HEDIT-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed> -batch)
     else ()
       add_test (
           NAME HEDIT-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-              -D "TEST_PROGRAM=$<TARGET_FILE:hdfed${tgt_ext}>"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
               -D "TEST_ARGS:STRING=-batch"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
               -D "TEST_INPUT=${testfile}"
               -D "TEST_OUTPUT=${testfile}.tmp"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
@@ -210,7 +204,7 @@ if (HDF4_BUILD_TOOLS)
 endif ()
 
 macro (ADD_H4_TEST testname testfile)
-  add_test (NAME ${testname} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${testfile}${tgt_ext}> ${ARGN})
+  add_test (NAME ${testname} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${testfile}> ${ARGN})
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else ()
@@ -230,7 +224,7 @@ macro (ADD_CMP_TEST testname reffile testfile)
 endmacro ()
 
 macro (ADD_H4Q_TEST testname testfile)
-  add_test (NAME ${testname} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${testfile}${tgt_ext}> ${ARGN} > /dev/null 2>&1)
+  add_test (NAME ${testname} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${testfile}> ${ARGN} > /dev/null 2>&1)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else ()

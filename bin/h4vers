@@ -64,7 +64,7 @@ use strict;
 # ./hfile.h or ./hdf/src/hfile.h.
 #
 # If the version number is changed (either `-s' or `-i' was used on
-# the command line) then the first line of the README.txt and
+# the command line) then the first line of the README.md and
 # release_notes/RELEASE.txt two levels above the hfile.h file are also
 # modified so it looks something like: This is hdf4-1.2.3-pre1 currently
 # under development. The AC_INIT macro in configure.in will also change
@@ -78,7 +78,6 @@ use strict;
 # indicates that the source code has changed since the last version
 # (which it probably has).
 ##############################################################################
-
 
 sub getvers {
   local ($_) = @_;
@@ -169,10 +168,10 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "file is $file.\n";
 #print "File array is ", @files;
 
-# Determine file to use as hfile.h, README.txt,
+# Determine file to use as hfile.h, README.md,
 # release_notes/RELEASE.txt, configure.in,
 # and config/cmake/scripts/HDF4config.cmake.
-# The paths to README.txt, release_notes/RELEASE.txt, configure.ac,
+# The paths to README.md, release_notes/RELEASE.txt, configure.ac,
 # and config/cmake/scripts/HDF4config.cmake
 # files are always from the directory two levels above hfile.h.
 unless ($file) {
@@ -200,9 +199,9 @@ die "unable to read file: $H4_JAVA\n" unless -r $file;
 my $H4_TESTJAVA = $file;
 $H4_TESTJAVA =~ s/[^\/]*$/..\/..\/java\/test\/TestH4.java/;
 die "unable to read file: $H4_TESTJAVA\n" unless -r $file;
-# README.txt
+# README.md
 my $README = $file;
-$README =~ s/[^\/]*$/..\/..\/README.txt/;
+$README =~ s/[^\/]*$/..\/..\/README.md/;
 die "unable to read file: $README\n" unless -r $file;
 # release_notes/RELEASE.txt
 my $RELEASE = $file;
@@ -232,7 +231,7 @@ my (@curver) = getvers $contents;
 # Determine the new version number.
 my @newver; #new version
 if ($set) {
-  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([a-zA-Z]\w*))?/) {
+  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([\da-zA-Z]\w*))?/) {
     @newver = ($1, $2, $3, $5);
   } elsif ($set =~ /(\d+)\D+(\d+)\D+(\d+)(\s*\(([a-zA-Z]\w*)\))?\D*$/) {
     @newver = ($1, $2, $3, $5);
@@ -319,43 +318,6 @@ if ($newver[0]!=$curver[0] ||
 #  close FILE;
 #}
 
-# Update the config/cmake/scripts/HDF4config.cmake file
-if ($HDF4CONFIGCMAKE) {
-  my $data = read_file($HDF4CONFIGCMAKE);
-#  my $sub_rel_ver_str = "";
-  my $sub_rel_ver_str = (
-     $newver[3] eq ""
-     ? sprintf("\"%s\"", "")
-     : sprintf("\"%s\"", "-".$newver[3].", currently under development")
-     );
-  my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
-
-  $data =~ s/set \(CTEST_SOURCE_VERSION .*\)/set \(CTEST_SOURCE_VERSION $version_string\)/;
-  $data =~ s/set \(CTEST_SOURCE_VERSEXT .*\)/set \(CTEST_SOURCE_VERSEXT $sub_rel_ver_str\)/;
-
-  write_file($HDF4CONFIGCMAKE, $data);
-}
-
-# Update the java/src/hdf/hdflib/HDFLibrary.java file
-if ($H4_JAVA) {
-  my $data = read_file($H4_JAVA);
-  my $version_string = sprintf("%d.%d.%d", @newver[0,1,2]);
-
-  $data =~ s/    private final static String JHI_VERSION = "\d*.\d*.\d*";/    private final static String JHI_VERSION = "$version_string";/;
-
-  write_file($H4_JAVA, $data);
-}
-
-# Update the java/test/TestH4.java file
-if ($H4_TESTJAVA) {
-  my $data = read_file($H4_TESTJAVA);
-  my $version_string = sprintf("%d, %d, %d", @newver[0,1,2]);
-
-  $data =~ s/    int LIB_VERSION\[\] = { \d*, \d*, \d* };/    int LIB_VERSION\[\] = { $version_string };/;
-
-  write_file($H4_TESTJAVA, $data);
-}
-
 # Update the README file
 if ($README) {
   open FILE, $README or die "$README: $!\n";
@@ -382,6 +344,43 @@ if ($RELEASE) {
   open FILE, ">$RELEASE" or die "$RELEASE: $!\n";
   print FILE @contents;
   close FILE;
+}
+
+# Update the config/cmake/scripts/HDF4config.cmake file
+if ($HDF4CONFIGCMAKE) {
+  my $data = read_file($HDF4CONFIGCMAKE);
+#  my $sub_rel_ver_str = "";
+  my $sub_rel_ver_str = (
+     $newver[3] eq ""
+     ? sprintf("\"%s\"", "")
+     : sprintf("\"%s\"", "-".$newver[3])
+     );
+  my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
+
+  $data =~ s/set \(CTEST_SOURCE_VERSION .*\)/set \(CTEST_SOURCE_VERSION $version_string\)/;
+  $data =~ s/set \(CTEST_SOURCE_VERSEXT .*\)/set \(CTEST_SOURCE_VERSEXT $sub_rel_ver_str\)/;
+
+  write_file($HDF4CONFIGCMAKE, $data);
+}
+
+# Update the java/src/hdf/hdflib/HDFLibrary.java file
+if ($H4_JAVA) {
+  my $data = read_file($H4_JAVA);
+  my $version_string = sprintf("%d.%d.%d", @newver[0,1,2]);
+
+  $data =~ s/    private final static String JHI_VERSION = "\d*.\d*.\d*";/    private final static String JHI_VERSION = "$version_string";/;
+
+  write_file($H4_JAVA, $data);
+}
+
+# Update the java/test/TestH4.java file
+if ($H4_TESTJAVA) {
+  my $data = read_file($H4_TESTJAVA);
+  my $version_string = sprintf("%d, %d, %d", @newver[0,1,2]);
+
+  $data =~ s/        int LIB_VERSION\[\] = \{.*\};/        int LIB_VERSION\[\] = \{$version_string\};/;
+
+  write_file($H4_TESTJAVA, $data);
 }
 
 # Update the man/hdf.1 file
@@ -441,7 +440,7 @@ if ($MANHDF1) {
 
 # helper function to read the file for updating
 # config/cmake/scripts/HDF4Config.cmake and
-# java/src/hdf/hdf5lib/HDFLibrary.java files.
+# java/src/hdf/hdflib/HDFLibrary.java files.
 # The version string in those files is not at the top, so the string replacement
 # is not for the first line, and reading/writing the entire file as one string
 # facilitates the substring replacement.
@@ -458,7 +457,7 @@ sub read_file {
 
 # helper function to write the file for updating
 # config/cmake/scripts/HDF4config.cmake and
-# java/src/hdf/hdf5lib/HDFLibrary.java files.
+# java/src/hdf/hdflib/HDFLibrary.java files.
 sub write_file {
     my ($filename, $content) = @_;
 
@@ -493,12 +492,12 @@ sub gen_configure {
   $conf =~ /^(.*?)\/?configure.ac$/;
 
   if ($1) {
-    $rc = system("cd $1 && bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("cd $1 && ./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   } else {
-    $rc = system("bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   }
   if ($rc) {
-    printf("bin/reconfigure failed with exit code %d. Aborted.\n", $rc);
+    printf("./autogen.sh failed with exit code %d. Aborted.\n", $rc);
     exit 1;
   }
 }
@@ -506,7 +505,7 @@ sub gen_configure {
 # Update the configure.ac files and regenerate them
 gen_configure("HDF", $CONFIGURE) if $CONFIGURE;
 
-sub gen_h5pubconf {
+sub gen_h4pubconf {
     my ($name, $pubconf, @vers) = @_;
 
     my $namelc = lc($name);

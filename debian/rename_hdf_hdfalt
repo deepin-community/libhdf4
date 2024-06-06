@@ -3,7 +3,16 @@ Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
 
 --- a/HDF4_ALT/hdf/src/Makefile.am
 +++ b/HDF4_ALT/hdf/src/Makefile.am
-@@ -30,10 +30,10 @@ CHEADERS = atom.h bitvect.h cdeflate.h c
+@@ -4,7 +4,7 @@
+ 
+ include $(top_srcdir)/config/commence.am
+ 
+-lib_LTLIBRARIES = libdf.la
++lib_LTLIBRARIES = libdfalt.la
+ 
+ FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c \
+            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c \
+@@ -27,14 +27,14 @@ CHEADERS = H4api_adpt.h df.h h4config.h
  FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
  
  if HDF_BUILD_FORTRAN
@@ -16,18 +25,26 @@ Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
  include_HEADERS = $(CHEADERS)
  endif
  
+-libdf_la_LIBADD = @LIBS@
++libdfalt_la_LIBADD = @LIBS@
+ 
+ # The following is a workaround. Since Fortran is included in this 
+ # Makefile.am, automake will always try to use the Fortran linker, even when
 --- a/HDF4_ALT/mfhdf/libsrc/Makefile.am
 +++ b/HDF4_ALT/mfhdf/libsrc/Makefile.am
-@@ -14,7 +14,7 @@
+@@ -14,9 +14,9 @@ AM_CPPFLAGS = $(lib_INCLUDES) $(DEFINES)
  ##                          Library to build                               ##
  #############################################################################
  
 -lib_LTLIBRARIES = libmfhdf.la
 +lib_LTLIBRARIES = libmfhdfalt.la
  
- ## Information for building the "libmfhdf.la" library
- CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
-@@ -28,9 +28,9 @@
+-## Information for building the "libmfhdf.la" library
++## Information for building the "libmfhdfalt.la" library
+ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c	\
+            globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c		\
+            sharray.c string.c var.c h4_xdr.c
+@@ -28,12 +28,12 @@ FSOURCES = $(top_srcdir)/mfhdf/fortran/m
  endif
  
  if HDF_BUILD_FORTRAN
@@ -38,18 +55,11 @@ Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
 +libmfhdfalt_la_SOURCES = $(CSOURCES)
  endif
  
- libmfhdf_la_LIBADD = $(XDRLIB)
---- a/HDF4_ALT/hdf/src/Makefile.am
-+++ b/HDF4_ALT/hdf/src/Makefile.am
-@@ -4,7 +4,7 @@
+-libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
++libmfhdfalt_la_LIBADD = $(top_builddir)/hdf/src/libdfalt.la
  
- include $(top_srcdir)/config/commence.am
- 
--lib_LTLIBRARIES = libdf.la
-+lib_LTLIBRARIES = libdfalt.la
- 
- FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
-            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
+ if HDF_BUILD_NETCDF
+ include_HEADERS = hdf2netcdf.h mfhdf.h netcdf.h mfdatainfo.h
 --- a/HDF4_ALT/config/commence.am
 +++ b/HDF4_ALT/config/commence.am
 @@ -21,8 +21,8 @@ RM = rm -f
@@ -89,23 +99,9 @@ Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
  
  if HDF_BUILD_SHARED
 -    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
-+    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
- else
--    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
-+    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdfalt.a
- endif
- 
- ## Setup the different includes and preprocessor #defines we need.
---- a/HDF4_ALT/mfhdf/ncgen/Makefile.am
-+++ b/HDF4_ALT/mfhdf/ncgen/Makefile.am
-@@ -5,9 +5,9 @@
- include $(top_srcdir)/config/commence.am
- 
- if HDF_BUILD_SHARED
--    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
 +    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdfalt.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdfalt.$(SHARED_EXTENSION)
  else
--    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdfalt.a
+-    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
 +    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdfalt.a $(top_builddir)/hdf/src/.libs/libdfalt.a
  endif
  

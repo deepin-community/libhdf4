@@ -1,0 +1,44 @@
+Description: Fix FTBFS when szip is enabled.
+ /usr/bin/ld: ../../hdf/src/.libs/libdf.so: undefined reference to `SZ_encoder_enabled'
+ /usr/bin/ld: ../../hdf/src/.libs/libdf.so: undefined reference to `SZ_BufftoBuffCompress'
+ /usr/bin/ld: ../../hdf/src/.libs/libdf.so: undefined reference to `SZ_BufftoBuffDecompress'
+ .
+ /usr/bin/ld: hrepack_parse.o: undefined reference to symbol 'SZ_encoder_enabled'
+ /usr/bin/ld: /lib/x86_64-linux-gnu/libsz.so.2: error adding symbols: DSO missing from command line
+ .
+ /usr/bin/ld: hrepacktst.o: undefined reference to symbol 'SZ_encoder_enabled'
+ /usr/bin/ld: /lib/x86_64-linux-gnu/libsz.so.2: error adding symbols: DSO missing from command line
+Author: Bas Couwenberg <sebastic@debian.org>
+Forwarded: https://github.com/HDFGroup/hdf4/pull/716
+
+--- a/hdf/src/Makefile.am
++++ b/hdf/src/Makefile.am
+@@ -34,6 +34,8 @@ libdf_la_SOURCES = $(CSOURCES)
+ include_HEADERS = $(CHEADERS)
+ endif
+ 
++libdf_la_LIBADD = @LIBS@
++
+ # The following is a workaround. Since Fortran is included in this 
+ # Makefile.am, automake will always try to use the Fortran linker, even when
+ # fortran has been disabled in configure. The Fortran linker gets confused 
+--- a/mfhdf/hrepack/Makefile.am
++++ b/mfhdf/hrepack/Makefile.am
+@@ -26,7 +26,7 @@ hrepack_SOURCES = hrepack.c hrepack_an.c
+                   hrepack_opttable.c hrepack_parse.c                        \
+                   hrepack_sds.c hrepack_utils.c                             \
+                   hrepack_vg.c hrepack_vs.c hrepack_dim.c
+-hrepack_LDADD = $(LIBMFHDF) $(LIBHDF)
++hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+ hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+ 
+ #############################################################################
+@@ -39,7 +39,7 @@ check_SCRIPTS=hrepack.sh
+ check_PROGRAMS = hrepack_check test_hrepack
+ 
+ test_hrepack_SOURCES = hrepacktst.c
+-test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) -lm
++test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) -lm @LIBS@
+ test_hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+ 
+ hrepack_check_SOURCES = hrepack_check.c

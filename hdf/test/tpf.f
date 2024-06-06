@@ -11,10 +11,9 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tpf (number_failed)
-C      program tpff 
+C      program tpff
       implicit none
       include 'fortest.inc'
 C
@@ -37,7 +36,7 @@ C
       character*64 TESTFILE
       character*1 CR
       character pal1(768), pal2(768), ipal(768)
-      integer ret, ref 
+      integer ret, ref
       integer ref1, ref2, newref1, newref2
       integer i
 
@@ -52,11 +51,11 @@ C Initialize pal1 as {1, 2, 3, 4, 5, ...}
 C Initialize pal2 as {1, 1, 1, 2, 2, 2, ...}
       do 100 i = 0, 255
           pal1(3*i + 1) = char(i)
-          pal1(3*i + 2) = char(i) 
+          pal1(3*i + 2) = char(i)
           pal1(3*i + 3) = char(i)
-          pal2(i + 1) = char(i) 
-          pal2(i + 256 + 1) = char(i) 
-          pal2(i + 512 + 1) = char(i) 
+          pal2(i + 1) = char(i)
+          pal2(i + 256 + 1) = char(i)
+          pal2(i + 512 + 1) = char(i)
 100   continue
 
 C
@@ -81,7 +80,7 @@ C expression promotes it to an integer expression.
       ref2 = dplref()
       ref = ref2*1
       call VRFY(ref, 'dplref', number_failed)
-     
+
 C
 C Reset the palettes for reading
       call MESSAGE(VERBO_HI, 'Restarting palette interface')
@@ -95,11 +94,11 @@ C Get palette 1 and match it with pal1
       call VRFY(ret, 'dpgpal', number_failed)
       do 200 i=1, 768
           if (ipal(i) .ne. pal1(i))  then
-              print *, 'Error at ', i, ', ipal:', ipal(i), 
+              print *, 'Error at ', i, ', ipal:', ipal(i),
      *                 '      pal1(i):', pal1(i)
           endif
 200   continue
-      
+
 C
 C verify the ref number is updated correctly too
       call MESSAGE(VERBO_HI, 'Getting newref1')
@@ -144,7 +143,7 @@ C Explicitly set to palette of ref2 for reading
       call MESSAGE(VERBO_HI, 'Setting read ref to ref2.')
       ret = dprref(TESTFILE, ref2)
       call VRFY(ret, 'dprref', number_failed)
-      
+
       call MESSAGE(VERBO_HI, 'Reading pal2')
       ret = dpgpal(TESTFILE, ipal)
       call VRFY(ret, 'dpgpal', number_failed)
@@ -179,7 +178,7 @@ C Explicitly set to palette of ref1 for reading
           print *, 'Error: newref1 is ', newref1, ', should be ', ref1
           number_failed = number_failed + 1
       endif
-      
+
 C
 C match it with pal1
       do 500 i=1, 768
@@ -217,11 +216,11 @@ C     print *,'last ref is: ', ret
           endif
 700   continue
 
-      if (number_failed .eq. 0) then 
+      if (number_failed .eq. 0) then
           call MESSAGE(VERBO_DEF + 1,
      +                '****** ALL TESTS SUCCESSFUL ******')
       else
-          print *, '****** ', number_failed, ' TESTS FAILES  ******'
+          print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
 
       return

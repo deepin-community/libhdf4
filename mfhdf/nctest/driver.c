@@ -1,60 +1,51 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id$
  *********************************************************************/
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
 #include "hdf4_netcdf.h"
 #endif
 
+#include "emalloc.h"
+#include "testcdf.h"
 #include "tests.h"
 
 /* #define MDEBUG 1 */
 
-  /*
-   * Test driver for netCDF implementation.  This program performs
-   * tests against the netCDF specification for all user-level
-   * functions in an implementation of the netCDF library.  Must be
-   * invoked from a directory in which the invoker has write
-   * permission.
-   */
+/*
+ * Test driver for netCDF implementation.  This program performs
+ * tests against the netCDF specification for all user-level
+ * functions in an implementation of the netCDF library.  Must be
+ * invoked from a directory in which the invoker has write
+ * permission.
+ */
 
 #include <stdio.h>
-#if defined TEST_PC || defined TEST_WIN
-FILE *dbg_file;
-#endif
 
 #include <stdlib.h>
 #include <string.h> /* to remove warnings, HDFFR-1434 */
 
-#ifdef PROTOTYPE
-int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif
+/* In-memory netcdf structure, kept in sync with disk netcdf */
+struct netcdf *test_g = NULL;
+
+int
+main(void)
 {
-    static char testfile[] = "test.nc";
+    static char testfile[]            = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-    int status = 0;
 
-#if defined TEST_PC || defined TEST_WIN
-    dbg_file=fopen("test.dbg","w+");
-#endif
+    ncopts &= ~NC_FATAL;   /* make errors nonfatal */
+    ncopts &= ~NC_VERBOSE; /* turn off error messages */
+    ncopts |= NC_VERBOSE;  /* turn  error messages on--AKC */
+    ncopts &= ~NC_VERBOSE; /* turn off error messages */
 
-#ifdef MDEBUG
-    malloc_debug(2);
-#endif /* MDEBUG */
-
-    ncopts &= ~NC_FATAL;	/* make errors nonfatal */
-    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
-    ncopts |= NC_VERBOSE;	/* turn  error messages on--AKC */
-    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
+    test_g = (struct netcdf *)emalloc(sizeof(struct netcdf));
+    memset(test_g, 0, sizeof(struct netcdf));
 
     test_nccreate(testfile);
 
@@ -124,10 +115,17 @@ char *argv[];
 
     test_nctypelen();
 
-#if defined TEST_PC || defined TEST_WIN
-    fclose(dbg_file);
-#endif
-#define EXIT_SUCCESS 0
+    for (int i = 0; i < test_g->ndims; i++) {
+        free(test_g->dims[i].name);
+    }
+    for (int i = 0; i < test_g->nvars; i++) {
+        free(test_g->vars[i].name);
+        free(test_g->vars[i].dims);
+    }
+    for (int i = 0; i < test_g->natts; i++) {
+        free(test_g->atts[i].name);
+    }
+    free(test_g);
+
     return EXIT_SUCCESS;
 }
-

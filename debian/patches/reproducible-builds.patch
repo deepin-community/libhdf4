@@ -1,6 +1,7 @@
 Description: Remove settings that make the build unreproducible.
 Author: Bas Couwenberg <sebastic@debian.org>
 Bug-Debian: https://bugs.debian.org/825540
+Forwarded: not-needed
 
 --- a/libhdf4.settings.in
 +++ b/libhdf4.settings.in

@@ -7,8 +7,8 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
+ * https://www.hdfgroup.org/licenses.  If you do not have access to the      *
+ * file, you may request a copy from help@hdfgroup.org.                      *
  ****************************************************************************/
 
 package hdf.hdflib;
@@ -20,18 +20,18 @@ package hdf.hdflib;
  * These errors include Java configuration errors, security violations, and resource exhaustion.
  */
 public class HDFJavaException extends HDFException {
-    String msg;
+    /**
+     * Constructs an <code>HDFJavaException</code> with no specified detail
+     * message.
+     */
+    public HDFJavaException() { super(); }
 
-    public HDFJavaException() {
-        HDFerror = 0;
-    }
-
-    public HDFJavaException(String s) {
-        msg = "HDFLibraryException: " + s;
-    }
-
-    @Override
-    public String getMessage() {
-        return msg;
-    }
+    /**
+     * Constructs an <code>HDFJavaException</code> with the specified detail
+     * message.
+     *
+     * @param s
+     *            the detail message.
+     */
+    public HDFJavaException(String s) { super(s); }
 }

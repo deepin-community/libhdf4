@@ -11,13 +11,12 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine t24f (number_failed)
       implicit none
       include 'fortest.inc'
-C Test Program: 
-C     		Writes 24-bit raster images with specified interlace 
+C Test Program:
+C     		Writes 24-bit raster images with specified interlace
 C		   code to a file.
 C		Reads the images and their dimensions from the file.
 C Input file: none
@@ -93,7 +92,7 @@ C
 160           continue
 180       continue
 200   continue
-  
+
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
       call VRFY(ret, 'd2gdims',number_failed)
@@ -172,7 +171,7 @@ C
       call VRFY(ret, 'd2gimg',number_failed)
       do 450 i=1, 2
           do 420 j=1, 2
-              do 410 k =1, 3  
+              do 410 k =1, 3
                   if (in1(j,k,i) .ne. buf2(j,i,k)) then
                       print *, 'Error at  ', k, j, i
                   endif
@@ -196,7 +195,7 @@ C
           do 480 j=1, 2
               do 460 k=1, 3
                   if (in2(j,i,k) .ne. buf(k,j,i)) then
-                      print *, 'Error at  ', k, j, i 
+                      print *, 'Error at  ', k, j, i
                   endif
 460           continue
 480       continue
@@ -234,13 +233,13 @@ C
 580       continue
 600   continue
 
-      if (number_failed .eq. 0) then 
+      if (number_failed .eq. 0) then
           call MESSAGE(VERBO_DEF + 1,
      +   '****** ALL TESTS SUCCESSFUL ******')
       else
-          print *, '****** ', number_failed, ' TESTS FAILES  ******'
+          print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
 
-      return 
+      return
       end
 

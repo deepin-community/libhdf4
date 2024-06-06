@@ -40,12 +40,12 @@ else
    echo "  ... Should be 'Fortran: yes'"
 fi
 
-# CHECKING COMPILATION MODE
-if grep -q "Compilation Mode: production" ./lib/libhdf4.settings; then
-   echo "Checking ./lib/libhdf4.settings -- Compilation Mode  ... $green PASSED$reset"
+# CHECKING CONFIGURE MODE
+if grep -q "Configure mode: production" ./lib/libhdf4.settings; then
+   echo "Checking ./lib/libhdf4.settings -- Configure mode  ... $green PASSED$reset"
 else
-   echo "Checking ./lib/libhdf4.settings -- Compilation Mode  ... $red FAILED$reset"
-   echo "  ... Should be 'Compilation Mode: production'"
+   echo "Checking ./lib/libhdf4.settings -- Configure mode  ... $red FAILED$reset"
+   echo "  ... Should be 'Configure mode: production'"
 fi
 
 # CHECKING OPTIMIZATION
@@ -83,14 +83,13 @@ fi
 # TESTING IF FILES EXISTS
 #########################
 
-include_file=(atom.h bitvect.h cdeflate.h cnbit.h cnone.h crle.h cskphuff.h cszip.h dfan.h
-dffunc.f90 dffunc.inc dfgr.h df.h dfi.h dfrig.h dfsd.h dfstubs.h dfufp2i.h dynarray.h H4api_adpt.h
-h4config.h hbitio.h hchunks.h hcomp.h hcompi.h hconv.h hdatainfo.h hdf2netcdf.h hdf.f90
-hdf.h hdfi.h hdf.inc herr.h hfile.h hkit.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
-htags.h linklist.h local_nc.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h
-mfhdfi.h mstdio.h netcdf.f90 netcdf.h netcdf.inc tbbt.h vattr.h vg.h)
+include_file=(
+dffunc.f90 dffunc.inc H4api_adpt.h df.h h4config.h hbitio.h hcomp.h hdatainfo.h
+hdf2netcdf.h hdf.f90 hdf.h hdf.inc herr.h hfile.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
+htags.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h netcdf.f90 netcdf.h
+netcdf.inc vg.h)
 
-lib_file=(libdf.a libdf.la libhdf4.settings libjpeg.a libmfhdf.a libmfhdf.la libsz.a libz.a)
+lib_file=(libdf.a libdf.la libhdf4.settings libmfhdf.a libmfhdf.la)
 
 bin_file=(gif2hdf h4cc h4fc h4redeploy hdf24to8 hdf2gif hdf2jpeg hdf8to24 hdfcomp
 hdfed hdfimport hdfls hdfpack hdftopal hdftor8 hdfunpac hdiff hdp hrepack jpeg2hdf
@@ -216,7 +215,7 @@ else
 fi
 
 echo ""
-echo "$yellow  (2) VERIFY: Binary executables do not requre any external $reset"
+echo "$yellow  (2) VERIFY: Binary executables do not require any external $reset"
 echo "$yellow      libraries (except system libraries on some machines): $reset"
 
 echo `echo "      Result from ${magenta}ldd bin/hdp${reset}:  "; ldd bin/hdp`

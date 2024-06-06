@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*-----------------------------------------------------------------------------
  * File:    hfilef.c
  * Purpose: C stubs for Fortran low level routines
@@ -22,7 +20,7 @@
  *  hclose_:   call Hclose to close HDF file
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------
@@ -38,18 +36,18 @@
  * Method:  Convert filename to C string, call Hopen
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
+intf
+nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(name, (intn) *namelen);
+    fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) Hopen(fn, (intn) *acc_mode, (int16) *defdds);
-    HDfree(fn);
-    return (ret);
+        return FAIL;
+    ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -61,25 +59,25 @@ nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
  * Invokes: Hclose
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhclose(intf * file_id)
+intf
+nhclose(intf *file_id)
 {
-    return (Hclose(*file_id));
+    return Hclose(*file_id);
 }
 
 /*-----------------------------------------------------------------------------
  * Name:    hnumber
- * Purpose: Get numer of elements with tag
+ * Purpose: Get number of elements with tag
  * Inputs:  file_id: handle to HDF file to close
  * Returns: the number of objects of type 'tag' else FAIL
  * Users:   HDF Fortran programmers
  * Invokes: Hnumber
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhnumber(intf * file_id, intf *tag)
+intf
+nhnumber(intf *file_id, intf *tag)
 {
-    return (Hnumber((int32) *file_id, (uint16) *tag));
+    return Hnumber((int32)*file_id, (uint16)*tag);
 }
 
 /*-----------------------------------------------------------------------------
@@ -92,18 +90,18 @@ nhnumber(intf * file_id, intf *tag)
  * Method:  Convert dir to C string, call HXsetdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhxisdir(_fcd dir, intf * dirlen)
+intf
+nhxisdir(_fcd dir, intf *dirlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(dir, (intn) *dirlen);
+    fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) HXsetdir(fn);
-    HDfree(fn);
-    return (ret);
+        return FAIL;
+    ret = (intf)HXsetdir(fn);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -116,149 +114,124 @@ nhxisdir(_fcd dir, intf * dirlen)
  * Method:  Convert dir to C string, call HXsetcdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhxiscdir(_fcd dir, intf * dirlen)
+intf
+nhxiscdir(_fcd dir, intf *dirlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(dir, (intn) *dirlen);
+    fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) HXsetcreatedir(fn);
-    HDfree(fn);
-    return (ret);
+        return FAIL;
+    ret = (intf)HXsetcreatedir(fn);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
  * Name:    hddontatexit
  * Purpose: Call HDdont_atexit
- * Inputs:  
+ * Inputs:
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
- * Invokes: HDdont_atexit 
+ * Invokes: HDdont_atexit
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhddontatexit(void)
 {
-   return((intf)(HDdont_atexit()));
+    return (intf)(HDdont_atexit());
 }
 /*-----------------------------------------------------------------------------
  * Name: hglibverc
  * Purpose:  Calls Hgetlibversion
- * 
+ *
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
- FRETVAL(intf)
-#ifdef PROTOTYPE
+intf
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
-#else
-nhglibverc(major_v, minor_v, release, string, len)
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
-#endif /* PROTOTYPE */
 {
-   char *cstring;
-   uint32 cmajor_v;
-   uint32 cminor_v;
-   uint32 crelease;
-   intn   status;
-   
-   cstring = NULL;
-   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
-   status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
- 
-   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+    char  *cstring;
+    uint32 cmajor_v;
+    uint32 cminor_v;
+    uint32 crelease;
+    intn   status;
 
-   if(cstring)  HDfree((VOIDP)cstring);
+    cstring = NULL;
+    if (*len)
+        cstring = (char *)malloc((uint32)*len + 1);
+    status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
 
-   *major_v = (intf) cmajor_v;
-   *minor_v = (intf) cminor_v;
-   *release = (intf) crelease;
+    HDpackFstring(cstring, _fcdtocp(string), *len);
 
-   return((intf)status);
+    free(cstring);
 
+    *major_v = (intf)cmajor_v;
+    *minor_v = (intf)cminor_v;
+    *release = (intf)crelease;
+
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name: hgfilverc
  * Purpose:  Calls Hgetfileversion
- * Inputs:  file_id - file identifier 
+ * Inputs:  file_id - file identifier
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
- FRETVAL(intf)
-#ifdef PROTOTYPE
-nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release,
-            _fcd string, intf *len)
-#else
-nhgfilverc(file_id, major_v, minor_v, release, string, len)
-           intf *file_id; 
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
-#endif /* PROTOTYPE */
+intf
+nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 {
-   char *cstring;
-   uint32 cmajor_v;
-   uint32 cminor_v;
-   uint32 crelease;
-   intn   status;
-   
-   cstring = NULL;
-   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
-   status = Hgetfileversion((int32) *file_id, &cmajor_v, &cminor_v, &crelease,
-                            cstring);
- 
-   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+    char  *cstring;
+    uint32 cmajor_v;
+    uint32 cminor_v;
+    uint32 crelease;
+    intn   status;
 
-   if(cstring)  HDfree((VOIDP)cstring);
+    cstring = NULL;
+    if (*len)
+        cstring = (char *)malloc((uint32)*len + 1);
+    status = Hgetfileversion((int32)*file_id, &cmajor_v, &cminor_v, &crelease, cstring);
 
-   *major_v = (intf) cmajor_v;
-   *minor_v = (intf) cminor_v;
-   *release = (intf) crelease;
+    HDpackFstring(cstring, _fcdtocp(string), *len);
 
-   return((intf)status);
+    free(cstring);
 
+    *major_v = (intf)cmajor_v;
+    *minor_v = (intf)cminor_v;
+    *release = (intf)crelease;
+
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hiishdf
  * Purpose: call Hishdf function
- * Inputs:  name: Name of the file 
+ * Inputs:  name: Name of the file
  *          namelen: length of name
  * Returns: TRUE(1) on success, FALSE (-1) on failure
  * Users:   HDF Fortran programmers
  * Method:  Convert filename to C string, call Hishdf
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhiishdf(_fcd name,  intf * namelen)
+intf
+nhiishdf(_fcd name, intf *namelen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(name, (intn) *namelen);
+    fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) Hishdf(fn);
-    HDfree(fn);
-    return (ret);
+        return FAIL;
+    ret = (intf)Hishdf(fn);
+    free(fn);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hconfinfc
@@ -271,17 +244,17 @@ nhiishdf(_fcd name,  intf * namelen)
  * Returns: SUCCEED (0)  on success, FALSE (-1) on failure
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-nhconfinfc (intf *coder_type,  intf * info)
+intf
+nhconfinfc(intf *coder_type, intf *info)
 {
     comp_coder_t coder_type_c;
     uint32       info_c;
     intn         status;
 
-    coder_type_c = (comp_coder_t) *coder_type;
-    status = HCget_config_info(coder_type_c, &info_c);
+    coder_type_c = (comp_coder_t)*coder_type;
+    status       = HCget_config_info(coder_type_c, &info_c);
     if (status == FAIL)
-	return(FAIL);
-    *info = (intf) info_c; 
-    return (status);
+        return FAIL;
+    *info = (intf)info_c;
+    return status;
 }

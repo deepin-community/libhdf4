@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*-----------------------------------------------------------------------------
  * File:    herrf.c
  * Purpose: C stubs for error-handling Fortran routines
@@ -22,9 +20,8 @@
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
-
 
 /*-----------------------------------------------------------------------------
  * Name:    heprnt
@@ -38,8 +35,8 @@
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(VOID)
-nheprnt(intf * print_levels)
+void
+nheprnt(intf *print_levels)
 {
     HEprint(stderr, *print_levels);
 }
@@ -55,67 +52,47 @@ nheprnt(intf * print_levels)
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
-
-#ifdef PROTOTYPE
-nheprntc(_fcd filename, intf * print_levels, intf *namelen)
-#else
-nheprntc(filename, print_levels, namelen)
-           _fcd  filename;
-           intf *print_levels; 
-           intf  *namelen;
-#endif /* PROTOTYPE */
-
+intf
+nheprntc(_fcd filename, intf *print_levels, intf *namelen)
 {
     FILE *err_file;
-    char * c_name;
-    intn c_len;
-    int ret = 0;
+    char *c_name;
+    intn  c_len;
+    int   ret = 0;
 
     c_len = *namelen;
-    if(c_len == 0) {
-                HEprint(stderr, *print_levels);
-                return(ret);
+    if (c_len == 0) {
+        HEprint(stderr, *print_levels);
+        return ret;
     }
     c_name = HDf2cstring(filename, c_len);
-    	if (!c_name) return(FAIL);
+    if (!c_name)
+        return FAIL;
     err_file = fopen(c_name, "a");
-    	if (!err_file) return(FAIL);
+    if (!err_file)
+        return FAIL;
     HEprint(err_file, *print_levels);
     fclose(err_file);
-    return(ret);
-    
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name: hestringc
  * Purpose:  Calls HEstring
  * Inputs:   error_code - HDF error code
  * Outputs: error_message - error message assocoated with the error code
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
- FRETVAL(intf)
-#ifdef PROTOTYPE
-nhestringc(intf *error_code,
-            _fcd error_message, intf *len)
-#else
-nhestringc(error_code, error_message, len)
-           intf *error_code;
-           _fcd  error_message;
-           intf  *len;
-#endif /* PROTOTYPE */
+intf
+nhestringc(intf *error_code, _fcd error_message, intf *len)
 {
-   char *cstring = NULL;
-   intn   status;
- 
-   status = -1;
-   cstring = (char *)HEstring((hdf_err_code_t) *error_code);
-   if (cstring) {
-                status = 0;
-                HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
-   }  
-   return status;
- 
- 
+    char *cstring = NULL;
+    intn  status;
+
+    status  = -1;
+    cstring = (char *)HEstring((hdf_err_code_t)*error_code);
+    if (cstring) {
+        status = 0;
+        HDpackFstring(cstring, _fcdtocp(error_message), *len);
+    }
+    return status;
 }

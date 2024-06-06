@@ -11,12 +11,11 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine slabwf (num_err)
 C
 C Program to write data set using the DFSDxxx interface
-C 
+C
 C Output files: slabwf.hdf, slab1wf, slab4wf
 
       implicit none
@@ -105,7 +104,7 @@ C
       slab5(1,1,2) = 103.0
       slab5(1,2,2) = 113.0
       slab5(1,3,2) = 123.0
-      
+
       do 200 i=1, np
          do 180 j=1, nr
             do 150 k=1, nc
@@ -144,9 +143,9 @@ C Set number type, dimension stuff etc
 
       ret = dssdisc(3, di(3), scpln)
       call VRFY(ret,'dssdisc',number_failed)
-C 
-C Write it slab by slab   
-C 
+C
+C Write it slab by slab
+C
 
 C     set the Fill value
       ret = dssfill(fillvalue)
@@ -223,7 +222,7 @@ C
       if ( num_err .ne. 0) then
          print *,'number of failures =',num_err
       endif
-     
+
       call MESSAGE(5,'   Verifying data ')
 
       num_err = 0
@@ -281,9 +280,9 @@ C Set dimension stuff etc
 
       ret = dssdisc(3, di(3), scpln)
       call VRFY(ret,'dssdisc',number_failed)
-C 
-C Write it slab by slab   
-C 
+C
+C Write it slab by slab
+C
       sr(1) = 0
       sr(2) = 0
       sr(3) = 0
@@ -321,7 +320,7 @@ C
       call VRFY(ret,'dseslab',number_failed)
 
 
-      num_err = number_failed 
+      num_err = number_failed
       if (num_err .ne. 0) then
            print *,'number of failures =',num_err
       else
@@ -337,16 +336,16 @@ C      print *,'\n   Writing the last 2 of 5 slabs to slab1wf.hdf'
 C set ref of SDS to write to
       nref = 2
 
-C 
-C Fisrt clear all previous info and restarot to beginning of file
-C 
+C
+C First clear all previous info and restarot to beginning of file
+C
       ret = dsclear()
       call VRFY(ret,'dsclear',number_failed)
 
       ret = dfsdrestart()
       call VRFY(ret,'dfsdrestart',number_failed)
 
-C Get relavant info on SDS
+C Get relevant info on SDS
 
       call MESSAGE(5,'Calling dsigdim to get info on SDS')
       ret = dsgdims(sn2, rank, sz, rank)
@@ -465,9 +464,9 @@ C Set relevant info
 
       ret = dssdisc(3, di(3), scpln)
       call VRFY(ret,'dssdisc',number_failed)
-C 
-C Write it as one slab    
-C 
+C
+C Write it as one slab
+C
 
       ret = dssslab(sn4)
       call VRFY(ret,'dssslab',number_failed)
@@ -526,6 +525,6 @@ C            print *, 'sa() ',sa(k,j,i)
 
 C
 C
-      return 
+      return
       end
 

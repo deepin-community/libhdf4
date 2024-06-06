@@ -11,45 +11,36 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-
 /*
-   FILE
-   cnone.c
-   HDF none encoding I/O routines
+   cnone.c - HDF none encoding I/O routines
 
-   REMARKS
-   These routines are only included for completeness and are not
-   actually expected to be used.
-
-   DESIGN
-
-   EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   4/25/94     Starting writing specs & coding prototype.
  */
 
 /* General HDF includes */
-#include "hdf.h"
+#include "hdf_priv.h"
 
-#define CNONE_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"     /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
+
+/* functions to perform run-length encoding */
+funclist_t cnone_funcs = {HCPcnone_stread,
+                          HCPcnone_stwrite,
+                          HCPcnone_seek,
+                          HCPcnone_inquire,
+                          HCPcnone_read,
+                          HCPcnone_write,
+                          HCPcnone_endaccess,
+                          NULL,
+                          NULL};
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcnone_staccess
-            (accrec_t * access_rec, int16 acc_mode);
+static int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
-    HCIcnone_staccess -- Start accessing a RLE compressed data element.
+    HCIcnone_staccess -- Start accessing an uncompressed data element.
 
  USAGE
     int32 HCIcnone_staccess(access_rec, access)
@@ -61,33 +52,25 @@ PRIVATE int32 HCIcnone_staccess
 
  DESCRIPTION
     Common code called by HCIcnone_stread and HCIcnone_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
-HCIcnone_staccess(accrec_t * access_rec, int16 acc_mode)
+static int32
+HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcnone_staccess");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (acc_mode == DFACC_READ)
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                               info->comp_ref);
+        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref);
     else
-        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                info->comp_ref, info->length);
+        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref, info->length);
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
+    if ((acc_mode & DFACC_WRITE) && Happendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (SUCCEED);
-}   /* end HCIcnone_staccess() */
+    return SUCCEED;
+} /* end HCIcnone_staccess() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -102,22 +85,16 @@ HCIcnone_staccess(accrec_t * access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using no compression.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_stread(accrec_t * access_rec)
+HCPcnone_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_stread");
-    int32       ret;
+    int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
-}   /* HCPcnone_stread() */
+    return ret;
+} /* HCPcnone_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -132,22 +109,16 @@ HCPcnone_stread(accrec_t * access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using no compression.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_stwrite(accrec_t * access_rec)
+HCPcnone_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_stwrite");
-    int32       ret;
+    int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
-}   /* HCPcnone_stwrite() */
+    return ret;
+} /* HCPcnone_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -167,25 +138,19 @@ HCPcnone_stwrite(accrec_t * access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
+HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcnone_seek");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hseek(info->aid, offset, origin) == FAIL)
         HRETURN_ERROR(DFE_CSEEK, FAIL);
 
-    return (SUCCEED);
-}   /* HCPcnone_seek() */
+    return SUCCEED;
+} /* HCPcnone_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -201,26 +166,20 @@ HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
     Returns the number of bytes read or FAIL
 
  DESCRIPTION
-    Read in a number of bytes from a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
+    Read in a number of bytes from an uncompressed data element.
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_read(accrec_t * access_rec, int32 length, void * data)
+HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcnone_read");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hread(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
-}   /* HCPcnone_read() */
+    return length;
+} /* HCPcnone_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -237,25 +196,19 @@ HCPcnone_read(accrec_t * access_rec, int32 length, void * data)
 
  DESCRIPTION
     Write out a number of bytes to a data element (w/ no compression).
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_write(accrec_t * access_rec, int32 length, const void * data)
+HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcnone_write");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hwrite(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
-}   /* HCPcnone_write() */
+    return length;
+} /* HCPcnone_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -280,30 +233,23 @@ HCPcnone_write(accrec_t * access_rec, int32 length, const void * data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-                 uint16 *pref, int32 *plength, int32 *poffset,
-                 int32 *pposn, int16 *paccess, int16 *pspecial)
+HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
+                 int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id = pfile_id;
-    ptag = ptag;
-    pref = pref;
-    plength = plength;
-    poffset = poffset;
-    pposn = pposn;
-    paccess = paccess;
-    pspecial = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
-    return (SUCCEED);
-}   /* HCPcnone_inquire() */
+    return SUCCEED;
+} /* HCPcnone_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -318,23 +264,17 @@ HCPcnone_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
 
  DESCRIPTION
     Close the compressed data element and free modelling info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-HCPcnone_endaccess(accrec_t * access_rec)
+HCPcnone_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_endaccess");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* close the compressed data AID */
     if (Hendaccess(info->aid) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
-}   /* HCPcnone_endaccess() */
+    return SUCCEED;
+} /* HCPcnone_endaccess() */

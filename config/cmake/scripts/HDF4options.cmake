@@ -19,7 +19,6 @@
 ####      Only build shared libraries       ####
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DONLY_SHARED_LIBS:BOOL=OFF")
 ####      Add PIC option on linux/mac       ####
-#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_ANSI_CFLAGS:STRING=-fPIC")
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_JPEG_WITH_PIC:BOOL=ON
 
 #############################################################################################
@@ -30,13 +29,9 @@ set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
 
 #############################################################################################
 ####      java enabled      ####
-#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF_BUILD_JAVA:BOOL=ON")
+#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
 ####      java disabled      ####
-set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF_BUILD_JAVA:BOOL=OFF")
-
-#############################################################################################
-####      hdf4 xdr enabled      ####
-#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_XDR_LIB:BOOL=ON")
+set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
 
 #############################################################################################
 ### change install prefix (default use INSTALLDIR value)
@@ -56,7 +51,7 @@ set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRIN
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib -DSZIP_INCLUDE_DIR:PATH=some_location/include")
 
 ####      package examples       ####
-#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACK_EXAMPLES:BOOL=ON -DHDF4_EXAMPLES_COMPRESSED:STRING=HDF5Examples-0.3.9-Source.tar.gz -DHDF4_EXAMPLES_COMPRESSED_DIR:PATH=${CTEST_SCRIPT_DIRECTORY}")
+#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACK_EXAMPLES:BOOL=ON -DHDF4_EXAMPLES_COMPRESSED:STRING=HDF4Examples-0.3.10-Source.tar.gz -DHDF4_EXAMPLES_COMPRESSED_DIR:PATH=${CTEST_SCRIPT_DIRECTORY}")
 
 ##############################################################################################
 ### disable test program builds
@@ -74,5 +69,10 @@ set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 ### use a toolchain file
 
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/intel.cmake")
+
+#############################################################################################
+### Set the OSX architectures
+
+#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_OSX_ARCHITECTURES:STRING=arm64;x86_64")
 
 #############################################################################################

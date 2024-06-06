@@ -8,13 +8,14 @@
 # Enable hardening build flags
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
+include /usr/share/dpkg/architecture.mk
 include /usr/share/dpkg/pkg-info.mk
 
 UPSTREAM_VERSION = $(shell echo $(DEB_VERSION_UPSTREAM) | sed -e 's/\+.*//')
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-RELEASE := 4.2.15
+RELEASE := $(UPSTREAM_VERSION)
 PACKAGE := libhdf4
 SOVER   := 0
 
@@ -39,12 +40,6 @@ ifneq (,$(findstring verbose,$(DEB_BUILD_OPTIONS)))
    export DH_VERBOSE
 endif
 
-ifneq (,$(filter $(DEB_BUILD_ARCH),s390x sparc64))
-   DISABLE_TESTS=1
-else
-   DISABLE_TESTS=0
-endif
-
 TEMPLATES=$(wildcard debian/*.in)
 
 templates:
@@ -58,9 +53,8 @@ templates:
 %:
 	dh $@
 
-override_dh_clean:
+execute_before_dh_clean:
 	$(RM) -r HDF$(RELEASE) HDF4 HDF4_ALT $(DESTDIR_ALT)
-	dh_clean
 
 override_dh_auto_clean:
 	if [ -e HDF4 ]; then \
@@ -88,7 +82,7 @@ override_dh_auto_configure: templates
 	                  --builddirectory=debian/build-hdf4 \
 	                  -- --prefix=/usr \
 	                     --includedir=/usr/include/hdf \
-	                     --libdir=/usr/lib \
+	                     --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
 	                     --enable-shared \
 	                     --enable-fortran \
 	                     --with-szlib=yes \
@@ -100,7 +94,7 @@ override_dh_auto_configure: templates
 	                  --builddirectory=debian/build-hdf4-alt \
 	                  -- --prefix=/usr \
 	                     --includedir=/usr/include/hdf \
-	                     --libdir=/usr/lib \
+	                     --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
 	                     --enable-shared \
 	                     --disable-fortran \
 	                     --disable-netcdf \
@@ -124,23 +118,37 @@ override_dh_auto_build:
 		                 LIBS="$(LIBS)"
 
 override_dh_auto_test:
-	if [ "$(DISABLE_TESTS)" = 0 ]; then \
-		dh_auto_test --sourcedirectory=HDF4 \
-		             --builddirectory=debian/build-hdf4 \
-		             --no-parallel \
-		             -- F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
-		                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-		                LIBS="$(LIBS)" ; \
-	fi
+ifneq (,$(filter $(DEB_BUILD_ARCH),ppc64el s390x sparc64))
+	dh_auto_test --sourcedirectory=HDF4 \
+	             --builddirectory=debian/build-hdf4 \
+	             --no-parallel \
+	             -- F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
+	                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+	                LIBS="$(LIBS)" \
+	             || echo "Ignoring test failures"
 
-	if [ "$(DISABLE_TESTS)" = 0 ]; then \
-		dh_auto_test --sourcedirectory=HDF4_ALT \
-		             --builddirectory=debian/build-hdf4-alt \
-		             --no-parallel \
-		             -- CC="$(CC)" CXX="$(CXX)" \
-		                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-		                LIBS="$(LIBS)" ; \
-	fi
+	dh_auto_test --sourcedirectory=HDF4_ALT \
+	             --builddirectory=debian/build-hdf4-alt \
+	             --no-parallel \
+	             -- CC="$(CC)" CXX="$(CXX)" \
+	                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+	                LIBS="$(LIBS)" \
+	             || echo "Ignoring test failures"
+else
+	dh_auto_test --sourcedirectory=HDF4 \
+	             --builddirectory=debian/build-hdf4 \
+	             --no-parallel \
+	             -- F77="$(F77)" CC="$(CC)" CXX="$(CXX)" \
+	                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+	                LIBS="$(LIBS)"
+
+	dh_auto_test --sourcedirectory=HDF4_ALT \
+	             --builddirectory=debian/build-hdf4-alt \
+	             --no-parallel \
+	             -- CC="$(CC)" CXX="$(CXX)" \
+	                CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+	                LIBS="$(LIBS)"
+endif
 
 override_dh_auto_install:
 	dh_auto_install --sourcedirectory=HDF4 \
@@ -151,26 +159,18 @@ override_dh_auto_install:
 	                --builddirectory=debian/build-hdf4-alt \
 	                --destdir=$(DESTDIR_ALT)
 
-	install -d -o root -g root $(DESTDIR)/usr/share/doc/$(PACKAGE)
+	install -d $(DESTDIR)/usr/share/doc/$(PACKAGE)
 
-	mkdir -p $(DESTDIR)/usr/share/man/man3
-	sed -e "s/^\.TH HDF 1/\.TH HDF 3/" $(DESTDIR)/usr/share/man/man1/hdf.1 > $(DESTDIR)/usr/share/man/man3/hdf.3
-	rm -f $(DESTDIR)/usr/share/man/man1/hdf.1 $(DESTDIR_ALT)/usr/share/man/man1/hdf.1
-	
 	mv $(DESTDIR_ALT)/usr/lib $(DESTDIR)/usr/lib-alt
 	mv $(DESTDIR_ALT)/usr/include $(DESTDIR)/usr/include-alt
 
-	# Move examples to -doc package
-	mkdir -p $(DESTDIR)/usr/share/doc/$(PACKAGE)-doc
-	mv $(DESTDIR)/usr/share/hdf4_examples $(DESTDIR)/usr/share/doc/$(PACKAGE)-doc/examples
-	
 	# strip rpath into binaries and libraries	
-	for obj in $(DESTDIR)/usr/bin/* $(DESTDIR)/usr/lib/*.so.* $(DESTDIR)/usr/lib-alt/*.so.*; do \
+	for obj in $(DESTDIR)/usr/bin/* $(DESTDIR)/usr/lib/$(DEB_HOST_MULTIARCH)/*.so.* $(DESTDIR)/usr/lib-alt/$(DEB_HOST_MULTIARCH)/*.so.*; do \
 		chrpath -d $${obj} || true; \
 	done
 
 	# Empty out the dependency field in our .la files
-	for file in $(DESTDIR)/usr/lib/*.la $(DESTDIR)/usr/lib-alt/*.la; do \
+	for file in $(DESTDIR)/usr/lib/$(DEB_HOST_MULTIARCH)/*.la $(DESTDIR)/usr/lib-alt/$(DEB_HOST_MULTIARCH)/*.la; do \
 		sed -i -e "/dependency_libs/ s/'.*'/''/" $$file ; \
 	done
 
@@ -190,8 +190,7 @@ override_dh_install:
 
 	$(RM) -r $(CURDIR)/debian/tmp
 
-override_dh_installman:
-	dh_installman
+execute_after_dh_installman:
 	$(RM) $(CURDIR)/debian/hdf4-tools/usr/share/man/man1/hdf.1
 
 override_dh_makeshlibs:

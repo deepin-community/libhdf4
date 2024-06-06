@@ -1,3 +1,6 @@
 # Source uses __FILE__ macro
 file-references-package-build-path *
 
+# False positive, lat/lon
+typo-in-manual-page lon long *
+

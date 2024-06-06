@@ -11,14 +11,12 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-#ifndef REPACK_PARSE_H_
-#define REPACK_PARSE_H_
+#ifndef HREPACK_PARSE_H
+#define HREPACK_PARSE_H
 
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,20 +24,17 @@ extern "C" {
 
 int parse_number(char *str);
 
-
 /* compression */
 
-obj_list_t* parse_comp(const char *str, int *n_objs, comp_info_t *comp);
-const char* get_scomp(comp_coder_t code);
+obj_list_t *parse_comp(const char *str, int *n_objs, comp_info_t *comp);
+const char *get_scomp(comp_coder_t code);
 
 /* chunking */
 
-obj_list_t* parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank);
-
+obj_list_t *parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank);
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif  /* REPACK_PARSE_H_ */
+#endif /* HREPACK_PARSE_H */

@@ -11,14 +11,13 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tsdstrf (num_failed)
       implicit none
 C
 C This program tests correctness of writing and read datastrings
 C and dimension strings.
-C To avoid the '\0' inserted by HDstrncpy, compare the first 14
+C To avoid the '\0' inserted by strncpy, compare the first 14
 C characters of output and input strings in subroutine compare()
       integer num_failed
       character*20 myname
@@ -58,7 +57,7 @@ C characters of output and input strings in subroutine compare()
       call MESSAGE(5, 'Creating arrays...')
 
       do 110 i=1,dims(2)
-          do 100 j=1,dims(1) 
+          do 100 j=1,dims(1)
              f32(j,i) = (i*10) + j
 100       continue
 110   continue
@@ -107,7 +106,7 @@ C characters of output and input strings in subroutine compare()
       return
       end
 
-     
+
 
       subroutine compare(outstring, instring, num)
       implicit none
@@ -118,7 +117,7 @@ C characters of output and input strings in subroutine compare()
 C
 C Note, outstring and instring are of length 14 instead of 15.
 C
- 
+
       if (outstring .ne. instring) then
           print *, 'Test failed for <', outstring,'>'
           print *, '      HDF says= <', instring,'>'

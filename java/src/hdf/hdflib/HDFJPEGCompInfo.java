@@ -7,8 +7,8 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
+ * https://www.hdfgroup.org/licenses.  If you do not have access to the      *
+ * file, you may request a copy from help@hdfgroup.org.                      *
  ****************************************************************************/
 
 package hdf.hdflib;
@@ -25,23 +25,29 @@ public class HDFJPEGCompInfo extends HDFOldCompInfo {
     /* Struct to contain information about how to compress */
     /* or decompress a JPEG encoded 24-bit image */
 
-    public int quality; /* Quality factor for JPEG compression, should be from */
-    /* 0 (terrible) to 100 (very good) */
+    /**
+       Quality factor for JPEG compression, should be from
+                 0 (terrible) to 100 (very good)
+     */
+    public int quality;
 
-    public int force_baseline; /* If force_baseline is set to TRUE then */
-    /* quantization tables are limited to */
-    /* 0..255 for JPEG baseline compability */
-    /* This is only an issue for quality */
-    /* settings below 24 */
+    /**
+       If force_baseline is set to TRUE then
+         quantization tables are limited to
+         0..255 for JPEG baseline compatibility
+         This is only an issue for quality
+         settings below 24
+     */
+    public int force_baseline; /**/
 
-    public HDFJPEGCompInfo() {
-        ctype = HDFConstants.COMP_JPEG;
-    }
+    /** */
+    public HDFJPEGCompInfo() { ctype = HDFConstants.COMP_JPEG; }
 
-    public HDFJPEGCompInfo(int qual, int fb) {
-        ctype = HDFConstants.COMP_JPEG;
-        quality = qual;
+    /** */
+    public HDFJPEGCompInfo(int qual, int fb)
+    {
+        ctype          = HDFConstants.COMP_JPEG;
+        quality        = qual;
         force_baseline = fb;
     }
-
 }

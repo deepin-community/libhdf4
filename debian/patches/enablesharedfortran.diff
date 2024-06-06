@@ -1,9 +1,10 @@
 Description: Enable support for shared fortran libraries.
 Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
+Forwarded: not-needed
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -290,15 +290,16 @@ fi
+@@ -332,15 +332,16 @@ AC_SUBST([BUILD_FORTRAN])
  ## Build static libraries by default. Furthermore, fortran shared libraries
  ## are unsupported. Disallow a user from enabling both shared libraries and
  ## fortran.
@@ -27,5 +28,5 @@ Author: Johan Van de Wauw <johan.vandewauw@gmail.com>
 +#    fi
 +#fi
  
- AC_PROG_INSTALL
- AC_PROG_LN_S
+ ## ----------------------------------------------------------------------
+ ## Check if they would like the Java native interface (JNI) compiled

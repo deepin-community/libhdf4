@@ -11,8 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
-/*LINTLIBRARY */
 /* ------------------------------ hcompri.c -------------------------------
 
    Routines for reading & writing old-style (i.e. non-special compressed)
@@ -25,7 +23,7 @@
   ******************
     These special elements are invoked at run-time only, information about
     whether an element was written/read through this interface is not stored in
-    the file.  Unless specificly asked for by an API routine or required for a
+    the file.  Unless specifically asked for by an API routine or required for a
     particular kind of access by the library, these routines aren't called.
 
  LOCAL ROUTINES
@@ -46,44 +44,33 @@
 
 ------------------------------------------------------------------------- */
 
-#include "hdf.h"
-#include "hfile.h"
-#include <assert.h>
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* crinfo_t -- compressed raster information structure */
 
-typedef struct
-  {
-      intn        attached;     /* number of access records attached
-                                   to this information structure */
-      int32 fid;                /* File ID of image */
-      uint16 tag, ref;          /* Tag & ref of compressed raster image */
-      int32 xdim, ydim;         /* Image dimensions */
-      int16 scheme;             /* Compression scheme */
-      comp_info cinfo;          /* Compression information */
-      uintn image_size;         /* Size of the uncompressed image in memory */
-  }
-crinfo_t;
+typedef struct {
+    intn attached;        /* number of access records attached
+                             to this information structure */
+    int32     fid;        /* File ID of image */
+    uint16    tag, ref;   /* Tag & ref of compressed raster image */
+    int32     xdim, ydim; /* Image dimensions */
+    int16     scheme;     /* Compression scheme */
+    comp_info cinfo;      /* Compression information */
+    uintn     image_size; /* Size of the uncompressed image in memory */
+} crinfo_t;
 
 /* forward declaration of the functions provided in this module */
 
 /* cr_funcs -- table of the accessing functions of the compressed raster
    data element function modules.  The position of each function in
    the table is standard */
-funclist_t  cr_funcs =
-{
-    HRPstread,
-    HRPstwrite,
-    HRPseek,
-    HRPinquire,
-    HRPread,
-    HRPwrite,
-    HRPendaccess,
-    HRPinfo,
-    NULL         /* no routine registered */
+funclist_t cr_funcs = {
+    HRPstread, HRPstwrite,   HRPseek, HRPinquire, HRPread,
+    HRPwrite,  HRPendaccess, HRPinfo, NULL /* no routine registered */
 };
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HRPconvert -- wrap an existing raster image with the special element routines.
 USAGE
@@ -105,13 +92,13 @@ FORTRAN
 
 --------------------------------------------------------------------------*/
 int32
-HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 scheme, comp_info *cinfo, uintn pixel_size)
+HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 scheme, comp_info *cinfo,
+           uintn pixel_size)
 {
-    CONSTR(FUNC, "HRPconvert");     /* for HERROR */
-    filerec_t  *file_rec;           /* file record */
-    accrec_t   *access_rec=NULL;    /* access element record */
-    crinfo_t  *info;                /* information for the compressed raster element */
-    int32      ret_value = SUCCEED;
+    filerec_t *file_rec;          /* file record */
+    accrec_t  *access_rec = NULL; /* access element record */
+    crinfo_t  *info       = NULL; /* information for the compressed raster element */
+    int32      ret_value  = SUCCEED;
 
     HEclear();
 
@@ -120,19 +107,19 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32) sizeof(crinfo_t)))==NULL)
+    if ((info = malloc((uint32)sizeof(crinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
-    info->attached= 1;
-    info->fid     = fid;
-    info->tag     = tag;
-    info->ref     = ref;
-    info->xdim    = xdim;
-    info->ydim    = ydim;
-    info->image_size  = xdim*ydim*pixel_size;
-    info->scheme  = scheme;
-    HDmemcpy(&(info->cinfo),cinfo,sizeof(comp_info));
+    info->attached   = 1;
+    info->fid        = fid;
+    info->tag        = tag;
+    info->ref        = ref;
+    info->xdim       = xdim;
+    info->ydim       = ydim;
+    info->image_size = xdim * ydim * pixel_size;
+    info->scheme     = scheme;
+    memcpy(&(info->cinfo), cinfo, sizeof(comp_info));
 
     /* get empty access record */
     access_rec = HIget_access_rec();
@@ -143,31 +130,33 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
     access_rec->special_info = info;
 
     /* Check if the tag/ref pair exists */
-    if(Hexist(fid,tag,ref)<0) {
-        access_rec->new_elem=TRUE;
-        if((access_rec->ddid=HTPcreate(file_rec,tag,ref))==FAIL)
+    if (Hexist(fid, tag, ref) < 0) {
+        access_rec->new_elem = TRUE;
+        if ((access_rec->ddid = HTPcreate(file_rec, tag, ref)) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      } /* end if */
+    } /* end if */
     else {
-        if((access_rec->ddid=HTPselect(file_rec,tag,ref))==FAIL)
+        if ((access_rec->ddid = HTPselect(file_rec, tag, ref)) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      } /* end else */
+    } /* end else */
     access_rec->special_func = &cr_funcs;
     access_rec->special      = SPECIAL_COMPRAS;
     access_rec->posn         = 0;
     access_rec->access       = DFACC_RDWR;
     access_rec->file_id      = fid;
-    access_rec->appendable   = FALSE;     /* data is non-appendable */
+    access_rec->appendable   = FALSE; /* data is non-appendable */
     file_rec->attach++;
 
-    ret_value = HAregister_atom(AIDGROUP,access_rec);  /* return access id */
+    ret_value = HAregister_atom(AIDGROUP, access_rec); /* return access id */
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-    } /* end if */
+    if (ret_value == FAIL) {
+        free(info);
+        if (NULL != access_rec)
+            access_rec->special_info = NULL;
+    }
 
-  return ret_value; 
+    return ret_value;
 } /* HRPconvert */
 
 /* ------------------------------ HRPstread ------------------------------- */
@@ -184,14 +173,13 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPstread(accrec_t * rec)
+HRPstread(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec=rec;
+    (void)rec;
 
-assert(0 && "Should never be called");
-  return (FAIL);
-}   /* HRPstread */
+    assert(0 && "Should never be called");
+    return FAIL;
+} /* HRPstread */
 
 /* ------------------------------ HRPstwrite ------------------------------- */
 /*
@@ -207,14 +195,13 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPstwrite(accrec_t * rec)
+HRPstwrite(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec=rec;
+    (void)rec;
 
-assert(0 && "Should never be called");
-  return (FAIL);
-}   /* HRPstwrite */
+    assert(0 && "Should never be called");
+    return FAIL;
+} /* HRPstwrite */
 
 /* ------------------------------ HRPseek ------------------------------- */
 /*
@@ -233,28 +220,20 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPseek(accrec_t * access_rec, int32 offset, int origin)
+HRPseek(accrec_t *access_rec, int32 offset, int origin)
 {
-    int32     ret_value = SUCCEED;
-    CONSTR(FUNC, "HRPseek");    /* for HERROR */
+    int32 ret_value = SUCCEED;
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
-    if (origin != DF_START || offset !=0)
+    if (origin != DF_START || offset != 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* set the offset */
     access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* HRPseek */
+    return ret_value;
+} /* HRPseek */
 
 /* ------------------------------ HRPread ------------------------------- */
 /*
@@ -273,15 +252,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPread(accrec_t * access_rec, int32 length, void * data)
+HRPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HRPread");    /* for HERROR */
-    crinfo_t  *info =          /* information on the special element */
-        (crinfo_t *) access_rec->special_info;
-    int32    ret_value = SUCCEED;
+    crinfo_t *info = /* information on the special element */
+        (crinfo_t *)access_rec->special_info;
+    int32 ret_value = SUCCEED;
 
     /* validate length */
-    if (length!=0 && length!=(int32)info->image_size)
+    if (length != 0 && length != (int32)info->image_size)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* adjust length */
@@ -289,20 +267,13 @@ HRPread(accrec_t * access_rec, int32 length, void * data)
         length = info->image_size;
 
     /* Copy data from buffer */
-    DFgetcomp(info->fid,info->tag,info->ref,data,info->xdim,info->ydim,info->scheme);
+    DFgetcomp(info->fid, info->tag, info->ref, data, info->xdim, info->ydim, info->scheme);
 
     ret_value = length;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return(ret_value);
-}	/* HRPread */
+    return ret_value;
+} /* HRPread */
 
 /* ------------------------------ HRPwrite ------------------------------- */
 /*
@@ -321,15 +292,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPwrite(accrec_t * access_rec, int32 length, const void * data)
+HRPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HRPwrite");   /* for HERROR */
-    crinfo_t  *info =          /* information on the special element */
-                    (crinfo_t *) (access_rec->special_info);
-    int32      ret_value = SUCCEED;
+    crinfo_t *info = /* information on the special element */
+        (crinfo_t *)(access_rec->special_info);
+    int32 ret_value = SUCCEED;
 
     /* validate length */
-    if (length!=0 && length!=(int32)info->image_size)
+    if (length != 0 && length != (int32)info->image_size)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* adjust length */
@@ -337,25 +307,19 @@ HRPwrite(accrec_t * access_rec, int32 length, const void * data)
         length = info->image_size;
 
     /* Copy data to buffer */
-    DFputcomp(info->fid,info->tag,info->ref,data,info->xdim,info->ydim,NULL,NULL,info->scheme,&(info->cinfo));
+    DFputcomp(info->fid, info->tag, info->ref, data, info->xdim, info->ydim, NULL, NULL, info->scheme,
+              &(info->cinfo));
 
-    ret_value = length;    /* return length of bytes written */
+    ret_value = length; /* return length of bytes written */
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return(ret_value);
-}	/* HRPwrite */
+    return ret_value;
+} /* HRPwrite */
 
 /* ------------------------------ HRPinquire ------------------------------ */
 /*
 NAME
-   HRPinquire -- retreive information about a compressed raster element
+   HRPinquire -- retrieve information about a compressed raster element
 USAGE
    int32 HBPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about
@@ -376,19 +340,17 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-           uint16 *pref, int32 *plength, int32 *poffset,
+HRPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HRPinquire");   /* for HERROR */
-    crinfo_t  *info =          /* special information record */
-        (crinfo_t *) access_rec->special_info;
-    uint16 data_tag,data_ref;   /* tag/ref of the data we are checking */
-    int32       data_off;		/* offset of the data we are checking */
-    int32    ret_value = SUCCEED;
+    crinfo_t *info = /* special information record */
+        (crinfo_t *)access_rec->special_info;
+    uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
+    int32  data_off;           /* offset of the data we are checking */
+    int32  ret_value = SUCCEED;
 
     /* Get the data's offset & length */
-    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,NULL)==FAIL)
+    if (HTPinquire(access_rec->ddid, &data_tag, &data_ref, &data_off, NULL) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the variables if they are present */
@@ -410,15 +372,8 @@ HRPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *pspecial = (int16)access_rec->special;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
     return ret_value;
-}	/* HRPinquire */
+} /* HRPinquire */
 
 /* ----------------------------- HRPendaccess ----------------------------- */
 /*
@@ -434,11 +389,10 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 intn
-HRPendaccess(accrec_t * access_rec)
+HRPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HRPendaccess");   /* for HERROR */
-    filerec_t  *file_rec; 	    /* file record */
-    intn     ret_value = SUCCEED;
+    filerec_t *file_rec; /* file record */
+    intn       ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)
@@ -449,7 +403,7 @@ HRPendaccess(accrec_t * access_rec)
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* shut down dependant access record */
+    /* shut down dependent access record */
     if (HRPcloseAID(access_rec) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
@@ -463,18 +417,14 @@ HRPendaccess(accrec_t * access_rec)
     /* detach from the file */
     file_rec->attach--;
 
-
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-      if(access_rec!=NULL)
-          HIrelease_accrec_node(access_rec);
-    } /* end if */
+    if (ret_value == FAIL) { /* Error condition cleanup */
+        if (access_rec != NULL)
+            HIrelease_accrec_node(access_rec);
+    }
 
-  /* Normal function cleanup */
-
-  return ret_value; 
-}	/* HRPendaccess */
+    return ret_value;
+} /* HRPendaccess */
 
 /* ----------------------------- HRPcloseAID ------------------------------ */
 /*
@@ -490,36 +440,22 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HRPcloseAID(accrec_t * access_rec)
+HRPcloseAID(accrec_t *access_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HRPcloseAID");    /* for HERROR */
-#endif /* LATER */
-    crinfo_t  *info =          /* special information record */
-        (crinfo_t *) access_rec->special_info;
-    int32      ret_value = SUCCEED;
+    crinfo_t *info = /* special information record */
+        (crinfo_t *)access_rec->special_info;
+    int32 ret_value = SUCCEED;
 
     /* detach the special information record.
        If no more references to that, free the record */
 
-    if (--(info->attached) == 0)
-      {
-        HDfree(info);
+    if (--(info->attached) == 0) {
+        free(info);
         access_rec->special_info = NULL;
-      }
+    }
 
-#ifdef LATER
-done:
-#endif /* LATER */
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-    return(ret_value);
-}   /* HRPcloseAID */
+    return ret_value;
+} /* HRPcloseAID */
 
 /* ------------------------------- HRPinfo -------------------------------- */
 /*
@@ -528,19 +464,18 @@ NAME
 USAGE
    int32 HRPinfo(access_rec, info_block)
        accrec_t        * access_rec; IN: access record of element
-       sp_info_block_t * info_block; OUT: information about the special element 
+       sp_info_block_t * info_block; OUT: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
    Return information about the given external element.  Info_block is
-   assumed to be non-NULL.  
+   assumed to be non-NULL.
 
    --------------------------------------------------------------------------- */
 int32
-HRPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
+HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HRPinfo");    /* for HERROR */
-    int32      ret_value = SUCCEED;
+    int32 ret_value = SUCCEED;
 
     /* validate access record */
     if (access_rec->special != SPECIAL_COMPRAS)
@@ -550,13 +485,5 @@ HRPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->key = SPECIAL_COMPRAS;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return(ret_value);
-}   /* HRPinfo */
-
+    return ret_value;
+} /* HRPinfo */

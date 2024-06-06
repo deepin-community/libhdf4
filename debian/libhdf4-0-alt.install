@@ -1,1 +1,1 @@
-usr/lib-alt/lib*.so.0* usr/lib
+usr/lib-alt/${DEB_HOST_MULTIARCH}/lib*.so.0* usr/lib/${DEB_HOST_MULTIARCH}

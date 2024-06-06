@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: HDF4
 Upstream-Contact: HDF Group <help@hdfgroup.org>
-Source: https://support.hdfgroup.org/ftp/HDF/releases/
+Source: https://github.com/HDFGroup/hdf4
 
 Files: *
 Copyright: 2006-2016, The HDF Group
@@ -11,24 +11,58 @@ Copyright: 2006-2016, The HDF Group
           1984, 1986, Sun Microsystems, Inc
 License: HDF4
 
-Files: bin/ltmain.sh
-Copyright: 1996-2001, 2003-2011, Free Software Foundation, Inc
-License: GPL-2+ with Libtool exception
-
 Files: config/sanitizer/*
 Copyright: 2018, George Cave
 License: Apache-2.0
 
-Files: hdf/src/hqueue.h
- hdf/src/mcache.c
- hdf/src/mcache.h
+Files: hdf/src/hqueue_priv.h
+       hdf/src/mcache.c
+       hdf/src/mcache_priv.h
 Copyright: 1990-1991, 1993-1994, The Regents of the University of California
 License: BSD-3-Clause
 
-Files: hdf/util/getopt.c
- hdf/util/getopt1.c
-Copyright: 1987-1993, Free Software Foundation, Inc
-License: GPL-2+
+Files: HDF4Examples/*
+Copyright: 2006-2016, The HDF Group
+           1988-2006, Board of Trustees of the University of Illinois
+Comment: Contributors: National Center for Supercomputing Applications (NCSA) at
+ the University of Illinois, Fortner Software, Unidata Program Center (netCDF),
+ The Independent JPEG Group (JPEG), Jean-loup Gailly and Mark Adler (gzip),
+ and Digital Equipment Corporation (DEC).
+License: HDF4Examples
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted for any purpose (including commercial purposes)
+ provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
+ .
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or materials provided with the distribution.
+ .
+ 3. In addition, redistributions of modified forms of the source or binary
+    code must carry prominent notices stating that the original code was
+    changed and the date of the change.
+ .
+ 4. All publications or advertising materials mentioning features or use of
+    this software are asked, but not required, to acknowledge that it was
+    developed by The HDF Group and by the National Center for Supercomputing
+    Applications at the University of Illinois at Urbana-Champaign and
+    credit the contributors.
+ .
+ 5. Neither the name of The HDF Group, the name of the University, nor the
+    name of any Contributor may be used to endorse or promote products derived
+    from this software without specific prior written permission from The HDF
+    Group, the University, or the Contributor, respectively.
+ .
+ DISCLAIMER:
+ THIS SOFTWARE IS PROVIDED BY THE HDF GROUP AND THE CONTRIBUTORS "AS IS"
+ WITH NO WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.  In no event
+ shall The HDF Group or the Contributors be liable for any damages suffered
+ by the users arising out of the use of this software, even if advised of
+ the possibility of such damage.
 
 Files: mfhdf/*
 Copyright: 1993, UCAR/Unidata
@@ -48,57 +82,79 @@ Comment: Regarding the NetCDF code included in HDF4.
 License: NetCDF
 
 Files: mfhdf/dumper/testfiles/vslongname.c
- mfhdf/hdfimport/crtSDSfloats.c
- mfhdf/hdfimport/gen_sds_floats.c
- mfhdf/libsrc/hdfnctest.c
- mfhdf/libsrc/mfdatainfo.c
- mfhdf/test/gen_sds_szipped.c
- mfhdf/test/hdfnctest.c
- mfhdf/test/tattdatainfo.c
- mfhdf/test/tattributes.c
- mfhdf/test/tdatainfo.c
- mfhdf/test/tdatasizes.c
- mfhdf/test/tncunlim.c
- mfhdf/test/tncvargetfill.c
- mfhdf/test/tunlim.c
- mfhdf/test/tutils.c
+       mfhdf/hdfimport/crtSDSfloats.c
+       mfhdf/hdfimport/gen_sds_floats.c
+       mfhdf/libsrc/hdfnctest.c
+       mfhdf/libsrc/mfdatainfo.c
+       mfhdf/test/gen_sds_szipped.c
+       mfhdf/test/hdfnctest.c
+       mfhdf/test/tattdatainfo.c
+       mfhdf/test/tattributes.c
+       mfhdf/test/tdatainfo.c
+       mfhdf/test/tdatasizes.c
+       mfhdf/test/tncunlim.c
+       mfhdf/test/tncvargetfill.c
+       mfhdf/test/tunlim.c
+       mfhdf/test/tutils.c
 Copyright: The HDF Group
 License: HDF4
 
 Files: mfhdf/libsrc/array.c
- mfhdf/libsrc/attr.c
- mfhdf/libsrc/cdf.c
- mfhdf/libsrc/dim.c
- mfhdf/libsrc/error.c
- mfhdf/libsrc/error.h
- mfhdf/libsrc/file.c
- mfhdf/libsrc/globdef.c
- mfhdf/libsrc/iarray.c
- mfhdf/libsrc/local_nc.h
- mfhdf/libsrc/putget.c
- mfhdf/libsrc/putgetg.c
- mfhdf/libsrc/sharray.c
- mfhdf/libsrc/string.c
- mfhdf/libsrc/var.c
- mfhdf/test/cdftest.c
+       mfhdf/libsrc/attr.c
+       mfhdf/libsrc/cdf.c
+       mfhdf/libsrc/dim.c
+       mfhdf/libsrc/error.c
+       mfhdf/libsrc/error_priv.h
+       mfhdf/libsrc/file.c
+       mfhdf/libsrc/globdef.c
+       mfhdf/libsrc/iarray.c
+       mfhdf/libsrc/nc_priv.h
+       mfhdf/libsrc/putget.c
+       mfhdf/libsrc/putgetg.c
+       mfhdf/libsrc/sharray.c
+       mfhdf/libsrc/string.c
+       mfhdf/libsrc/var.c
+       mfhdf/test/cdftest.c
 Copyright: 1988, 1993, University Corporation for Atmospheric Research
                        The HDF Group
                        The Board of Trustees of the University of Illinois
 License: NetCDF and HDF4
 
-Files: mfhdf/ncgen/ncgentab.c
- mfhdf/ncgen/ncgentab.h
-Copyright: 1984, 1989-1990, 2000-2006, Free Software Foundation, Inc
-License: GPL-2+ with Bison exception
-
-Files: mfhdf/xdr/types.h
- mfhdf/xdr/xdr.c
- mfhdf/xdr/xdr.h
- mfhdf/xdr/xdrarray.c
- mfhdf/xdr/xdrfloat.c
- mfhdf/xdr/xdrstdio.c
-Copyright: 2009, Sun Microsystems, Inc.
+Files: mfhdf/libsrc/h4_xdr.c
+       mfhdf/libsrc/h4_xdr_priv.h
+Copyright: 1986, 2009, Sun Microsystems, Inc.
 License: BSD-3-Clause
+
+Files: mfhdf/ncgen/ncgentab.c
+       mfhdf/ncgen/ncgentab.h
+Copyright: 1984, 1989-1990, 2000-2006, Free Software Foundation, Inc
+License: GPL-3+ with Bison exception
+
+Files: mfhdf/util/h4getopt.c
+Copyright: 1987, 1993-1994, The Regents of the University of California
+License: BSD-3-Clause
+
+Files: mfhdf/util/h4getopt.h
+Copyright: 2009, Frank Warmerdam
+License: HPND-sl-gl-sgi
+ Permission to use, copy, modify, distribute, and sell this software and
+ its documentation for any purpose is hereby granted without fee, provided
+ that (i) the above copyright notices and this permission notice appear in
+ all copies of the software and related documentation, and (ii) the names of
+ Sam Leffler, Greg Larson and Silicon Graphics may not be used in any
+ advertising or publicity relating to the software without the specific,
+ prior written permission of Sam Leffler, Greg Larson and Silicon Graphics.
+ .
+ THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ .
+ IN NO EVENT SHALL SAM LEFFLER, GREG LARSON OR SILICON GRAPHICS BE LIABLE
+ FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+ OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+ LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+ OF THIS SOFTWARE.
 
 Files: debian/*
 Copyright: 1997-2001, Philippe Troin <phil@fifi.org>
@@ -231,10 +287,10 @@ License: GPL-2+
  On Debian systems, the complete text of version 2 of the GNU General
  Public License can be found in `/usr/share/common-licenses/GPL-2'.
 
-License: GPL-2+ with Bison exception
+License: GPL-3+ with Bison exception
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 2 of the License, or
+ the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
  .
  This program is distributed in the hope that it will be useful,
@@ -242,8 +298,8 @@ License: GPL-2+ with Bison exception
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
  .
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ On Debian systems, the complete text of version 3 of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-3'.
  .
  As a special exception, you may create a larger work that contains
  part or all of the Bison parser skeleton and distribute that work
@@ -257,34 +313,3 @@ License: GPL-2+ with Bison exception
  .
  This special exception was added by the Free Software Foundation in
  version 2.2 of Bison.
- .
- On Debian systems, the full text of the GNU General Public
- License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
-
-License: GPL-2+ with Libtool exception
- GNU Libtool is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- .
- As a special exception to the GNU General Public License,
- if you distribute this file as part of a program or library that
- is built using GNU Libtool, you may include this file under the
- same distribution terms that you use for the rest of that program.
- .
- GNU Libtool is distributed in the hope that it will be useful, but
- WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- General Public License for more details.
- .
- You should have received a copy of the GNU General Public License
- along with GNU Libtool; see the file COPYING.  If not, a copy
- can be downloaded from http://www.gnu.org/licenses/gpl.html,
- or obtained by writing to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- .
- On Debian systems, the full text of the GNU General Public
- License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
-
